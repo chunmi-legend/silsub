@@ -92,6 +92,8 @@ svg text { font-family: var(--f-body); }
 .chips { display: flex; gap: 4px; }
 .chips button { font: 500 .74rem var(--f-body); color: var(--ink-2); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
 .chips button.on { color: var(--seal); border-color: var(--seal); }
+.hint { flex: 1; min-width: 0; text-align: right; font-size: .76rem; color: var(--ink-2); }
+.btn:disabled { opacity: .35; cursor: default; }
 
 @media (max-width: 720px) {
   .page { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -137,16 +139,16 @@ svg text { font-family: var(--f-body); }
           <h1>1표가 모자라자, 반올림하다</h1>
           <p>1954년 11월, 이승만의 중임 제한을 없애는 개헌안. 재적 203명 중 135명이 찬성했다.</p>
         </div>
-        <div class="ctrls"><button type="button" class="btn" data-replay="sasaoip">다시 보기</button></div>
       </div>
       <div class="fig short"><svg id="svgSasaoip" viewBox="0 0 1000 560" role="img" aria-label="찬성 135명. 2/3 기준은 135.333명이라 1표 부족으로 부결되었으나, 사사오입 논리로 135명으로 바꿔 가결을 선포"></svg></div>
       <div class="scrub">
         <div class="chips" id="chipsSasaoip">
           <button type="button" data-t="0">표결</button>
-          <button type="button" data-t="4700">1표 부족</button>
-          <button type="button" data-t="8200">사사오입</button>
+          <button type="button" data-t="7300">1표 부족</button>
+          <button type="button" data-t="9800">사사오입</button>
         </div>
-        <input type="range" id="scrubSasaoip" min="0" max="11500" step="10" value="0" aria-label="애니메이션 시점">
+        <span class="hint" id="hintSasaoip"></span>
+        <button type="button" class="btn" id="nextSasaoip">다음 장면 ▶</button>
       </div>
     </section>
 
@@ -180,7 +182,7 @@ svg text { font-family: var(--f-body); }
         </div>
         <div class="ctrls"><button type="button" class="btn" data-replay="trade">다시 보기</button></div>
       </div>
-      <div class="fig short"><svg id="svgTrade" viewBox="0 0 1000 560" role="img" aria-label="원조 및 구호액은 1957년 약 3억 9600만 달러로 정점 이후 감소, 수입액은 1957년 약 4700만 달러에서 1960년 약 9600만 달러로 증가, 무역 적자는 약 2500만에서 6400만 달러로 확대"></svg></div>
+      <div class="fig short"><svg id="svgTrade" viewBox="0 0 1000 560" role="img" aria-label="원조 및 구호액은 1957년을 정점으로 감소하고, 그 뒤 수입액이 늘어 수입과 수출의 차이인 무역 적자가 커졌다"></svg></div>
       <div class="scrub">
         <div class="chips" id="chips-trade">
           <button type="button" data-t="0">1953~1960</button>
@@ -315,7 +317,7 @@ svg text { font-family: var(--f-body); }
 
   /* ───────── 2. 사사오입 개헌 ───────── */
   pages.sasaoip = (function () {
-    var svg = $("#svgSasaoip"), CX = 255, CY = 470, FLY = 620;
+    var svg = $("#svgSasaoip"), CX = 255, CY = 470, FLY = 900;
     mk("text", { x: 30, y: 46, "class": "tb" }, svg, "개헌안 표결 · 재적 203명");
     var seats = hemicycle(203, CX, CY, 92, 232, 8);
     var gSeats = mk("g", {}, svg), gFly = mk("g", {}, svg);
@@ -330,8 +332,8 @@ svg text { font-family: var(--f-body); }
     mk("text", { x: GX + GW / 2, y: GB + 22, "class": "tm mid" }, svg, "찬성");
     var cnt = mk("text", { x: GX + GW / 2, y: 74, "class": "big mid", "font-size": 40, fill: "var(--south)" }, svg, "0");
     var gLab = mk("text", { x: GX - 12, y: gy(135.333) + 4, "class": "tm end", style: "fill:var(--seal)" }, svg, "2/3");
-    var yesSeats = order.slice(0, 135).map(function (si, rank) { var s = seats[si]; s.yes = rank; s.launch = 300 + rank * 22; s.c = [(s.x + GX) / 2 + 40, Math.min(s.y, gy(rank)) - 90]; s.pt = mk("circle", { r: 5, fill: "var(--south)", style: "display:none" }, gFly); return s; });
-    var FILLED = 300 + 134 * 22 + FLY; // ≈ 3.9s
+    var yesSeats = order.slice(0, 135).map(function (si, rank) { var s = seats[si]; s.yes = rank; s.launch = 500 + rank * 40; s.c = [(s.x + GX) / 2 + 40, Math.min(s.y, gy(rank)) - 90]; s.pt = mk("circle", { r: 5, fill: "var(--south)", style: "display:none" }, gFly); return s; });
+    var FILLED = 500 + 134 * 40 + FLY; // ≈ 6.8s
 
     // 확대경
     var lens = mk("g", { style: "opacity:0" }, svg);
@@ -369,8 +371,9 @@ svg text { font-family: var(--f-body); }
     var sNo = stamp("부결", PX + 270, 400), sYes = stamp("가결", PX + 270, 400);
     var bottom = mk("text", { x: 30, y: 530, "class": "t", style: "font-weight:600" }, svg, "");
 
-    var END = 11500, t = 0, playing = true, prev = 0;
-    var chips = $$("#chipsSasaoip button"), scrub = $("#scrubSasaoip");
+    // 장면마다 멈춤: 표결이 끝나면, 1표 부족이 드러나면, 가결 선포 뒤
+    var STOPS = [7299, 9799, 13800], END = 13800, t = 0, playing = true, prev = 0;
+    var chips = $$("#chipsSasaoip button"), nextBtn = $("#nextSasaoip"), hint = $("#hintSasaoip");
     function setOp(el, o) { el.style.opacity = o.toFixed(3); }
     function render(t) {
       var arrived = 0;
@@ -388,11 +391,11 @@ svg text { font-family: var(--f-body); }
       gFill.setAttribute("y", gy(arrived)); gFill.setAttribute("height", arrived * U);
       cnt.textContent = arrived;
       // 단계 2: 확대
-      var a2 = seg(t, 4300, 4900); setOp(lens, a2);
-      var blink = t > 5000 && t < 9400 ? .55 + .45 * Math.cos((t - 5000) / 260) : (t >= 9400 ? 1 - seg(t, 9400, 9800) : 1);
+      var a2 = seg(t, 7400, 8200); setOp(lens, a2);
+      var blink = t > 8300 && t < 12000 ? .55 + .45 * Math.cos(performance.now() / 300) : (t >= 12000 ? 1 - seg(t, 12000, 12400) : 1);
       setOp(slot, blink);
       // 단계 3: 사사오입
-      var fall = seg(t, 8300, 9000), slide = ease(seg(t, 9000, 10000));
+      var fall = seg(t, 9900, 10900), slide = ease(seg(t, 11000, 12400));
       var yLine = ly(135.333) + (ly(135) - ly(135.333)) * slide;
       lLine.setAttribute("y1", yLine); lLine.setAttribute("y2", yLine);
       labA.setAttribute("y", yLine - 8);
@@ -402,26 +405,38 @@ svg text { font-family: var(--f-body); }
       var gl = gy(135.333) + (gy(135) - gy(135.333)) * slide;
       gLine.setAttribute("y1", gl); gLine.setAttribute("y2", gl); gLab.setAttribute("y", gl + 4);
       labA.textContent = slide > .98 ? "반올림 → 135" : "2/3 = 135";
-      var no = seg(t, 5600, 5900), noOff = seg(t, 9900, 10200);
+      var no = seg(t, 8900, 9300), noOff = seg(t, 12400, 12800);
       setOp(sNo, no * (1 - noOff));
       sNo.setAttribute("transform", "translate(" + (PX + 270) + " 400) scale(" + (1 + .6 * (1 - easeOut(no))).toFixed(3) + ") translate(" + -(PX + 270) + " -400)");
-      var yes = seg(t, 10300, 10600);
+      var yes = seg(t, 12900, 13300);
       setOp(sYes, yes);
       sYes.setAttribute("transform", "translate(" + (PX + 270) + " 400) scale(" + (1 + .6 * (1 - easeOut(yes))).toFixed(3) + ") translate(" + -(PX + 270) + " -400)");
-      date.textContent = t < 8300 ? "1954. 11. 27" : "1954. 11. 29";
-      cap.textContent = t < 8300 ? "2/3 이상 찬성 → 136명 필요" : "“0.333명은 사람이 될 수 없으니 반올림”";
-      bottom.textContent = t < 4300 ? "" : t < 8300 ? "135명 찬성 · 1표 부족으로 부결 선포" : "자유당, 사사오입(반올림) 논리로 결과를 뒤집어 가결 선포";
-      bottom.style.fill = t < 8300 ? "var(--ink)" : "var(--seal)";
+      date.textContent = t < 9900 ? "1954. 11. 27" : "1954. 11. 29";
+      cap.textContent = t < 9900 ? "2/3 이상 찬성 → 136명 필요" : "“0.333명은 사람이 될 수 없으니 반올림”";
+      bottom.textContent = t < FILLED ? "" : t < 7400 ? "찬성 135명 · 재적 203명의 2/3를 넘었을까?" : t < 9900 ? "135명 찬성 · 1표 부족으로 부결 선포" : "자유당, 사사오입(반올림) 논리로 결과를 뒤집어 가결 선포";
+      bottom.style.fill = t < 9900 ? "var(--ink)" : "var(--seal)";
       chips.forEach(function (c, ci) { var a = +c.dataset.t, b = ci < chips.length - 1 ? +chips[ci + 1].dataset.t : Infinity; c.classList.toggle("on", t >= a && t < b); });
-      scrub.value = Math.min(END, t);
+      nextBtn.disabled = playing;
+      nextBtn.textContent = playing ? "재생 중" : t >= END ? "처음부터 ▶" : "다음 장면 ▶";
+      hint.textContent = playing ? "" : t >= END ? "" : "그림을 클릭해도 넘어갑니다";
     }
-    chips.forEach(function (c) { c.addEventListener("click", function () { t = +c.dataset.t; playing = true; render(t); }); });
-    scrub.addEventListener("input", function () { t = +scrub.value; playing = false; render(t); });
-    scrub.addEventListener("change", function () { playing = t < END; });
+    function stopAfter(t) { for (var i = 0; i < STOPS.length; i++) if (STOPS[i] > t) return STOPS[i]; return END; }
+    var target = STOPS[0];
+    function play(from) { t = from; target = stopAfter(t); playing = true; prev = performance.now(); render(t); }
+    function advance() { if (playing) return; play(t >= END ? 0 : t); }
+    chips.forEach(function (c) { c.addEventListener("click", function () { play(+c.dataset.t); }); });
+    nextBtn.addEventListener("click", advance);
+    svg.parentNode.addEventListener("click", advance);
+    svg.parentNode.style.cursor = "pointer";
     return {
-      start: function (now) { prev = now; t = reduce ? END : 0; playing = !reduce; render(t); },
-      frame: function (now) { var dt = Math.min(100, now - prev); prev = now; if (!playing) return; t += dt; if (t >= END) { t = END; playing = false; } render(t); },
-      replay: function (now) { prev = now; t = 0; playing = true; render(0); }
+      start: function (now) { play(0); },
+      frame: function (now) {
+        var dt = Math.min(100, now - prev); prev = now;
+        if (!playing) { if (t > 8300 && t < 12000) render(t); return; }
+        t += dt; if (t >= target) { t = target; playing = false; }
+        render(t);
+      },
+      replay: function (now) { play(0); }
     };
   })();
 
@@ -537,7 +552,7 @@ svg text { font-family: var(--f-body); }
   /* ───────── 4. 원조와 무역 수지 ───────── */
   pages.trade = (function () {
     var svg = $("#svgTrade");
-    // 교과서 그래프(김두얼, 2016)에서 읽은 근사값, 백만 달러
+    // 교과서 그래프(김두얼, 2016)의 모양을 따라 그리기 위한 값. 정확한 수치가 아니므로 화면에 숫자로 내보이지 않는다
     var YRS = [1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960];
     var AID = [193, 150, 234, 321, 396, 330, 223, 247];
     var IMP = [155, 93, 109, 67, 47, 48, 80, 96];
@@ -547,8 +562,8 @@ svg text { font-family: var(--f-body); }
     function x(i) { return X0 + SLOT * i + SLOT / 2; }
     function T(i) { return 300 + i * 520; }
     mk("text", { x: 30, y: 44, "class": "tb" }, svg, "원조 경제 규모");
-    mk("text", { x: 30, y: 66, "class": "tm" }, svg, "단위: 백만 달러 · 김두얼(2016), 교과서 그래프에서 읽은 근사값");
-    axis(svg, X0, Y0, W, H, MAX, 50, 100, String);
+    mk("text", { x: 30, y: 66, "class": "tm" }, svg, "교과서 94쪽 그래프(김두얼, 2016)의 흐름을 따라 그림 · 정확한 수치는 교과서 참고");
+    axis(svg, X0, Y0, W, H, MAX, 50, Infinity, String);
     YRS.forEach(function (yr, i) { mk("text", { x: x(i), y: Y0 + 22, "class": "tm mid" }, svg, yr); });
     // 범례
     var lg = mk("g", {}, svg), LX = 712;
@@ -577,28 +592,28 @@ svg text { font-family: var(--f-body); }
       mk("text", { x: bx + 12, y: (y(hi) + y(lo)) / 2 + 5, "class": "tb", style: "fill:var(--seal)" }, g, label);
       return g;
     }
-    var b57 = bracket(4, 47, 22, "25"), b60 = bracket(7, 96, 32, "64");
+    var b57 = bracket(4, 47, 22, "적자"), b60 = bracket(7, 96, 32, "적자");
 
     // 오른쪽 요약
     var PX = 712, PY = 140;
     var panel = mk("g", { style: "opacity:0" }, svg);
     mk("text", { x: PX, y: PY, "class": "tm" }, panel, "1957 → 1960");
     var rows = [
-      { label: "원조 및 구호액", a: 396, b: 247, c: "var(--south)", mark: "▼", at: 5600 },
-      { label: "수입액", a: 47, b: 96, c: "var(--seal)", mark: "▲", at: 6500 },
-      { label: "수출액", a: 22, b: 32, c: "var(--gold)", mark: "", at: 7000 }
+      { label: "원조 및 구호액", word: "감소 ▼", c: "var(--south)", at: 5600 },
+      { label: "수입액", word: "증가 ▲", c: "var(--seal)", at: 6500 },
+      { label: "수출액", word: "크게 늘지 않음", c: "var(--gold)", at: 7000 }
     ];
     rows.forEach(function (r, i) {
       var ry = PY + 44 + i * 62;
       r.g = mk("g", { style: "opacity:0" }, svg);
       mk("text", { x: PX, y: ry, "class": "t2" }, r.g, r.label);
-      r.num = mk("text", { x: PX, y: ry + 30, "class": "big", "font-size": 26, fill: r.c }, r.g, "");
+      r.num = mk("text", { x: PX, y: ry + 30, "class": "big", "font-size": 26, style: "fill:" + r.c }, r.g, "");
     });
     var defG = mk("g", { style: "opacity:0" }, svg);
     mk("line", { x1: PX, x2: 978, y1: PY + 222, y2: PY + 222, stroke: "var(--rule)" }, defG);
     mk("text", { x: PX, y: PY + 250, "class": "t", style: "font-weight:700" }, defG, "무역 적자 (수입 − 수출)");
-    var defNum = mk("text", { x: PX, y: PY + 300, "class": "big", "font-size": 44, fill: "var(--seal)" }, defG, "");
-    mk("text", { x: PX, y: PY + 326, "class": "t2" }, defG, "약 2.6배로 확대");
+    var defNum = mk("text", { x: PX, y: PY + 300, "class": "big", "font-size": 44, style: "fill:var(--seal)" }, defG, "");
+    mk("text", { x: PX, y: PY + 326, "class": "t2" }, defG, "수입은 늘고 수출은 제자리");
     var cap = mk("text", { x: 30, y: 540, "class": "t", style: "fill:var(--seal);font-weight:700" }, svg, "");
 
     function lerp(a, b, k) { return a + (b - a) * k; }
@@ -632,13 +647,12 @@ svg text { font-family: var(--f-body); }
       op(b57, seg(t, 7400, 7700)); op(b60, seg(t, 7700, 8000));
       op(panel, seg(t, 5300, 5600));
       rows.forEach(function (r) {
-        var k = seg(t, r.at, r.at + 300), c = ease(seg(t, r.at + 200, r.at + 900));
+        var k = seg(t, r.at, r.at + 300);
         op(r.g, k);
-        r.num.textContent = r.a + " → " + Math.round(lerp(r.a, r.b, c)) + (c >= 1 && r.mark ? " " + r.mark : "");
+        r.num.textContent = r.word;
       });
-      var dk = ease(seg(t, 7800, 8600));
       op(defG, seg(t, 7600, 7900));
-      defNum.textContent = "25 → " + Math.round(lerp(25, 64, dk));
+      defNum.textContent = "확대";
       cap.textContent = t > 8600 ? "원조가 줄자 수입이 늘어 무역 수지 악화 · 무상 원조는 유상 차관으로 바뀌었다" : "";
     }
     return timeline("trade", 9200, render);
