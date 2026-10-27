@@ -76,8 +76,6 @@ svg text { font-family: var(--f-body); }
 .big { font-family: var(--f-display); font-weight: 800; fill: var(--ink); }
 .mid { text-anchor: middle; } .end { text-anchor: end; }
 .fade { transition: opacity .6s ease; }
-.layer { transition: opacity .5s ease; }
-.layer.off { opacity: 0; pointer-events: none; }
 
 /* 범례 버튼 (제2대 국회) */
 .legend { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
@@ -110,9 +108,9 @@ svg text { font-family: var(--f-body); }
       <span class="brand">전후 남북한의 정치와 경제</span>
       <nav class="tabs" aria-label="화면">
         <a href="#election"><small>발췌 개헌</small>제2대 국회의원 선거</a>
-        <a href="#direct"><small>발췌 개헌</small>간선제와 직선제</a>
         <a href="#sasaoip"><small>1954</small>사사오입 개헌</a>
-        <a href="#sambaek"><small>원조 경제</small>삼백 산업</a>
+        <a href="#cotton"><small>원조 경제</small>원면 소비량</a>
+        <a href="#trade"><small>원조 경제</small>원조와 무역 수지</a>
       </nav>
       <button type="button" id="fsBtn">전체 화면</button>
     </div>
@@ -130,17 +128,6 @@ svg text { font-family: var(--f-body); }
       </div>
       <div class="fig short"><svg id="svgElection" viewBox="0 0 1000 560" role="img" aria-label="제2대 국회 210석: 무소속 126, 기타 36, 민주국민당 24, 대한국민당 24"></svg></div>
       <div class="legend" id="legendElection"></div>
-    </section>
-
-    <!-- 간선제와 직선제 -->
-    <section class="page" id="p-direct" data-name="direct" hidden>
-      <div class="head">
-        <div>
-          <h1>대통령은 누가 뽑는가</h1>
-          <p>발췌 개헌(1952)으로 대통령 선출 방식이 국회의 간접 선거에서 국민의 직접 선거로 바뀌었다.</p>
-        </div>
-      </div>
-      <div class="fig"><svg id="svgDirect" viewBox="0 0 1000 560" role="img" aria-label="간선제는 국민이 국회의원을, 국회의원이 대통령을 뽑고, 직선제는 국민이 대통령을 직접 뽑는다"></svg></div>
     </section>
 
     <!-- 사사오입 개헌 -->
@@ -163,19 +150,44 @@ svg text { font-family: var(--f-body); }
       </div>
     </section>
 
-    <!-- 삼백 산업 -->
-    <section class="page" id="p-sambaek" data-name="sambaek" hidden>
+    <!-- 원면 소비량 -->
+    <section class="page" id="p-cotton" data-name="cotton" hidden>
       <div class="head">
         <div>
-          <h1>원조 농산물이 삼백(三白) 산업이 되기까지</h1>
-          <p>미국의 잉여 농산물이 공장을 거쳐 밀가루·설탕·면직물이 되었다. 생산물이 모두 흰색이라 삼백 산업이라 한다.</p>
+          <h1>원조 면화가 들어오자, 국내 면화가 사라지다</h1>
+          <p>원면 소비량(1955~1958). 미국의 원조로 값싼 면화가 들어오면서 국내산 면화 사용이 크게 줄었다.</p>
         </div>
-        <div class="ctrls">
-          <button type="button" class="btn" data-layer="who" aria-pressed="false">누가 혜택을 봤나</button>
-          <button type="button" class="btn" data-layer="farm" aria-pressed="false">국내 농가는</button>
-        </div>
+        <div class="ctrls"><button type="button" class="btn" data-replay="cotton">다시 보기</button></div>
       </div>
-      <div class="fig"><svg id="svgSambaek" viewBox="0 0 1000 560" role="img" aria-label="밀은 제분 공장에서 밀가루로, 원당은 제당 공장에서 설탕으로, 원면은 방직 공장에서 면직물로"></svg></div>
+      <div class="fig short"><svg id="svgCotton" viewBox="0 0 1000 560" role="img" aria-label="원면 소비량: 국내산 2,210에서 80으로 감소, 외국산 66,408에서 110,690으로 증가(천 파운드)"></svg></div>
+      <div class="scrub">
+        <div class="chips" id="chips-cotton">
+          <button type="button" data-t="300">1955</button>
+          <button type="button" data-t="1700">1956</button>
+          <button type="button" data-t="3100">1957</button>
+          <button type="button" data-t="4500">1958</button>
+        </div>
+        <input type="range" id="scrub-cotton" min="0" max="7000" step="10" value="0" aria-label="애니메이션 시점">
+      </div>
+    </section>
+
+    <!-- 원조와 무역 수지 -->
+    <section class="page" id="p-trade" data-name="trade" hidden>
+      <div class="head">
+        <div>
+          <h1>원조가 줄자, 무역 수지가 나빠지다</h1>
+          <p>원조 경제 규모(1953~1960). 1957년을 정점으로 미국의 원조가 줄자 수입이 늘어 무역 수지가 악화되었다.</p>
+        </div>
+        <div class="ctrls"><button type="button" class="btn" data-replay="trade">다시 보기</button></div>
+      </div>
+      <div class="fig short"><svg id="svgTrade" viewBox="0 0 1000 560" role="img" aria-label="원조 및 구호액은 1957년 약 3억 9600만 달러로 정점 이후 감소, 수입액은 1957년 약 4700만 달러에서 1960년 약 9600만 달러로 증가, 무역 적자는 약 2500만에서 6400만 달러로 확대"></svg></div>
+      <div class="scrub">
+        <div class="chips" id="chips-trade">
+          <button type="button" data-t="0">1953~1960</button>
+          <button type="button" data-t="5200">1957년 이후</button>
+        </div>
+        <input type="range" id="scrub-trade" min="0" max="9200" step="10" value="0" aria-label="애니메이션 시점">
+      </div>
     </section>
   </main>
 </div>
@@ -197,10 +209,6 @@ svg text { font-family: var(--f-body); }
   function ease(k) { return k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
   function easeOut(k) { return 1 - Math.pow(1 - k, 3); }
   function quad(a, c, b, k) { var m = 1 - k; return [m * m * a[0] + 2 * m * k * c[0] + k * k * b[0], m * m * a[1] + 2 * m * k * c[1] + k * k * b[1]]; }
-  function cubic(p0, p1, p2, p3, k) {
-    var m = 1 - k;
-    return [m*m*m*p0[0] + 3*m*m*k*p1[0] + 3*m*k*k*p2[0] + k*k*k*p3[0], m*m*m*p0[1] + 3*m*m*k*p1[1] + 3*m*k*k*p2[1] + k*k*k*p3[1]];
-  }
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function shuffle(arr, r) { for (var i = arr.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var x = arr[i]; arr[i] = arr[j]; arr[j] = x; } return arr; }
   // 움직임이 이 자료의 핵심이라 OS의 "애니메이션 줄이기" 설정과 관계없이 재생한다
@@ -222,27 +230,6 @@ svg text { font-family: var(--f-body); }
     seats.sort(function (p, q) { return q.a - p.a || p.r - q.r; });
     return seats;
   }
-
-  // 입자 흐름: 경로를 따라 흘러가는 점들
-  function Flow(g) { this.g = g; this.live = []; this.free = []; }
-  Flow.prototype.spawn = function (now, dur, path, paint, r) {
-    var el = this.free.pop() || mk("circle", { r: r || 5 }, this.g);
-    el.setAttribute("r", r || 5);
-    el.style.display = "";
-    var p = { el: el, t0: now, dur: dur, path: path, paint: paint };
-    this.live.push(p); return p;
-  };
-  Flow.prototype.update = function (now) {
-    for (var i = this.live.length - 1; i >= 0; i--) {
-      var p = this.live[i], k = (now - p.t0) / p.dur;
-      if (k >= 1) { p.el.style.display = "none"; this.free.push(p.el); this.live.splice(i, 1); continue; }
-      var xy = p.path(k);
-      p.el.setAttribute("cx", xy[0].toFixed(1)); p.el.setAttribute("cy", xy[1].toFixed(1));
-      p.paint(p.el, k, xy);
-    }
-  };
-  Flow.prototype.clear = function () { var self = this; this.live.forEach(function (p) { p.el.style.display = "none"; self.free.push(p.el); }); this.live = []; };
-  function fill(c) { return function (el) { el.setAttribute("fill", c); el.setAttribute("stroke", "none"); el.style.opacity = 1; }; }
 
   var PARTY = [
     { key: "mk", name: "민주국민당", sub: "반이승만", n: 24, c: "var(--north)" },
@@ -326,100 +313,7 @@ svg text { font-family: var(--f-body); }
     };
   })();
 
-  /* ───────── 2. 간선제와 직선제 ───────── */
-  pages.direct = (function () {
-    var svg = $("#svgDirect");
-    mk("line", { x1: 500, y1: 24, x2: 500, y2: 536, stroke: "var(--rule)", "stroke-width": 1.5 }, svg);
-    var gL = mk("g", {}, svg), gR = mk("g", {}, svg);
-    function side(g, x0, title, sub) {
-      mk("text", { x: x0, y: 50, "class": "big", "font-size": 30 }, g, title);
-      mk("text", { x: x0, y: 72, "class": "t2" }, g, sub);
-    }
-    side(gL, 30, "간선제", "제헌 헌법(1948) · 국회에서 무기명 투표");
-    side(gR, 530, "직선제", "발췌 개헌(1952) · 국민의 보통·평등·직접·비밀 투표");
-
-    function president(g, x, y, label) {
-      mk("rect", { x: x, y: y, width: 130, height: 48, rx: 4, fill: "var(--south)" }, g);
-      mk("text", { x: x + 65, y: y + 30, "class": "mid", style: "fill:var(--sheet);font-size:18px;font-weight:700" }, g, label);
-    }
-    function people(g, xs, y, color) {
-      var out = [];
-      xs.forEach(function (x) {
-        mk("circle", { cx: x, cy: y, r: 6, fill: color }, g);
-        mk("rect", { x: x - 7, y: y + 8, width: 14, height: 18, rx: 5, fill: color }, g);
-        out.push(x);
-      });
-      return out;
-    }
-    function range(a, b, n) { var r = []; for (var k = 0; k < n; k++) r.push(a + (b - a) * k / (n - 1)); return r; }
-    function assembly(g, x0, y0, dim) {
-      var list = [], k = 0;
-      PARTY.forEach(function (p) { for (var j = 0; j < p.n; j++) list.push(p); });
-      var cells = [];
-      list.forEach(function (p, idx) {
-        var x = x0 + (idx % 21) * 12, y = y0 + Math.floor(idx / 21) * 12;
-        mk("rect", { x: x, y: y, width: 9.5, height: 9.5, rx: 1.5, fill: p.c, opacity: dim ? .22 : 1 }, g);
-        cells.push({ x: x + 4.75, y: y + 4.75, c: p.c });
-      });
-      return cells;
-    }
-
-    // 왼쪽: 간선제
-    president(gL, 180, 92, "대통령");
-    var cellsL = assembly(gL, 118, 252, false);
-    mk("text", { x: 104, y: 312, "class": "tb end" }, gL, "국회");
-    mk("text", { x: 104, y: 332, "class": "t2 end" }, gL, "210석");
-    var pplL = people(gL, range(70, 430, 13), 482, "var(--ink-2)");
-    mk("text", { x: 250, y: 534, "class": "t mid" }, gL, "국민");
-    mk("text", { x: 326, y: 112, "class": "t" }, gL, "국회의원이 선출");
-    var note = mk("text", { x: 326, y: 134, "class": "t2" }, gL);
-    note.innerHTML = '이승만계 <tspan style="fill:var(--south);font-weight:700">24석</tspan> / 210석';
-    mk("text", { x: 326, y: 156, "class": "t", style: "fill:var(--seal);font-weight:700" }, gL, "→ 재선 어려움");
-    var flowL = new Flow(mk("g", {}, gL));
-
-    // 오른쪽: 직선제
-    president(gR, 690, 92, "대통령");
-    assembly(gR, 628, 252, true);
-    mk("text", { x: 754, y: 318, "class": "t mid", style: "fill:var(--ink-2);font-weight:600" }, gR, "국회 · 대통령 선출에서 빠짐");
-    var pplR = people(gR, range(570, 940, 13), 482, "var(--seal)");
-    mk("text", { x: 755, y: 534, "class": "t mid", style: "fill:var(--seal);font-weight:600" }, gR, "국민");
-    mk("text", { x: 836, y: 112, "class": "t" }, gR, "1952 대통령 선거");
-    var res = mk("text", { x: 836, y: 136, "class": "t2" }, gR);
-    res.innerHTML = '이승만 <tspan style="fill:var(--south);font-weight:700">74.6%</tspan> 득표';
-    var flowR = new Flow(mk("g", {}, gR));
-
-    var r = rng(52), accA = 0, accB = 0, accC = 0, prev = 0;
-    function spawnA(now) { // 국민 → 국회
-      var px = pplL[Math.floor(r() * pplL.length)], c = cellsL[Math.floor(r() * cellsL.length)];
-      var p0 = [px, 474], p1 = [px, 420], p2 = [c.x, c.y + 70], p3 = [c.x, c.y];
-      flowL.spawn(now, 1500, function (k) { return cubic(p0, p1, p2, p3, ease(k)); }, function (el, k) { el.setAttribute("fill", "var(--ink-2)"); el.style.opacity = k > .9 ? (1 - k) * 10 : 1; }, 4);
-    }
-    function spawnB(now) { // 국회 → 대통령 (의원의 소속 색)
-      var c = cellsL[Math.floor(r() * cellsL.length)], bx = 200 + r() * 90;
-      var p0 = [c.x, c.y], p1 = [c.x, 200], p2 = [bx, 200], p3 = [bx, 142];
-      flowL.spawn(now, 1300, function (k) { return cubic(p0, p1, p2, p3, ease(k)); }, function (el, k) { el.setAttribute("fill", c.c); el.style.opacity = k > .9 ? (1 - k) * 10 : 1; }, 4.5);
-    }
-    function spawnC(now) { // 국민 → 대통령 직접
-      var px = pplR[Math.floor(r() * pplR.length)], bx = 705 + r() * 100, left = px < 755;
-      var sx = left ? 592 : 918, col = r() < .746 ? "var(--south)" : "var(--mute)";
-      var p0 = [px, 474], p1 = [sx, 440], p2 = [sx, 170], p3 = [bx, 142];
-      flowR.spawn(now, 1700, function (k) { return cubic(p0, p1, p2, p3, ease(k)); }, function (el, k) { el.setAttribute("fill", col); el.style.opacity = k > .92 ? (1 - k) * 12 : 1; }, 4.5);
-    }
-    return {
-      start: function (now) { prev = now; },
-      frame: function (now) {
-        var dt = Math.min(100, now - prev); prev = now;
-        if (reduce) return;
-        accA += dt * .009; accB += dt * .008; accC += dt * .014;
-        while (accA >= 1) { spawnA(now); accA--; }
-        while (accB >= 1) { spawnB(now); accB--; }
-        while (accC >= 1) { spawnC(now); accC--; }
-        flowL.update(now); flowR.update(now);
-      }
-    };
-  })();
-
-  /* ───────── 3. 사사오입 개헌 ───────── */
+  /* ───────── 2. 사사오입 개헌 ───────── */
   pages.sasaoip = (function () {
     var svg = $("#svgSasaoip"), CX = 255, CY = 470, FLY = 620;
     mk("text", { x: 30, y: 46, "class": "tb" }, svg, "개헌안 표결 · 재적 203명");
@@ -531,111 +425,227 @@ svg text { font-family: var(--f-body); }
     };
   })();
 
-  /* ───────── 4. 삼백 산업 ───────── */
-  pages.sambaek = (function () {
-    var svg = $("#svgSambaek");
-    var ROWS = [
-      { y: 150, raw: "밀", fac: "제분", out: "밀가루" },
-      { y: 290, raw: "원당", sub: "사탕수수", fac: "제당", out: "설탕" },
-      { y: 430, raw: "원면", sub: "면화", fac: "방직", out: "면직물" }
-    ];
-    var gChan = mk("g", {}, svg), gWho = mk("g", { "class": "layer off" }, svg), gFarm = mk("g", { "class": "layer off" }, svg);
-    var gPart = mk("g", {}, svg), gNodes = mk("g", {}, svg);
-    var paths = ROWS.map(function (r, k) {
-      var sy = 262 + k * 28;
-      var d = "M180," + sy + " C228," + sy + " 222," + r.y + " 272," + r.y + " H384 C432," + r.y + " 432," + r.y + " 480," + r.y + " H600 C650," + r.y + " 650," + r.y + " 700," + r.y + " H846";
-      mk("path", { d: d, fill: "none", stroke: "var(--rule)", "stroke-width": 12, "stroke-linecap": "round", opacity: .55 }, gChan);
-      var p = mk("path", { d: d, fill: "none", stroke: "none" }, gChan);
-      return { el: p, len: p.getTotalLength() };
-    });
-    // 노드
-    mk("rect", { x: 30, y: 200, width: 150, height: 160, rx: 5, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 1.5 }, gNodes);
-    mk("text", { x: 105, y: 268, "class": "tb mid" }, gNodes, "미국 원조");
-    mk("text", { x: 105, y: 292, "class": "t2 mid" }, gNodes, "잉여 농산물");
-    mk("text", { x: 105, y: 330, "class": "tm mid" }, gNodes, "1950년대");
-    mk("text", { x: 327, y: 104, "class": "tm mid" }, gNodes, "원료");
-    mk("text", { x: 540, y: 104, "class": "tm mid" }, gNodes, "공장");
-    mk("text", { x: 760, y: 104, "class": "tm mid" }, gNodes, "제품");
-    ROWS.forEach(function (r) {
-      mk("rect", { x: 272, y: r.y - 26, width: 112, height: 52, rx: 4, fill: "var(--gold-soft)", stroke: "var(--gold)", "stroke-width": 2 }, gNodes);
-      mk("text", { x: 328, y: r.y + (r.sub ? -1 : 6), "class": "tb mid" }, gNodes, r.raw);
-      if (r.sub) mk("text", { x: 328, y: r.y + 17, "class": "t2 mid", "font-size": 11 }, gNodes, r.sub);
-      mk("path", { d: "M480," + (r.y + 30) + " V" + (r.y - 14) + " l24,-14 v14 l24,-14 v14 l24,-14 v14 l24,-14 v14 l24,-14 v44 Z", fill: "var(--paper)", stroke: "var(--ink)", "stroke-width": 2 }, gNodes);
-      mk("text", { x: 540, y: r.y + 20, "class": "tb mid" }, gNodes, r.fac);
-      mk("rect", { x: 700, y: r.y - 26, width: 120, height: 52, rx: 4, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 2.5 }, gNodes);
-      mk("text", { x: 760, y: r.y + 6, "class": "tb mid" }, gNodes, r.out);
-    });
-    mk("path", { d: "M850,124 h14 v332 h-14", fill: "none", stroke: "var(--ink)", "stroke-width": 2 }, gNodes);
-    mk("text", { x: 922, y: 262, "class": "big mid", "font-size": 56 }, gNodes, "三");
-    mk("text", { x: 922, y: 330, "class": "big mid", "font-size": 56 }, gNodes, "白");
-    mk("text", { x: 922, y: 366, "class": "t mid", style: "font-weight:600" }, gNodes, "삼백 산업");
-    mk("text", { x: 922, y: 386, "class": "t2 mid" }, gNodes, "소비재 산업");
-
-    // 누가 혜택을 봤나
-    mk("rect", { x: 462, y: 112, width: 156, height: 358, rx: 6, fill: "var(--gold-soft)", stroke: "var(--gold)", "stroke-width": 2.5, "stroke-dasharray": "7 5", opacity: .9 }, gWho);
-    mk("text", { x: 540, y: 494, "class": "tb mid", style: "fill:var(--gold)" }, gWho, "특정 기업");
-    mk("rect", { x: 250, y: 20, width: 150, height: 50, rx: 4, fill: "var(--south)" }, gWho);
-    mk("text", { x: 325, y: 51, "class": "mid", style: "fill:var(--sheet);font-size:17px;font-weight:700" }, gWho, "정부");
-    mk("text", { x: 410, y: 40, "class": "t2" }, gWho, "귀속 재산 헐값 매각");
-    mk("text", { x: 410, y: 58, "class": "t2" }, gWho, "원조 물자 배정");
-    mk("rect", { x: 760, y: 24, width: 110, height: 40, rx: 4, fill: "var(--paper)", stroke: "var(--rule)" }, gWho);
-    mk("text", { x: 815, y: 49, "class": "t2 mid" }, gWho, "다른 기업");
-    mk("text", { x: 700, y: 536, "class": "big", "font-size": 24, fill: "var(--seal)" }, gWho, "정경 유착 · 독과점");
-    var pBig = mk("path", { d: "M325,70 C325,96 520,80 540,112", fill: "none", stroke: "var(--rule)", "stroke-width": 2 }, gWho);
-    var pSmall = mk("path", { d: "M400,30 C560,10 680,10 760,40", fill: "none", stroke: "var(--rule)", "stroke-width": 2 }, gWho);
-
-    // 국내 농가
-    mk("rect", { x: 30, y: 452, width: 150, height: 52, rx: 4, fill: "var(--paper)", stroke: "var(--ink-2)" }, gFarm);
-    mk("text", { x: 105, y: 476, "class": "tb mid" }, gFarm, "국내 농가");
-    mk("text", { x: 105, y: 494, "class": "t2 mid" }, gFarm, "밀 · 면화");
-    var pFarm = mk("path", { d: "M180,478 C236,478 250,456 272,446", fill: "none", stroke: "var(--rule)", "stroke-width": 2, "stroke-dasharray": "4 4" }, gFarm);
-    mk("line", { x1: 212, y1: 456, x2: 230, y2: 476, stroke: "var(--seal)", "stroke-width": 4, "stroke-linecap": "round" }, gFarm);
-    mk("line", { x1: 230, y1: 456, x2: 212, y2: 476, stroke: "var(--seal)", "stroke-width": 4, "stroke-linecap": "round" }, gFarm);
-    mk("text", { x: 30, y: 528, "class": "t", style: "fill:var(--seal);font-weight:700" }, gFarm, "값싼 원조 농산물 → 국내 농산물 가격 폭락");
-    mk("text", { x: 30, y: 549, "class": "t2" }, gFarm, "원면 소비 중 국내산 3.2%(1955) → 0.07%(1958)");
-
-    var flow = new Flow(gPart), r = rng(1953), acc = 0, accW = 0, accS = 0, accF = 0, prev = 0, who = false, farm = false;
-    var lenBig = pBig.getTotalLength(), lenSmall = pSmall.getTotalLength(), lenFarm = pFarm.getTotalLength();
-    function along(p, len) { return function (k) { var q = p.getPointAtLength(k * len); return [q.x, q.y]; }; }
-    function spawnMain(now) {
-      var row = paths[Math.floor(r() * 3)], f = along(row.el, row.len);
-      flow.spawn(now, 4200, f, function (el, k, xy) {
-        if (xy[0] < 600) { el.setAttribute("fill", "var(--gold)"); el.setAttribute("stroke", "none"); }
-        else { el.setAttribute("fill", "var(--sheet)"); el.setAttribute("stroke", "var(--ink)"); el.setAttribute("stroke-width", "1.5"); }
-        el.style.opacity = k > .94 ? (1 - k) / .06 : 1;
-      }, 5.5);
-    }
-    $$("[data-layer]").forEach(function (b) {
-      b.addEventListener("click", function () {
-        var on = b.getAttribute("aria-pressed") !== "true";
-        b.setAttribute("aria-pressed", String(on));
-        if (b.dataset.layer === "who") { who = on; gWho.classList.toggle("off", !on); }
-        else { farm = on; gFarm.classList.toggle("off", !on); }
+  // 재생·멈춤·되감기가 되는 시간축 (원면, 무역 수지 화면 공용)
+  function timeline(name, END, render) {
+    var t = 0, playing = true, prev = 0;
+    var chips = $$("#chips-" + name + " button"), scrub = $("#scrub-" + name);
+    function draw() {
+      render(t);
+      chips.forEach(function (c, ci) {
+        var a = +c.dataset.t, b = ci < chips.length - 1 ? +chips[ci + 1].dataset.t : Infinity;
+        c.classList.toggle("on", t >= a && t < b);
       });
-    });
+      scrub.value = Math.min(END, t);
+    }
+    chips.forEach(function (c) { c.addEventListener("click", function () { t = +c.dataset.t; playing = true; draw(); }); });
+    scrub.addEventListener("input", function () { t = +scrub.value; playing = false; draw(); });
+    scrub.addEventListener("change", function () { playing = t < END; });
     return {
-      start: function (now) { prev = now; if (reduce) { for (var k = 0; k < 18; k++) spawnMain(now - k * 230); flow.update(now); } },
-      frame: function (now) {
-        var dt = Math.min(100, now - prev); prev = now;
-        if (reduce) return;
-        acc += dt * .0085; while (acc >= 1) { spawnMain(now); acc--; }
-        if (who) {
-          accW += dt * .007; while (accW >= 1) { flow.spawn(now, 1500, along(pBig, lenBig), fill("var(--gold)"), 6); accW--; }
-          accS += dt * .0009; while (accS >= 1) { flow.spawn(now, 1900, along(pSmall, lenSmall), fill("var(--mute)"), 5); accS--; }
-        }
-        if (farm) {
-          accF += dt * .0016; while (accF >= 1) {
-            flow.spawn(now, 1600, along(pFarm, lenFarm), function (el, k) { el.setAttribute("fill", "var(--mute)"); el.setAttribute("stroke", "none"); el.style.opacity = k < .35 ? 1 : Math.max(0, 1 - (k - .35) * 5); }, 5);
-            accF--;
-          }
-        }
-        flow.update(now);
-      }
+      start: function (now) { prev = now; t = 0; playing = true; draw(); },
+      frame: function (now) { var dt = Math.min(100, now - prev); prev = now; if (!playing) return; t += dt; if (t >= END) { t = END; playing = false; } draw(); },
+      replay: function (now) { prev = now; t = 0; playing = true; draw(); }
     };
+  }
+  function drawPath(el, k) { el.setAttribute("stroke-dashoffset", (1 - k).toFixed(3)); }
+  function op(el, v) { el.style.opacity = v.toFixed(3); }
+  function axis(g, x0, y0, w, h, max, step, labelEvery, fmt) {
+    for (var v = 0; v <= max; v += step) {
+      var y = y0 - v / max * h;
+      mk("line", { x1: x0, y1: y, x2: x0 + w, y2: y, stroke: "var(--rule)", "stroke-dasharray": v ? "3 4" : "", "stroke-width": v ? 1 : 1.5 }, g);
+      if (v % labelEvery === 0) mk("text", { x: x0 - 8, y: y + 4, "class": "tm end" }, g, fmt(v));
+    }
+  }
+
+  /* ───────── 3. 원면 소비량 ───────── */
+  pages.cotton = (function () {
+    var svg = $("#svgCotton");
+    var D = [[1955, 2210, 66408], [1956, 1723, 76905], [1957, 110, 105271], [1958, 80, 110690]];
+    var X0 = 96, Y0 = 470, W = 470, H = 340, MAX = 120000, SLOT = W / 4;
+    function y(v) { return Y0 - v / MAX * H; }
+    function T(i) { return 300 + i * 1400; }
+    mk("text", { x: 30, y: 44, "class": "tb" }, svg, "원면 소비량");
+    mk("text", { x: 30, y: 66, "class": "tm" }, svg, "단위: 천 파운드 · 한국개발연구원(1995)");
+    axis(svg, X0, Y0, W, H, MAX, 20000, 20000, function (v) { return v.toLocaleString("ko-KR"); });
+    mk("rect", { x: X0 + W - 170, y: 96, width: 12, height: 12, fill: "var(--gold)" }, svg);
+    mk("text", { x: X0 + W - 152, y: 107, "class": "t2" }, svg, "국내산");
+    mk("rect", { x: X0 + W - 90, y: 96, width: 12, height: 12, fill: "var(--south)" }, svg);
+    mk("text", { x: X0 + W - 72, y: 107, "class": "t2" }, svg, "외국산");
+
+    // 확대 패널
+    var PX = 640, PY = 96, PW = 336, PH = 392, MB = 446, MH = 200, MMAX = 2500, MSLOT = (PW - 40) / 4;
+    function my(v) { return MB - v / MMAX * MH; }
+    var lens = mk("g", {}, svg);
+    mk("rect", { x: X0 - 4, y: Y0 - 16, width: W + 8, height: 20, fill: "none", stroke: "var(--gold)", "stroke-width": 1.5, "stroke-dasharray": "4 3" }, lens);
+    mk("line", { x1: X0 + W + 4, y1: Y0 - 16, x2: PX, y2: PY, stroke: "var(--gold)", "stroke-dasharray": "4 3" }, lens);
+    mk("line", { x1: X0 + W + 4, y1: Y0 + 4, x2: PX, y2: PY + PH, stroke: "var(--gold)", "stroke-dasharray": "4 3" }, lens);
+    mk("rect", { x: PX, y: PY, width: PW, height: PH, rx: 6, fill: "var(--sheet)", stroke: "var(--gold)", "stroke-width": 1.5 }, svg);
+    mk("text", { x: PX + 18, y: PY + 26, "class": "tm" }, svg, "국내산만 확대");
+    mk("text", { x: PX + 18, y: PY + 50, "class": "t2" }, svg, "원면 소비 중 국내산 비중");
+    var share = mk("text", { x: PX + 18, y: PY + 100, "class": "big", "font-size": 46, fill: "var(--seal)" }, svg, "");
+    var shareYr = mk("text", { x: PX + PW - 18, y: PY + 100, "class": "tm end", style: "font-size:14px" }, svg, "");
+    mk("line", { x1: PX + 20, x2: PX + PW - 20, y1: MB, y2: MB, stroke: "var(--ink-2)", "stroke-width": 1.5 }, svg);
+
+    var cols = D.map(function (d, i) {
+      var cx = X0 + SLOT * i + SLOT / 2, mx = PX + 20 + MSLOT * i + MSLOT / 2;
+      var c = {
+        dom: mk("rect", { x: cx - 40, width: 36, fill: "var(--gold)" }, svg),
+        fr: mk("rect", { x: cx + 4, width: 36, fill: "var(--south)" }, svg),
+        frLab: mk("text", { x: cx + 22, "class": "tm mid", style: "fill:var(--ink);font-size:13px" }, svg, ""),
+        yr: mk("text", { x: cx, y: Y0 + 22, "class": "tm mid" }, svg, d[0]),
+        mBar: mk("rect", { x: mx - 20, width: 40, fill: "var(--gold)" }, svg),
+        mLab: mk("text", { x: mx, "class": "tm mid", style: "fill:var(--ink);font-size:13px" }, svg, ""),
+        mYr: mk("text", { x: mx, y: MB + 20, "class": "tm mid" }, svg, d[0])
+      };
+      c.share = d[1] / (d[1] + d[2]) * 100;
+      return c;
+    });
+    // 마무리 주석
+    var endG = mk("g", { style: "opacity:0" }, svg);
+    var arc = mk("path", { d: "M" + (X0 + SLOT / 2 + 22) + "," + (y(66408) - 30) + " Q" + (X0 + W / 2) + "," + (y(118000) - 26) + " " + (X0 + SLOT * 3.5 + 8) + "," + (y(110690) - 30), fill: "none", stroke: "var(--south)", "stroke-width": 2, pathLength: 1, "stroke-dasharray": 1 }, endG);
+    mk("text", { x: X0 + W / 2 - 30, y: y(118000) - 22, "class": "tb mid", style: "fill:var(--south)" }, endG, "외국산 약 1.7배");
+    var m0 = PX + 20 + MSLOT / 2, m3 = PX + 20 + MSLOT * 3.5;
+    var arc2 = mk("path", { d: "M" + (m0 + 24) + "," + (my(2210) - 30) + " Q" + (m3 + 4) + "," + (my(2210) - 30) + " " + (m3 + 4) + "," + (my(80) - 26), fill: "none", stroke: "var(--seal)", "stroke-width": 2, pathLength: 1, "stroke-dasharray": 1 }, endG);
+    mk("text", { x: m3 - 16, y: my(900), "class": "tb end", style: "fill:var(--seal)" }, endG, "약 1/28로");
+    var cap = mk("text", { x: 30, y: 540, "class": "t", style: "fill:var(--seal);font-weight:700" }, svg, "");
+
+    function fmtShare(s) { return (s >= 1 ? s.toFixed(1) : s.toFixed(2)) + "%"; }
+    function render(t) {
+      var curYear = -1;
+      cols.forEach(function (c, i) {
+        var d = D[i], k = ease(seg(t, T(i), T(i) + 800));
+        if (t >= T(i)) curYear = i;
+        var hd = Math.max(d[1] / MAX * H * k, k > 0 ? 1.2 : 0), hf = d[2] / MAX * H * k;
+        c.dom.setAttribute("y", Y0 - hd); c.dom.setAttribute("height", hd);
+        c.fr.setAttribute("y", Y0 - hf); c.fr.setAttribute("height", hf);
+        c.frLab.setAttribute("y", Y0 - hf - 8); c.frLab.textContent = k > 0 ? Math.round(d[2] * k).toLocaleString("ko-KR") : "";
+        var mh = Math.max(d[1] / MMAX * MH * k, k > 0 ? 1.5 : 0);
+        c.mBar.setAttribute("y", MB - mh); c.mBar.setAttribute("height", mh);
+        c.mLab.setAttribute("y", MB - mh - 8); c.mLab.textContent = k > 0 ? Math.round(d[1] * k).toLocaleString("ko-KR") : "";
+        var on = t >= T(i) && (i === D.length - 1 || t < T(i + 1));
+        c.yr.style.fill = c.mYr.style.fill = on ? "var(--ink)" : "";
+        c.yr.style.fontWeight = c.mYr.style.fontWeight = on ? "700" : "";
+      });
+      share.textContent = curYear < 0 ? "" : fmtShare(cols[curYear].share);
+      shareYr.textContent = curYear < 0 ? "" : D[curYear][0] + "년";
+      var e = seg(t, 5400, 6000);
+      op(endG, e); drawPath(arc, ease(seg(t, 5400, 6200))); drawPath(arc2, ease(seg(t, 5600, 6400)));
+      cap.textContent = t > 6200 ? "값싼 원조 면화가 대량으로 들어오면서 국내 면화 농가가 큰 타격을 입었다" : "";
+    }
+    return timeline("cotton", 7000, render);
+  })();
+
+  /* ───────── 4. 원조와 무역 수지 ───────── */
+  pages.trade = (function () {
+    var svg = $("#svgTrade");
+    // 교과서 그래프(김두얼, 2016)에서 읽은 근사값, 백만 달러
+    var YRS = [1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960];
+    var AID = [193, 150, 234, 321, 396, 330, 223, 247];
+    var IMP = [155, 93, 109, 67, 47, 48, 80, 96];
+    var EXP = [40, 25, 18, 23, 22, 16, 20, 32];
+    var X0 = 72, Y0 = 470, W = 600, H = 370, MAX = 400, SLOT = W / 8, BW = 42;
+    function y(v) { return Y0 - v / MAX * H; }
+    function x(i) { return X0 + SLOT * i + SLOT / 2; }
+    function T(i) { return 300 + i * 520; }
+    mk("text", { x: 30, y: 44, "class": "tb" }, svg, "원조 경제 규모");
+    mk("text", { x: 30, y: 66, "class": "tm" }, svg, "단위: 백만 달러 · 김두얼(2016), 교과서 그래프에서 읽은 근사값");
+    axis(svg, X0, Y0, W, H, MAX, 50, 100, String);
+    YRS.forEach(function (yr, i) { mk("text", { x: x(i), y: Y0 + 22, "class": "tm mid" }, svg, yr); });
+    // 범례
+    var lg = mk("g", {}, svg), LX = 712;
+    mk("rect", { x: LX, y: 64, width: 14, height: 12, fill: "var(--south)", opacity: .45 }, lg); mk("text", { x: LX + 20, y: 75, "class": "t2" }, lg, "원조 및 구호액");
+    mk("line", { x1: LX + 140, x2: LX + 164, y1: 70, y2: 70, stroke: "var(--seal)", "stroke-width": 3 }, lg); mk("text", { x: LX + 170, y: 75, "class": "t2" }, lg, "수입액");
+    mk("line", { x1: LX, x2: LX + 24, y1: 94, y2: 94, stroke: "var(--gold)", "stroke-width": 3 }, lg); mk("text", { x: LX + 30, y: 99, "class": "t2" }, lg, "수출액");
+    mk("rect", { x: LX + 140, y: 88, width: 14, height: 12, fill: "var(--seal)", opacity: .14 }, lg); mk("text", { x: LX + 160, y: 99, "class": "t2" }, lg, "무역 적자");
+
+    var bars = AID.map(function (v, i) { return mk("rect", { x: x(i) - BW / 2, width: BW, fill: "var(--south)", opacity: .45 }, svg); });
+    var area = mk("polygon", { fill: "var(--seal)", opacity: .14 }, svg);
+    var lImp = mk("polyline", { fill: "none", stroke: "var(--seal)", "stroke-width": 3, "stroke-linejoin": "round" }, svg);
+    var lExp = mk("polyline", { fill: "none", stroke: "var(--gold)", "stroke-width": 3, "stroke-linejoin": "round" }, svg);
+    var dImp = IMP.map(function (v, i) { return mk("circle", { cx: x(i), cy: y(v), r: 5, fill: "var(--sheet)", stroke: "var(--seal)", "stroke-width": 2.5 }, svg); });
+    var dExp = EXP.map(function (v, i) { return mk("circle", { cx: x(i), cy: y(v), r: 5, fill: "var(--sheet)", stroke: "var(--gold)", "stroke-width": 2.5 }, svg); });
+    var peak = mk("text", { x: x(4), y: y(396) - 10, "class": "tb mid" }, svg, "정점");
+
+    // 1957년 이후 강조
+    var dim = mk("rect", { x: X0 - 2, y: y(MAX) - 4, width: SLOT * 4, height: H + 6, fill: "var(--sheet)", opacity: 0 }, svg);
+    var aArrow = mk("path", { d: "M" + (x(4) + 8) + "," + (y(396) + 6) + " C" + (x(5) + 10) + "," + (y(396) + 6) + " " + x(5) + "," + (y(250)) + " " + (x(6) - 4) + "," + (y(223) - 14), fill: "none", stroke: "var(--south)", "stroke-width": 3, pathLength: 1, "stroke-dasharray": 1 }, svg);
+    var aLab = mk("text", { x: x(6) + 6, y: y(300), "class": "tb", style: "fill:var(--south)" }, svg, "원조 감소");
+    var iArrow = mk("path", { d: "M" + x(4) + "," + (y(47) - 18) + " C" + x(5) + "," + (y(52) - 18) + " " + x(6) + "," + (y(90) - 18) + " " + (x(7) - 6) + "," + (y(98) - 18), fill: "none", stroke: "var(--seal)", "stroke-width": 3, pathLength: 1, "stroke-dasharray": 1 }, svg);
+    var iLab = mk("text", { x: x(5) + 4, y: y(120), "class": "tb", style: "fill:var(--seal)" }, svg, "수입 증가");
+    function bracket(i, hi, lo, label) {
+      var g = mk("g", { style: "opacity:0" }, svg), bx = x(i) + 16;
+      mk("path", { d: "M" + bx + "," + y(hi) + " h8 V" + y(lo) + " h-8", fill: "none", stroke: "var(--seal)", "stroke-width": 2 }, g);
+      mk("text", { x: bx + 12, y: (y(hi) + y(lo)) / 2 + 5, "class": "tb", style: "fill:var(--seal)" }, g, label);
+      return g;
+    }
+    var b57 = bracket(4, 47, 22, "25"), b60 = bracket(7, 96, 32, "64");
+
+    // 오른쪽 요약
+    var PX = 712, PY = 140;
+    var panel = mk("g", { style: "opacity:0" }, svg);
+    mk("text", { x: PX, y: PY, "class": "tm" }, panel, "1957 → 1960");
+    var rows = [
+      { label: "원조 및 구호액", a: 396, b: 247, c: "var(--south)", mark: "▼", at: 5600 },
+      { label: "수입액", a: 47, b: 96, c: "var(--seal)", mark: "▲", at: 6500 },
+      { label: "수출액", a: 22, b: 32, c: "var(--gold)", mark: "", at: 7000 }
+    ];
+    rows.forEach(function (r, i) {
+      var ry = PY + 44 + i * 62;
+      r.g = mk("g", { style: "opacity:0" }, svg);
+      mk("text", { x: PX, y: ry, "class": "t2" }, r.g, r.label);
+      r.num = mk("text", { x: PX, y: ry + 30, "class": "big", "font-size": 26, fill: r.c }, r.g, "");
+    });
+    var defG = mk("g", { style: "opacity:0" }, svg);
+    mk("line", { x1: PX, x2: 978, y1: PY + 222, y2: PY + 222, stroke: "var(--rule)" }, defG);
+    mk("text", { x: PX, y: PY + 250, "class": "t", style: "font-weight:700" }, defG, "무역 적자 (수입 − 수출)");
+    var defNum = mk("text", { x: PX, y: PY + 300, "class": "big", "font-size": 44, fill: "var(--seal)" }, defG, "");
+    mk("text", { x: PX, y: PY + 326, "class": "t2" }, defG, "약 2.6배로 확대");
+    var cap = mk("text", { x: 30, y: 540, "class": "t", style: "fill:var(--seal);font-weight:700" }, svg, "");
+
+    function lerp(a, b, k) { return a + (b - a) * k; }
+    function partial(vals, t) {
+      var pts = [];
+      for (var i = 0; i < vals.length; i++) {
+        if (t < T(i)) break;
+        if (i === 0) { pts.push([x(0), y(vals[0])]); continue; }
+        var k = ease(seg(t, T(i), T(i) + 450));
+        pts.push([lerp(x(i - 1), x(i), k), lerp(y(vals[i - 1]), y(vals[i]), k)]);
+      }
+      return pts;
+    }
+    function str(pts) { return pts.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" "); }
+    function render(t) {
+      bars.forEach(function (b, i) {
+        var h = AID[i] / MAX * H * ease(seg(t, T(i), T(i) + 450));
+        b.setAttribute("y", Y0 - h); b.setAttribute("height", h);
+        b.setAttribute("opacity", i === 4 && t > 5200 ? .8 : .45);
+      });
+      var pi = partial(IMP, t), pe = partial(EXP, t);
+      lImp.setAttribute("points", str(pi)); lExp.setAttribute("points", str(pe));
+      area.setAttribute("points", pi.length > 1 ? str(pi.concat(pe.slice().reverse())) : "");
+      dImp.forEach(function (d, i) { op(d, seg(t, T(i) + 380, T(i) + 480)); });
+      dExp.forEach(function (d, i) { op(d, seg(t, T(i) + 380, T(i) + 480)); });
+      op(peak, seg(t, T(4) + 450, T(4) + 700));
+      // 1957년 이후
+      dim.setAttribute("opacity", (.7 * seg(t, 5200, 5700)).toFixed(3));
+      drawPath(aArrow, ease(seg(t, 5600, 6300))); op(aLab, seg(t, 6000, 6300));
+      drawPath(iArrow, ease(seg(t, 6500, 7200))); op(iLab, seg(t, 6900, 7200));
+      op(b57, seg(t, 7400, 7700)); op(b60, seg(t, 7700, 8000));
+      op(panel, seg(t, 5300, 5600));
+      rows.forEach(function (r) {
+        var k = seg(t, r.at, r.at + 300), c = ease(seg(t, r.at + 200, r.at + 900));
+        op(r.g, k);
+        r.num.textContent = r.a + " → " + Math.round(lerp(r.a, r.b, c)) + (c >= 1 && r.mark ? " " + r.mark : "");
+      });
+      var dk = ease(seg(t, 7800, 8600));
+      op(defG, seg(t, 7600, 7900));
+      defNum.textContent = "25 → " + Math.round(lerp(25, 64, dk));
+      cap.textContent = t > 8600 ? "원조가 줄자 수입이 늘어 무역 수지 악화 · 무상 원조는 유상 차관으로 바뀌었다" : "";
+    }
+    return timeline("trade", 9200, render);
   })();
 
   /* ───────── 화면 전환 ───────── */
-  var names = ["election", "direct", "sasaoip", "sambaek"], alias = { balchwe: "election", aid: "sambaek" };
+  var names = ["election", "sasaoip", "cotton", "trade"], alias = { balchwe: "election", direct: "election", aid: "cotton", sambaek: "cotton" };
   var cur = null;
   function show(name) {
     name = alias[name] || name;
