@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>전후 남북한의 정치와 경제</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 레이아웃: 상단 고정 차시 바 + 한 줄 본문 칼럼. 각 단원은 '설명 → 조작해 보는 그림' 순서. 수업 화면(프로젝터)에 맞춘 큰 글자. */
+:root {
+  --paper: #f3f4f1;
+  --sheet: #fbfbf9;
+  --ink: #1d2422;
+  --ink-2: #4a5552;
+  --rule: #d3d8d4;
+  --south: #1f5873;      /* 남한 서술 */
+  --south-soft: #dbe7ec;
+  --north: #8a3b32;      /* 북한 서술 */
+  --north-soft: #f1dfdb;
+  --seal: #c0352b;       /* 도장: 가결/부결 */
+  --gold: #a87a1c;
+  --gold-soft: #f2e8d0;
+  --mute: #9aa4a0;
+  --f-display: "Nanum Myeongjo", "Noto Serif KR", "AppleMyungjo", serif;
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  --fs: 18px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #161b1a; --sheet: #1d2321; --ink: #e8ece9; --ink-2: #a9b4b0; --rule: #34403c;
+  --south: #79b4cf; --south-soft: #20343d; --north: #df8f84; --north-soft: #3a2522;
+  --seal: #ef6a5d; --gold: #d9ad55; --gold-soft: #3a3221; --mute: #6b7773; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --paper: #161b1a; --sheet: #1d2321; --ink: #e8ece9; --ink-2: #a9b4b0; --rule: #34403c;
+  --south: #79b4cf; --south-soft: #20343d; --north: #df8f84; --north-soft: #3a2522;
+  --seal: #ef6a5d; --gold: #d9ad55; --gold-soft: #3a3221; --mute: #6b7773; color-scheme: dark;
+}
+html { font-size: var(--fs); scroll-behavior: smooth; scroll-padding-top: 76px; }
+html.big { --fs: 21px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.7; word-break: keep-all; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sheet); }
+
+/* 상단 바 */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--sheet); border-bottom: 1px solid var(--rule); }
+.bar-in { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; gap: 18px; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.bar-title { font-family: var(--f-display); font-weight: 800; font-size: .95rem; white-space: nowrap; }
+.bar nav { display: flex; gap: 4px; overflow-x: auto; flex: 1; min-width: 0; scrollbar-width: none; }
+.bar nav a { flex: none; color: var(--ink-2); text-decoration: none; font-size: .78rem; font-weight: 500; padding: 6px 10px; border-radius: 4px; }
+.bar nav a:hover { color: var(--ink); background: var(--paper); }
+.bar nav a.on { color: var(--sheet); background: var(--ink); }
+.tools { display: flex; gap: 6px; flex: none; }
+.tools button { font: 500 .72rem var(--f-body); color: var(--ink-2); background: transparent; border: 1px solid var(--rule); border-radius: 4px; padding: 5px 9px; cursor: pointer; }
+.tools button:hover { color: var(--ink); border-color: var(--ink-2); }
+@media (max-width: 640px) { .bar-title { display: none; } }
+
+main { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 80px; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* 표지 */
+.cover { padding-block: 56px 40px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 48px; align-items: end; border-bottom: 2px solid var(--ink); }
+.cover .unit { font-family: var(--f-mono); font-size: .75rem; color: var(--ink-2); letter-spacing: .04em; }
+.cover h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: 1.2; margin: 10px 0 18px; text-wrap: balance; }
+.qs { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.qs li { display: grid; grid-template-columns: 2.4rem 1fr; font-size: 1.02rem; }
+.qs b { font-family: var(--f-mono); color: var(--seal); font-weight: 500; }
+.statue { border-left: 1px solid var(--rule); padding-left: 24px; font-size: .86rem; color: var(--ink-2); }
+.statue blockquote { margin: 0 0 10px; font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; line-height: 1.6; color: var(--ink); }
+.statue .src { font-size: .75rem; }
+.statue .scale { display: flex; align-items: flex-end; gap: 14px; margin-top: 14px; height: 120px; }
+.statue .scale svg { height: 100%; width: auto; }
+@media (max-width: 820px) { .cover { grid-template-columns: 1fr; gap: 28px; } .statue { border-left: 0; padding-left: 0; border-top: 1px solid var(--rule); padding-top: 18px; } }
+
+/* 단원 */
+section.part { padding-block: 64px 8px; }
+.part-head { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 24px; align-items: baseline; margin-bottom: 26px; }
+.part-head .yr { font-family: var(--f-mono); font-size: .82rem; color: var(--ink-2); border-top: 3px solid var(--tone, var(--ink)); padding-top: 8px; }
+.part-head .yr span { display: block; font-size: .7rem; color: var(--tone, var(--ink-2)); font-weight: 500; }
+.part-head h2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(1.6rem, 3.4vw, 2.2rem); line-height: 1.3; margin: 0; text-wrap: balance; }
+.part-head p { margin: 10px 0 0; color: var(--ink-2); max-width: 44em; }
+.s { --tone: var(--south); } .n { --tone: var(--north); }
+@media (max-width: 640px) { .part-head { grid-template-columns: 1fr; gap: 6px; } }
+
+.board { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 26px; display: grid; gap: 22px; }
+.board + .board { margin-top: 18px; }
+.board h3 { margin: 0; font-size: 1.02rem; font-weight: 700; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.board h3 small { font-weight: 400; font-size: .76rem; color: var(--ink-2); }
+.cap { font-size: .78rem; color: var(--ink-2); margin: 0; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+@media (max-width: 820px) { .two { grid-template-columns: 1fr; } .board { padding: 18px; } }
+
+.seg { justify-self: start; display: inline-flex; border: 1px solid var(--ink); border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
+.seg button { font: 600 .8rem var(--f-body); padding: 8px 14px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+.btn { font: 600 .8rem var(--f-body); padding: 8px 14px; border: 1px solid var(--ink); border-radius: 5px; background: transparent; color: var(--ink); cursor: pointer; }
+.btn:hover { background: var(--paper); }
+
+/* 연표 */
+.tl { position: relative; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 0; padding-top: 6px; }
+.tl-wrap { overflow-x: auto; }
+.tl-inner { min-width: 760px; }
+.tl .axis { grid-column: 1 / -1; height: 2px; background: var(--ink); margin: 6px 0; position: relative; }
+.tl .col { border-left: 1px solid var(--rule); padding: 0 8px; min-height: 92px; display: flex; flex-direction: column; gap: 6px; }
+.tl .col.top { justify-content: flex-end; }
+.tl .y { font-family: var(--f-mono); font-size: .72rem; color: var(--ink-2); }
+.ev { font-size: .76rem; line-height: 1.35; padding: 5px 7px; border-radius: 3px; text-decoration: none; display: block; }
+.ev.s { background: var(--south-soft); color: var(--ink); border-left: 3px solid var(--south); }
+.ev.n { background: var(--north-soft); color: var(--ink); border-left: 3px solid var(--north); }
+.ev.c { background: var(--gold-soft); color: var(--ink); border-left: 3px solid var(--gold); }
+a.ev:hover { filter: brightness(.96); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: .74rem; color: var(--ink-2); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+/* 의석 그리드 */
+.seats { display: grid; gap: 3px; }
+.seat { aspect-ratio: 1; border-radius: 2px; background: var(--rule); transition: background .25s, opacity .25s; }
+.seat.ind { background: var(--gold); } .seat.dk { background: var(--south); } .seat.mk { background: var(--north); } .seat.oth { background: var(--mute); }
+.seats.focus .seat:not(.hl) { opacity: .18; }
+.party-keys { display: grid; gap: 6px; font-size: .84rem; }
+.party-keys button { display: grid; grid-template-columns: 14px 1fr auto; gap: 10px; align-items: center; text-align: left; font: inherit; background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 6px 8px; color: var(--ink); cursor: pointer; }
+.party-keys button:hover, .party-keys button[aria-pressed="true"] { border-color: var(--rule); background: var(--paper); }
+.party-keys i { width: 14px; height: 14px; border-radius: 2px; }
+.party-keys b { font-family: var(--f-mono); font-weight: 500; }
+
+/* 간선제 / 직선제 */
+.elect { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: center; }
+.elect svg { width: 100%; height: auto; display: block; }
+.article { border: 1px solid var(--rule); border-radius: 4px; padding: 16px 18px; font-size: .92rem; background: var(--paper); }
+.article .t { font-family: var(--f-mono); font-size: .72rem; color: var(--ink-2); display: block; margin-bottom: 6px; }
+.article mark { background: var(--gold-soft); color: var(--ink); padding: 0 2px; }
+@media (max-width: 820px) { .elect { grid-template-columns: 1fr; } }
+
+/* 단계 */
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; counter-reset: st; }
+.step { border-top: 3px solid var(--rule); padding: 14px 16px 4px 0; transition: border-color .3s, opacity .3s; opacity: .35; }
+.step.on { border-color: var(--south); opacity: 1; }
+.step .k { font-family: var(--f-mono); font-size: .7rem; color: var(--ink-2); }
+.step h4 { margin: 4px 0 6px; font-size: .95rem; }
+.step p { margin: 0; font-size: .82rem; color: var(--ink-2); line-height: 1.6; }
+.step .num { font-family: var(--f-mono); font-size: .8rem; color: var(--ink); background: var(--paper); border-radius: 3px; padding: 1px 6px; display: inline-block; margin-top: 6px; }
+@media (max-width: 820px) { .steps { grid-template-columns: 1fr 1fr; row-gap: 14px; } }
+@media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
+.step-ctl { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* 사사오입 */
+.vote { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.vgrid { display: grid; grid-template-columns: repeat(29, minmax(0, 1fr)); gap: 3px; }
+.v { aspect-ratio: 1; border-radius: 50%; background: var(--rule); transition: background .3s, box-shadow .3s; }
+.v.yes { background: var(--south); }
+.v.need { background: transparent; box-shadow: inset 0 0 0 2px var(--seal); }
+.calc { font-family: var(--f-mono); font-size: .92rem; display: grid; gap: 6px; }
+.calc .row { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--rule); padding-bottom: 6px; }
+.calc .row b { font-weight: 500; }
+.calc .row.key b { color: var(--seal); font-size: 1.1rem; }
+.verdict { display: flex; align-items: center; gap: 18px; min-height: 96px; }
+.stamp { font-family: var(--f-display); font-weight: 800; font-size: 1.9rem; color: var(--seal); border: 4px double var(--seal); border-radius: 50%; width: 92px; height: 92px; display: grid; place-items: center; transform: rotate(-12deg); flex: none; letter-spacing: .05em; }
+.stamp.pop { animation: pop .35s ease-out; }
+@keyframes pop { from { transform: rotate(-12deg) scale(1.5); opacity: 0; } to { transform: rotate(-12deg) scale(1); opacity: 1; } }
+.verdict p { margin: 0; font-size: .88rem; color: var(--ink-2); }
+@media (max-width: 820px) { .vote { grid-template-columns: 1fr; } }
+
+.reveal { border: 0; background: var(--gold-soft); color: var(--ink); font: 600 inherit var(--f-body); padding: 0 8px; border-radius: 3px; cursor: pointer; min-width: 4.5em; }
+.reveal[data-hidden="true"] { color: transparent; background: repeating-linear-gradient(-45deg, var(--gold-soft) 0 6px, var(--sheet) 6px 9px); }
+.reveal[data-hidden="true"]::after { content: ""; }
+
+/* 득표 막대 */
+.bars { display: grid; gap: 12px; }
+.bars .r { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr) 4rem; gap: 12px; align-items: center; font-size: .86rem; }
+.bars .track { height: 22px; background: var(--paper); border-radius: 3px; overflow: hidden; }
+.bars .fill { height: 100%; width: 0; transition: width .8s cubic-bezier(.2,.7,.2,1); }
+.bars .val { font-family: var(--f-mono); font-size: .86rem; text-align: right; }
+
+/* 탄압 사슬 */
+.chain { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.link { border: 1px solid var(--rule); border-radius: 4px; padding: 14px; background: var(--paper); display: grid; gap: 4px; align-content: start; position: relative; }
+.link .d { font-family: var(--f-mono); font-size: .7rem; color: var(--seal); }
+.link h4 { margin: 0; font-size: .95rem; }
+.link p { margin: 0; font-size: .8rem; color: var(--ink-2); line-height: 1.55; }
+@media (max-width: 820px) { .chain { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .chain { grid-template-columns: 1fr; } }
+
+.verdicts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 2px solid var(--ink); }
+.verdicts div { padding: 12px 14px 0 0; }
+.verdicts .d { font-family: var(--f-mono); font-size: .78rem; color: var(--ink-2); }
+.verdicts h4 { margin: 2px 0 4px; font-size: .95rem; }
+.verdicts p { margin: 0; font-size: .82rem; color: var(--ink-2); }
+.verdicts .final h4 { color: var(--south); }
+@media (max-width: 640px) { .verdicts { grid-template-columns: 1fr; } }
+
+/* 원조 흐름 */
+.flow { display: grid; grid-template-columns: minmax(0, 1fr) 2.2rem minmax(0, 1fr) 2.2rem minmax(0, 1fr); align-items: stretch; }
+.flow .col { display: grid; gap: 8px; align-content: start; }
+.flow .lab { font-family: var(--f-mono); font-size: .7rem; color: var(--ink-2); }
+.flow .item { border: 1px solid var(--rule); border-radius: 4px; padding: 10px 12px; font-size: .9rem; background: var(--paper); cursor: pointer; text-align: left; font-family: var(--f-body); color: var(--ink); }
+.flow .item.white { background: var(--sheet); border-color: var(--ink-2); }
+.flow .item.on { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft); }
+.flow .arr { display: grid; place-items: center; color: var(--ink-2); font-size: 1.1rem; }
+.flow .item small { display: block; color: var(--ink-2); font-size: .74rem; }
+@media (max-width: 720px) { .flow { grid-template-columns: 1fr; } .flow .arr { transform: rotate(90deg); height: 28px; } }
+
+.effects { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+.effects > div { padding: 16px 18px; }
+.effects > div + div { border-left: 1px solid var(--rule); }
+.effects h4 { margin: 0 0 8px; font-size: .9rem; }
+.effects ul { margin: 0; padding-left: 1.1em; font-size: .86rem; display: grid; gap: 4px; }
+.effects .plus h4 { color: var(--south); } .effects .minus h4 { color: var(--seal); }
+@media (max-width: 640px) { .effects { grid-template-columns: 1fr; } .effects > div + div { border-left: 0; border-top: 1px solid var(--rule); } }
+
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart text { fill: var(--ink-2); font-family: var(--f-mono); font-size: 11px; }
+.chart .grid line { stroke: var(--rule); }
+.big-num { font-family: var(--f-display); font-weight: 800; font-size: 2rem; line-height: 1; }
+.kv { display: flex; gap: 22px; flex-wrap: wrap; align-items: flex-end; }
+.kv div { display: grid; gap: 4px; }
+.kv span { font-size: .74rem; color: var(--ink-2); }
+
+/* 북한 숙청 */
+.purge { display: grid; gap: 14px; }
+.factions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.fac { border: 1px solid var(--rule); border-radius: 4px; padding: 12px; min-height: 110px; display: grid; align-content: space-between; gap: 6px; background: var(--paper); transition: opacity .4s, background .4s, border-color .4s; position: relative; }
+.fac h4 { margin: 0; font-size: .92rem; }
+.fac p { margin: 0; font-size: .74rem; color: var(--ink-2); line-height: 1.5; }
+.fac.kim { background: var(--north-soft); border-color: var(--north); }
+.fac.gone { opacity: .3; }
+.fac.gone::after { content: "숙청"; position: absolute; right: 10px; top: 10px; font: 800 .8rem var(--f-display); color: var(--seal); border: 2px solid var(--seal); border-radius: 3px; padding: 0 5px; transform: rotate(-8deg); }
+.ptl { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.ptl button { font: 500 .78rem var(--f-body); text-align: left; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; background: transparent; color: var(--ink-2); cursor: pointer; line-height: 1.4; }
+.ptl button b { display: block; font-family: var(--f-mono); font-weight: 500; color: var(--ink); font-size: .74rem; }
+.ptl button[aria-pressed="true"] { border-color: var(--north); color: var(--ink); background: var(--north-soft); }
+@media (max-width: 720px) { .factions { grid-template-columns: 1fr 1fr; } .ptl { grid-template-columns: 1fr 1fr; } }
+
+.people { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
+.people div { padding: 14px 18px 0 0; }
+.people h4 { margin: 0; font-family: var(--f-display); font-size: 1.15rem; }
+.people .tag { font-size: .72rem; color: var(--north); font-weight: 600; }
+.people p { margin: 6px 0 0; font-size: .82rem; color: var(--ink-2); line-height: 1.6; }
+@media (max-width: 720px) { .people { grid-template-columns: 1fr; } }
+
+.coop { display: grid; gap: 10px; }
+
+/* 비교표 */
+.cmp-wrap { overflow-x: auto; }
+table.cmp { width: 100%; border-collapse: collapse; min-width: 640px; font-size: .88rem; }
+.cmp th, .cmp td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--rule); }
+.cmp thead th { font-size: .8rem; border-bottom: 2px solid var(--ink); }
+.cmp thead th.s { color: var(--south); } .cmp thead th.n { color: var(--north); }
+.cmp tbody th { font-weight: 600; width: 9rem; color: var(--ink-2); font-size: .8rem; }
+.cmp td .reveal { font-size: inherit; }
+
+/* 확인하기 */
+.check { margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 14px; display: grid; gap: 8px; font-size: .9rem; }
+.check .h { font-family: var(--f-mono); font-size: .7rem; color: var(--ink-2); letter-spacing: .06em; }
+.check ol { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
+
+footer { max-width: 1120px; margin: 0 auto; padding-block: 0 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); font-size: .72rem; color: var(--ink-2); }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="bar-in">
+    <span class="bar-title">전후 남북한의 정치와 경제</span>
+    <nav aria-label="단원 이동" id="nav">
+      <a href="#timeline">연표</a>
+      <a href="#balchwe">발췌 개헌</a>
+      <a href="#sasaoip">사사오입 개헌</a>
+      <a href="#anticom">독재 강화</a>
+      <a href="#aid">원조 경제</a>
+      <a href="#north">북한</a>
+      <a href="#compare">남북 비교</a>
+    </nav>
+    <div class="tools">
+      <button type="button" id="answers">정답 모두 보기</button>
+      <button type="button" id="size" aria-pressed="false">글자 크게</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <header class="cover" id="top">
+    <div>
+      <div class="unit">Ⅱ. 대한민국의 발전 · 2. 6·25 전쟁과 분단의 고착화 · 02</div>
+      <h1>전후 남북한의<br>정치와 경제</h1>
+      <ul class="qs">
+        <li><b>Q1</b><span>남북한의 정치는 어떻게 변화하였을까?</span></li>
+        <li><b>Q2</b><span>남북한은 어떻게 전쟁의 피해를 복구하였을까?</span></li>
+      </ul>
+    </div>
+    <div class="statue">
+      <blockquote>“공사비 2억 6백만 환, 남산의 이 대통령 동상 제막”</blockquote>
+      이 대통령 80회 탄신 경축 중앙 위원회 주관으로 건립된 동상은 작년 10월 3일 기공 이래 10여 개월에 걸쳐 7만여 명의 인원과 …… 높이 81척에 건립 부지 3천여 평을 차지하고 있다.
+      <div class="src">『경향신문』, 1956. 8. 17.</div>
+      <div class="scale" aria-label="동상 높이 비교">
+        <svg viewBox="0 0 150 130" role="img" aria-label="본체 7m, 기단 포함 25m인 동상과 사람 키 비교">
+          <line x1="0" y1="124" x2="150" y2="124" stroke="var(--ink-2)" stroke-width="1"/>
+          <rect x="44" y="40" width="22" height="84" fill="var(--rule)"/>
+          <rect x="38" y="112" width="34" height="12" fill="var(--rule)"/>
+          <rect x="49" y="16" width="12" height="24" fill="var(--ink-2)"/>
+          <circle cx="55" cy="12" r="5" fill="var(--ink-2)"/>
+          <rect x="96" y="118" width="3" height="6" fill="var(--seal)"/>
+          <circle cx="97.5" cy="116" r="1.6" fill="var(--seal)"/>
+          <line x1="80" y1="7" x2="80" y2="124" stroke="var(--ink-2)" stroke-dasharray="2 2"/>
+          <text x="84" y="14" font-size="9" fill="var(--ink)" font-family="IBM Plex Mono, monospace">25 m</text>
+          <text x="84" y="40" font-size="8" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">본체 7 m</text>
+          <text x="103" y="122" font-size="8" fill="var(--seal)" font-family="IBM Plex Mono, monospace">사람</text>
+        </svg>
+        <p class="cap">1956년 대통령 취임일에 서울 남산에서 공개.<br>4·19 혁명 이후 철거되었다.<br><b style="color:var(--ink)">이렇게 거대한 동상을 세운 까닭은?</b></p>
+      </div>
+    </div>
+  </header>
+
+  <!-- 연표 -->
+  <section class="part" id="timeline">
+    <div class="part-head">
+      <div class="yr">1950 – 1958</div>
+      <div>
+        <h2>한눈에 보는 전후 10년</h2>
+        <p>칸을 누르면 해당 설명으로 이동합니다.</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="legend"><span><i style="background:var(--south)"></i>남한 정치·경제</span><span><i style="background:var(--north)"></i>북한</span><span><i style="background:var(--gold)"></i>전쟁·국제</span></div>
+      <div class="tl-wrap"><div class="tl-inner">
+        <div class="tl" id="tl"></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- 발췌 개헌 -->
+  <section class="part s" id="balchwe">
+    <div class="part-head">
+      <div class="yr">1950 → 1952<span>남한 · 정치</span></div>
+      <div>
+        <h2>발췌 개헌으로 정권이 연장되다</h2>
+        <p>국회가 대통령을 뽑는 방식으로는 재선이 어렵다고 판단한 이승만 정부는, 국민이 직접 뽑는 직선제로 헌법을 바꾸었다.</p>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>① 제2대 국회의원 선거 결과 <small>1950년 5월 · 210개 선거구</small></h3>
+      <div class="two">
+        <div class="seats" id="seats1950" style="grid-template-columns:repeat(21,minmax(0,1fr))" aria-label="210석 의석 분포"></div>
+        <div style="display:grid;gap:14px;align-content:start">
+          <div class="party-keys" id="partyKeys">
+            <button type="button" data-g="ind" aria-pressed="false"><i style="background:var(--gold)"></i><span>무소속 <small style="color:var(--ink-2)">중도파 민족주의자 등</small></span><b>126</b></button>
+            <button type="button" data-g="dk" aria-pressed="false"><i style="background:var(--south)"></i><span>대한국민당 <small style="color:var(--ink-2)">이승만계</small></span><b>24</b></button>
+            <button type="button" data-g="mk" aria-pressed="false"><i style="background:var(--north)"></i><span>민주국민당 <small style="color:var(--ink-2)">반이승만계</small></span><b>24</b></button>
+            <button type="button" data-g="oth" aria-pressed="false"><i style="background:var(--mute)"></i><span>기타 정당·단체</span><b>36</b></button>
+          </div>
+          <p class="cap">5·10 총선거에 참여하지 않았던 중도파와 정부 비판 세력이 대거 당선. 이승만계는 전체의 약 11%에 그쳤다. 여기에 전쟁 중 <b>거창 학살 사건</b>, <b>국민 방위군 사건</b>이 폭로되며 여론이 더 나빠졌다.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>② 대통령은 누가 뽑는가 <small>제53조의 변화</small></h3>
+      <div class="seg" role="group" aria-label="선출 방식">
+        <button type="button" id="mIndirect" aria-pressed="true">제헌 헌법 (1948) · 간선제</button>
+        <button type="button" id="mDirect" aria-pressed="false">발췌 개헌 (1952) · 직선제</button>
+      </div>
+      <div class="elect">
+        <svg id="electSvg" viewBox="0 0 420 260" role="img" aria-label="대통령 선출 구조"></svg>
+        <div style="display:grid;gap:12px">
+          <div class="article" id="artText"></div>
+          <p class="cap" id="artNote"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>③ 직선제 개헌안은 어떻게 통과되었나 <small>1952년 부산 정치 파동</small></h3>
+      <div class="steps" id="steps">
+        <div class="step on"><span class="k">1951. 11 → 1952. 1</span><h4>직선제 개헌안 제출</h4><p>자유당을 창당해 지지 기반을 넓히고 국회에 직선제 개헌안을 냄.</p><span class="num">찬성 19 · 반대 143 · 기권 1 → 부결</span></div>
+        <div class="step"><span class="k">1952. 4</span><h4>국회는 내각제 추진</h4><p>야당 중심의 국회는 오히려 내각 책임제 개헌을 추진.</p></div>
+        <div class="step"><span class="k">1952. 5</span><h4>계엄령과 공포 분위기</h4><p>계엄령 선포, 헌병이 야당 의원 통근 버스를 강제 연행, 간첩 혐의로 의원 구속.</p></div>
+        <div class="step"><span class="k">1952. 7. 4</span><h4>포위 속 기립 표결</h4><p>군인·경찰이 의사당을 포위한 상태에서 토론 없이 일어서서 찬반 표시.</p><span class="num">찬성 163 · 기권 3 → 통과</span></div>
+      </div>
+      <div class="step-ctl">
+        <button type="button" class="btn" id="stepPrev">이전</button>
+        <button type="button" class="btn" id="stepNext">다음 단계</button>
+        <span class="cap" id="stepCap">1 / 4</span>
+      </div>
+      <p class="cap">‘발췌’ 개헌이라는 이름은 정부안(직선제)과 국회안(내각제)에서 일부를 뽑아 합쳤다는 뜻이지만, 핵심은 정부의 대통령 직선제였다.</p>
+    </div>
+
+    <div class="check">
+      <span class="h">확인하기</span>
+      <ol>
+        <li>제2대 국회의원 선거에서는 이승만 정부에 비판적인 <button type="button" class="reveal" data-hidden="true">무소속</button> 출신이 많이 당선되었다.</li>
+        <li>발췌 개헌으로 대통령 선출 방식이 간선제에서 <button type="button" class="reveal" data-hidden="true">직선제</button>(으)로 바뀌었다.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 사사오입 -->
+  <section class="part s" id="sasaoip">
+    <div class="part-head">
+      <div class="yr">1954<span>남한 · 정치</span></div>
+      <div>
+        <h2>사사오입 개헌, 1표가 모자랐다</h2>
+        <p>초대 대통령에 한해 중임 제한을 없애는 개헌안. 통과에 필요한 표는 재적 의원 203명의 2/3였다.</p>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>개헌안 표결 <small>1954. 11. 27 · 재적 203명 중 찬성 135명</small></h3>
+      <div class="seg" role="group" aria-label="계산 방식">
+        <button type="button" id="rLaw" aria-pressed="true">헌법대로 계산</button>
+        <button type="button" id="rRound" aria-pressed="false">자유당의 사사오입 논리</button>
+      </div>
+      <div class="vote">
+        <div style="display:grid;gap:10px">
+          <div class="vgrid" id="vgrid" aria-label="재적 의원 203명"></div>
+          <div class="legend"><span><i style="background:var(--south);border-radius:50%"></i>찬성 135</span><span><i style="box-shadow:inset 0 0 0 2px var(--seal);border-radius:50%"></i>모자란 표</span><span><i style="background:var(--rule);border-radius:50%"></i>반대·기권 등 68</span></div>
+        </div>
+        <div style="display:grid;gap:16px">
+          <div class="calc">
+            <div class="row"><span>재적 의원</span><b>203명</b></div>
+            <div class="row"><span>203 × 2/3</span><b>135.333…</b></div>
+            <div class="row key"><span id="needLabel">필요한 찬성</span><b id="needVal">136명</b></div>
+            <div class="row"><span>실제 찬성</span><b>135명</b></div>
+          </div>
+          <div class="verdict">
+            <div class="stamp" id="stamp">부결</div>
+            <p id="verdictText"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>바뀐 조문 읽기 <small>사사오입 개헌안(1954)</small></h3>
+      <div class="two">
+        <div class="article">
+          <span class="t">제55조</span>
+          대통령과 부통령의 임기는 4년으로 한다. 단, 재선에 의하여 <mark>1차 중임할 수 있다</mark>. 대통령이 궐위된 때에는 부통령이 대통령이 되고 잔임 기간 중 재임한다.
+          <span class="t" style="margin-top:12px">부칙</span>
+          <mark>이 헌법 공포 당시의 대통령</mark>에 대하여는 제55조 제1항 단서의 제한을 적용하지 아니한다.
+        </div>
+        <div style="display:grid;gap:12px;align-content:start">
+          <p style="margin:0;font-weight:600">부칙의 ‘이 헌법 공포 당시의 대통령’은 누구일까?</p>
+          <p style="margin:0">→ <button type="button" class="reveal" data-hidden="true">이승만 대통령</button></p>
+          <p class="cap">즉, 일반 대통령은 두 번까지만 할 수 있지만 당시 대통령 한 사람만은 횟수 제한 없이 출마할 수 있게 한 조항. 이것이 ‘종신 집권’의 길이다.</p>
+          <p class="cap">11월 27일 국회 부의장이 부결을 선포했으나, 자유당은 이틀 뒤인 11월 29일 사사오입을 내세워 결과를 번복하고 가결을 선포했다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 독재 강화 -->
+  <section class="part s" id="anticom">
+    <div class="part-head">
+      <div class="yr">1956 → 1959<span>남한 · 정치</span></div>
+      <div>
+        <h2>반공을 내세워 독재를 강화하다</h2>
+        <p>제3대 대통령 선거에서 이승만은 세 번째로 당선되었지만, 무소속 조봉암이 예상보다 많은 표를 얻으며 경쟁자로 떠올랐다.</p>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>조봉암의 득표율 변화 <small>대통령 선거</small></h3>
+      <div class="bars" id="bars">
+        <div class="r"><span>제2대 (1952)</span><div class="track"><div class="fill" data-w="11.35" style="background:var(--mute)"></div></div><span class="val">11.35%</span></div>
+        <div class="r"><span>제3대 (1956)</span><div class="track"><div class="fill" data-w="30" style="background:var(--gold)"></div></div><span class="val">30%</span></div>
+        <div class="r"><span style="color:var(--ink-2)">이승만 · 제3대</span><div class="track"><div class="fill" data-w="70" style="background:var(--south)"></div></div><span class="val">70%</span></div>
+      </div>
+      <p class="cap">제3대 선거에서는 민주당 신익희 후보가 유세 중 사망해 무효·기권이 26%에 달했다. 이를 포함하면 이승만의 득표율은 56%. 부통령에는 민주당 장면이 자유당 이기붕을 꺾고 당선되었다.</p>
+    </div>
+
+    <div class="board">
+      <h3>위기를 느낀 정부의 대응 <small>반대 세력 탄압의 흐름</small></h3>
+      <div class="chain">
+        <div class="link"><span class="d">1958. 1</span><h4>진보당 사건</h4><p>평화 통일을 주장하며 진보당을 만든 조봉암에게 간첩 혐의를 씌우고 당을 해체. 1959년 사형.</p></div>
+        <div class="link"><span class="d">1958. 12</span><h4>국가 보안법 개정</h4><p>정부·대통령 비판(명예 훼손)까지 처벌할 수 있도록 처벌 범위를 넓힘.</p></div>
+        <div class="link"><span class="d">1959. 4</span><h4>『경향신문』 폐간</h4><p>정부 비판 칼럼 등을 구실로 언론을 통제. 4·19 혁명 이후 복간.</p></div>
+        <div class="link"><span class="d">1950년대</span><h4>국민반 조직</h4><p>동 단위로 주민을 묶어 동원·감시. 일제 강점기 애국반에 뿌리를 둔다는 비판.</p></div>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>역사 속 사람 · 조봉암, 52년 만의 무죄</h3>
+      <div class="verdicts">
+        <div><span class="d">1959</span><h4>사형 집행</h4><p>국가 변란 목적 진보당 창당 및 간첩 혐의.</p></div>
+        <div><span class="d">2007</span><h4>과거사 정리 위원회</h4><p>“정적을 제거하려는 의도의 표적 수사, 비인도적·반인권적 정치 탄압 사건.”</p></div>
+        <div class="final"><span class="d">2011. 1. 20</span><h4>대법원 재심 무죄</h4><p>공소 사실 대부분이 무죄로 밝혀져 판결의 잘못을 바로잡음.</p></div>
+      </div>
+    </div>
+
+    <div class="check">
+      <span class="h">확인하기</span>
+      <ol>
+        <li>자유당은 이승만 대통령의 종신 집권을 위해 <button type="button" class="reveal" data-hidden="true">사사오입</button> 개헌안을 통과시켰다.</li>
+        <li>이승만 정부는 주민을 효율적으로 동원·감시하려 국민반을 조직하였다. ( <button type="button" class="reveal" data-hidden="true">○</button> )</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 원조 경제 -->
+  <section class="part s" id="aid">
+    <div class="part-head">
+      <div class="yr">1953 → 1960<span>남한 · 경제</span></div>
+      <div>
+        <h2>원조가 전후 복구의 큰 힘이 되다</h2>
+        <p>미국은 한국 경제를 재건하고 공산주의 확산을 막으려고 원조를 제공했다. 가장 많이 들어온 것은 미국의 잉여 농산물이었다.</p>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>원조 물자가 공장을 거쳐 ‘삼백(三白)’이 되기까지 <small>항목을 눌러 연결 보기</small></h3>
+      <div class="flow" id="flow">
+        <div class="col"><span class="lab">미국 원조 농산물</span>
+          <button type="button" class="item" data-k="w">밀</button>
+          <button type="button" class="item" data-k="s">사탕수수(원당)</button>
+          <button type="button" class="item" data-k="c">면화(원면)</button>
+        </div>
+        <div class="arr" aria-hidden="true">→</div>
+        <div class="col"><span class="lab">가공 공장</span>
+          <button type="button" class="item" data-k="w">제분<small>밀을 빻는다</small></button>
+          <button type="button" class="item" data-k="s">제당<small>정제한다</small></button>
+          <button type="button" class="item" data-k="c">방직<small>실을 뽑아 천을 짠다</small></button>
+        </div>
+        <div class="arr" aria-hidden="true">→</div>
+        <div class="col"><span class="lab">삼백 산업 · 흰색 제품</span>
+          <button type="button" class="item white" data-k="w">밀가루</button>
+          <button type="button" class="item white" data-k="s">설탕</button>
+          <button type="button" class="item white" data-k="c">면직물</button>
+        </div>
+      </div>
+      <div class="effects">
+        <div class="plus"><h4>도움이 된 점</h4><ul><li>식량 문제 해결</li><li>삼백 산업 등 소비재 산업 발달</li><li>1950년대 후반 주요 산업 시설 어느 정도 복구</li></ul></div>
+        <div class="minus"><h4>문제점</h4><ul><li>값싼 농산물 유입 → 국내 농산물 가격 폭락, 농촌 타격</li><li>귀속 재산 매각·원조 분배 과정에서 특정 기업에 혜택 집중 → 정경 유착, 독과점</li><li>1950년대 말 무상 원조 → 유상 차관 전환, 경제 위기</li></ul></div>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>그래프로 보기 <small>교과서 94쪽 자료</small></h3>
+      <div class="two">
+        <div class="chart" style="display:grid;gap:10px">
+          <strong style="font-size:.9rem">원면 소비량 <span class="cap">(천 파운드)</span></strong>
+          <div class="kv"><div><span>1955 국내산 비중</span><b class="big-num" style="color:var(--gold)">3.2%</b></div><div><span>1958 국내산 비중</span><b class="big-num" style="color:var(--seal)">0.07%</b></div></div>
+          <svg id="cotton" viewBox="0 0 360 230" role="img" aria-label="원면 소비량: 국내산 2210에서 80으로, 외국산 66408에서 110690으로"></svg>
+          <p class="cap">원조로 값싼 면화가 들어오면서 국내산 면화 사용이 크게 줄었다. (한국개발연구원, 1995)</p>
+        </div>
+        <div class="chart" style="display:grid;gap:10px">
+          <strong style="font-size:.9rem">원조 경제 규모 <span class="cap">(백만 달러)</span></strong>
+          <div class="legend"><span><i style="background:var(--south)"></i>원조 및 구호액</span><span><i style="background:var(--seal)"></i>수입액</span><span><i style="background:var(--gold)"></i>수출액</span></div>
+          <svg id="aidChart" viewBox="0 0 360 230" role="img" aria-label="1953~1960 원조액, 수입액, 수출액"></svg>
+          <p class="cap">1957년 정점 이후 원조가 줄자 수입이 늘어 무역 수지가 악화되었다. (김두얼, 2016 · 교과서 그래프에서 읽은 근사값)</p>
+        </div>
+      </div>
+      <div class="effects">
+        <div><h4>귀속 재산이란?</h4><ul><li>미군정이 적산(적의 재산)으로 압류한 일본인 소유 재산</li><li>정부 수립 후 이승만 정부에 이관, 민간에 매각</li><li>매각 가격은 시가의 1/4~1/5, 상환 기간 최고 15년 → 매우 유리한 조건</li></ul></div>
+        <div><h4>대충자금</h4><ul><li>원조 물자를 판 돈을 따로 적립한 자금</li><li>약 절반은 미군 유지비, 무기 구입비 등으로 사용</li><li>1953~60년 원조가 정부 예산의 평균 59%</li></ul></div>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>역사 깊이 보기 · 교육, 한국 재건의 원동력</h3>
+      <div class="two">
+        <div class="article" style="font-family:var(--f-display);font-weight:700;line-height:1.75">“어디를 가든지, 정거장에서, 약탈당한 건물 안에서, 천막 속에서, 그리고 묘지에서도 수업을 하고 있다. 교과서 있는 학생은 교과서를 가지고, 책 없는 학생은 책 없는 대로 …… 몰려들고 있다.”<span class="t" style="margin-top:8px;font-family:var(--f-mono);font-weight:400">『뉴욕타임스』, 1951. 4. 23.</span></div>
+        <p style="margin:0;font-size:.9rem">전쟁 중에도 피란지 임시 학교에서 수업이 이어졌고, 초등학교 의무 교육이 실질적으로 시행되었다. 징집을 유예하고 학생 신분을 보장하는 <b>전시 학생증</b>도 발급되었다. 이 교육열이 전후 경제가 빠르게 발달하는 원동력이 되었다.</p>
+      </div>
+    </div>
+
+    <div class="check">
+      <span class="h">확인하기</span>
+      <ol>
+        <li>미국의 원조를 바탕으로 밀가루, 설탕, 면직물의 <button type="button" class="reveal" data-hidden="true">삼백</button> 산업이 발달하였다.</li>
+        <li>1950년대 말 미국의 무상 원조가 유상 차관으로 전환되었다. ( <button type="button" class="reveal" data-hidden="true">○</button> )</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 북한 -->
+  <section class="part n" id="north">
+    <div class="part-head">
+      <div class="yr">1950 → 1967<span>북한</span></div>
+      <div>
+        <h2>북한, 김일성 1인 독재와 사회주의 경제</h2>
+        <p>초기 북한 정권은 김일성을 중심으로 한 여러 세력의 연합이었다. 김일성은 전쟁과 그 이후를 거치며 경쟁 세력을 하나씩 제거했다.</p>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>권력 연합이 무너지는 순서 <small>시기를 차례로 누르기</small></h3>
+      <div class="purge">
+        <div class="ptl" id="ptl">
+          <button type="button" data-s="0" aria-pressed="true"><b>정권 수립기</b>여러 세력의 연합</button>
+          <button type="button" data-s="1" aria-pressed="false"><b>6·25 전쟁 중</b>옌안파 일부 숙청</button>
+          <button type="button" data-s="2" aria-pressed="false"><b>1953~1955</b>남로당계 숙청</button>
+          <button type="button" data-s="3" aria-pressed="false"><b>1955~1958</b>옌안파 완전 숙청</button>
+          <button type="button" data-s="4" aria-pressed="false"><b>1967</b>갑산계 숙청</button>
+        </div>
+        <div class="factions" id="factions">
+          <div class="fac kim" data-f="kim"><h4>김일성 계열</h4><p>소련의 지원을 받은 권력의 중심</p></div>
+          <div class="fac" data-f="yenan"><h4>옌안파</h4><p>중국 옌안(연안)의 조선 의용대 출신 · 김두봉</p></div>
+          <div class="fac" data-f="namro"><h4>남로당계</h4><p>박헌영 등 남조선 노동당 계열</p></div>
+          <div class="fac" data-f="gapsan"><h4>갑산계</h4><p>일제 강점기 김일성과 함께 활동하던 세력</p></div>
+        </div>
+        <p class="cap" id="purgeNote"></p>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>역사 속 사람 · 김일성에게 숙청된 사람들</h3>
+      <div class="people">
+        <div><span class="tag">남로당계</span><h4>박헌영</h4><p>일제 강점기 사회주의자. 광복 후 남한에서 남로당 결성. 월북해 부수상까지 올랐으나 전쟁 이후 숙청.</p></div>
+        <div><span class="tag">옌안파</span><h4>김두봉</h4><p>한글 학자이자 독립운동가. 김일성 종합 대학 초대 총장, 최고 인민 회의 상임 위원장. 김일성을 비판하다 숙청.</p></div>
+        <div><span class="tag">의열단 출신</span><h4>김원봉</h4><p>의열단 등 독립운동. 월북 후 국가 검열상, 최고 인민 회의 부의장. 전쟁 이후 숙청된 것으로 알려짐.</p></div>
+      </div>
+    </div>
+
+    <div class="board">
+      <h3>북한의 전후 복구</h3>
+      <div class="two">
+        <div style="display:grid;gap:12px;align-content:start">
+          <div class="article"><span class="t">경제 계획</span>전후 복구 3개년 계획 → 경제 개발 5개년 계획<br>소련·중국 등 사회주의 국가의 원조에 크게 의존</div>
+          <div class="article"><span class="t">천리마 운동 · 1956~</span>하루에 천 리를 달리는 말처럼, 대중의 노동력을 동원해 생산성을 높이자는 운동.<br><b>초기 효과</b> → 그러나 자본 투자·기술 혁신이 없어 <b>한계</b>.</div>
+        </div>
+        <div class="coop">
+          <strong style="font-size:.9rem">협동조합에 속한 농가 비율</strong>
+          <div class="bars" id="coopBars">
+            <div class="r"><span>1955</span><div class="track"><div class="fill" data-w="49" style="background:var(--north)"></div></div><span class="val">49%</span></div>
+            <div class="r"><span>1958</span><div class="track"><div class="fill" data-w="100" style="background:var(--north)"></div></div><span class="val">100%</span></div>
+          </div>
+          <p class="cap">전쟁 이전에는 사유 재산을 상당 부분 인정했지만, 전후 농지를 협동조합 소유로, 개인 상공업을 생산 협동조합으로 바꾸어 개인의 생산 수단 소유를 금지했다. 전쟁으로 노동력이 부족해 가족 단위 영농이 어려워진 것도 영향을 주었다.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="check">
+      <span class="h">확인하기</span>
+      <ol>
+        <li>김일성은 6·25 전쟁을 거치면서 반대 세력을 제거하여 권력 기반을 강화해 나갔다. ( <button type="button" class="reveal" data-hidden="true">○</button> )</li>
+        <li><button type="button" class="reveal" data-hidden="true">천리마 운동</button>은 초기에는 어느 정도 효과를 거두었으나 자본 투자와 기술 혁신이 이루어지지 않아 한계를 맞았다.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 비교 -->
+  <section class="part" id="compare">
+    <div class="part-head">
+      <div class="yr">정리</div>
+      <div>
+        <h2>남북한, 무엇이 같고 무엇이 달랐나</h2>
+        <p>칸을 눌러 하나씩 채워 가며 정리할 수 있습니다.</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="cmp-wrap">
+        <table class="cmp">
+          <thead><tr><th></th><th class="s">남한 (이승만 정부)</th><th class="n">북한 (김일성)</th></tr></thead>
+          <tbody>
+            <tr><th>권력 강화 방식</th><td><button type="button" class="reveal" data-hidden="true">개헌(발췌·사사오입)으로 장기 집권</button></td><td><button type="button" class="reveal" data-hidden="true">반대 세력 숙청으로 1인 독재</button></td></tr>
+            <tr><th>반대 세력 제거</th><td><button type="button" class="reveal" data-hidden="true">진보당 사건(조봉암), 국가 보안법 개정</button></td><td><button type="button" class="reveal" data-hidden="true">옌안파·남로당계·갑산계 숙청</button></td></tr>
+            <tr><th>명분</th><td><button type="button" class="reveal" data-hidden="true">반공</button></td><td><button type="button" class="reveal" data-hidden="true">독자 노선 강조 (중·소 갈등 이용)</button></td></tr>
+            <tr><th>원조</th><td><button type="button" class="reveal" data-hidden="true">미국 (잉여 농산물)</button></td><td><button type="button" class="reveal" data-hidden="true">소련·중국 등 사회주의 국가</button></td></tr>
+            <tr><th>경제 복구</th><td><button type="button" class="reveal" data-hidden="true">귀속 재산 매각, 민간 중심, 삼백 산업</button></td><td><button type="button" class="reveal" data-hidden="true">3개년·5개년 계획, 천리마 운동</button></td></tr>
+            <tr><th>경제 체제</th><td><button type="button" class="reveal" data-hidden="true">자본주의 (정경 유착·독과점 문제)</button></td><td><button type="button" class="reveal" data-hidden="true">협동화, 생산 수단 개인 소유 금지</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>Ⅱ-2-02 · 교과서 92~95쪽 수업 보조 자료</footer>
+
+<script>
+(function () {
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent, text) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  /* 연표 */
+  var years = [1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958];
+  var events = {
+    1950: [["c", "6·25 전쟁 발발", "#timeline"], ["s", "제2대 국회의원 선거 (5월)", "#balchwe"]],
+    1951: [["s", "거창 학살 · 국민 방위군 사건", "#balchwe"]],
+    1952: [["s", "발췌 개헌", "#balchwe"]],
+    1953: [["c", "정전 협정 체결", "#timeline"], ["n", "남로당계 숙청 시작", "#north"]],
+    1954: [["s", "사사오입 개헌", "#sasaoip"]],
+    1955: [["n", "옌안파 숙청 본격화", "#north"]],
+    1956: [["s", "제3대 대통령 선거", "#anticom"], ["n", "8월 종파 사건 · 천리마 운동", "#north"]],
+    1957: [["s", "원조 규모 정점", "#aid"]],
+    1958: [["s", "1월 진보당 사건 · 12월 국가 보안법 개정", "#anticom"], ["n", "농업 협동화 완료", "#north"]]
+  };
+  var tl = $("#tl");
+  years.forEach(function (y) {
+    var c = document.createElement("div"); c.className = "col top";
+    (events[y] || []).filter(function (e) { return e[0] !== "n"; }).forEach(function (e) {
+      var a = document.createElement("a"); a.className = "ev " + e[0]; a.href = e[2]; a.textContent = e[1]; c.appendChild(a);
+    });
+    tl.appendChild(c);
+  });
+  var ax = document.createElement("div"); ax.className = "axis"; tl.appendChild(ax);
+  years.forEach(function (y) {
+    var c = document.createElement("div"); c.className = "col";
+    var s = document.createElement("span"); s.className = "y"; s.textContent = y; c.appendChild(s);
+    (events[y] || []).filter(function (e) { return e[0] === "n"; }).forEach(function (e) {
+      var a = document.createElement("a"); a.className = "ev n"; a.href = e[2]; a.textContent = e[1]; c.appendChild(a);
+    });
+    tl.appendChild(c);
+  });
+
+  /* 1950 의석 */
+  var seats = $("#seats1950");
+  var groups = [["ind", 126], ["oth", 36], ["mk", 24], ["dk", 24]];
+  groups.forEach(function (g) { for (var i = 0; i < g[1]; i++) { var d = document.createElement("div"); d.className = "seat " + g[0]; seats.appendChild(d); } });
+  $$("#partyKeys button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var on = b.getAttribute("aria-pressed") !== "true";
+      $$("#partyKeys button").forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
+      $$(".seat", seats).forEach(function (s) { s.classList.remove("hl"); });
+      seats.classList.toggle("focus", on);
+      if (on) { b.setAttribute("aria-pressed", "true"); $$(".seat." + b.dataset.g, seats).forEach(function (s) { s.classList.add("hl"); }); }
+    });
+  });
+
+  /* 간선제 ↔ 직선제 */
+  var svg = $("#electSvg");
+  function drawElect(direct) {
+    svg.innerHTML = "";
+    var ink = "var(--ink)", soft = "var(--ink-2)";
+    el("defs", {}, svg).innerHTML = '<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--seal)"/></marker>';
+    // 대통령
+    el("rect", { x: 160, y: 10, width: 100, height: 40, rx: 4, fill: "var(--south)" }, svg);
+    el("text", { x: 210, y: 36, "text-anchor": "middle", fill: "var(--sheet)", "font-size": 15, "font-weight": 700, "font-family": "IBM Plex Sans KR, sans-serif" }, svg, "대통령");
+    // 국회
+    el("rect", { x: 150, y: 110, width: 120, height: 40, rx: 4, fill: direct ? "var(--paper)" : "var(--gold-soft)", stroke: direct ? "var(--rule)" : "var(--gold)" }, svg);
+    el("text", { x: 210, y: 136, "text-anchor": "middle", fill: direct ? soft : ink, "font-size": 14, "font-weight": 600, "font-family": "IBM Plex Sans KR, sans-serif" }, svg, "국회 (210명)");
+    // 국민
+    for (var i = 0; i < 24; i++) {
+      var x = 30 + i * 15.5;
+      el("circle", { cx: x, cy: 214, r: 5, fill: direct ? "var(--seal)" : "var(--mute)" }, svg);
+      el("rect", { x: x - 5, y: 221, width: 10, height: 12, rx: 3, fill: direct ? "var(--seal)" : "var(--mute)" }, svg);
+    }
+    el("text", { x: 210, y: 254, "text-anchor": "middle", fill: ink, "font-size": 13, "font-weight": 600, "font-family": "IBM Plex Sans KR, sans-serif" }, svg, "국민");
+    if (direct) {
+      [60, 140, 280, 360].forEach(function (x) { el("path", { d: "M" + x + ",200 Q" + (x + (210 - x) * .5) + ",110 " + (200 + (x - 210) * .12) + ",54", fill: "none", stroke: "var(--seal)", "stroke-width": 2, "marker-end": "url(#ah)" }, svg); });
+      el("text", { x: 300, y: 104, fill: "var(--seal)", "font-size": 12, "font-family": "IBM Plex Sans KR, sans-serif" }, svg, "직접 투표");
+    } else {
+      el("line", { x1: 210, y1: 200, x2: 210, y2: 154, stroke: soft, "stroke-width": 2, "marker-end": "url(#ah)" }, svg);
+      el("line", { x1: 210, y1: 108, x2: 210, y2: 54, stroke: "var(--seal)", "stroke-width": 2.5, "marker-end": "url(#ah)" }, svg);
+      el("text", { x: 220, y: 182, fill: soft, "font-size": 12, "font-family": "IBM Plex Sans KR, sans-serif" }, svg, "국회의원 선거");
+      el("text", { x: 220, y: 86, fill: "var(--seal)", "font-size": 12, "font-family": "IBM Plex Sans KR, sans-serif" }, svg, "국회에서 대통령 선출");
+    }
+    $("#artText").innerHTML = direct
+      ? '<span class="t">발췌 개헌안 (1952) 제53조</span>대통령과 부통령은 <mark>국민의 보통, 평등, 직접, 비밀 투표</mark>에 의하여 각각 선거한다.'
+      : '<span class="t">제헌 헌법 (1948) 제53조</span>대통령과 부통령은 <mark>국회에서 무기명 투표</mark>로써 각각 선거한다.';
+    $("#artNote").textContent = direct
+      ? "국회의 반대를 피해 국민에게 직접 표를 받는 길을 열었다. 전쟁 중 반공 여론과 대통령 개인의 인지도가 유리하게 작용했다."
+      : "1950년 선거로 국회는 이승만에게 비판적인 의원이 다수. 이 방식으로는 재선이 어렵다.";
+    $("#mIndirect").setAttribute("aria-pressed", String(!direct));
+    $("#mDirect").setAttribute("aria-pressed", String(direct));
+  }
+  $("#mIndirect").addEventListener("click", function () { drawElect(false); });
+  $("#mDirect").addEventListener("click", function () { drawElect(true); });
+  drawElect(false);
+
+  /* 단계 */
+  var stepIdx = 0, stepEls = $$("#steps .step");
+  function setStep(i) {
+    stepIdx = Math.max(0, Math.min(stepEls.length - 1, i));
+    stepEls.forEach(function (s, k) { s.classList.toggle("on", k <= stepIdx); });
+    $("#stepCap").textContent = (stepIdx + 1) + " / " + stepEls.length;
+  }
+  $("#stepNext").addEventListener("click", function () { setStep(stepIdx + 1); });
+  $("#stepPrev").addEventListener("click", function () { setStep(stepIdx - 1); });
+
+  /* 사사오입 */
+  var vg = $("#vgrid");
+  for (var i = 0; i < 203; i++) { var d = document.createElement("div"); d.className = "v" + (i < 135 ? " yes" : ""); vg.appendChild(d); }
+  var vs = $$(".v", vg);
+  function setRound(round) {
+    vs[135].classList.toggle("need", !round);
+    $("#needLabel").textContent = round ? "필요한 찬성 (반올림)" : "필요한 찬성";
+    $("#needVal").textContent = round ? "135명" : "136명";
+    var st = $("#stamp");
+    st.textContent = round ? "가결" : "부결";
+    st.classList.remove("pop"); void st.offsetWidth; st.classList.add("pop");
+    $("#verdictText").innerHTML = round
+      ? "135.333…에서 0.333…명은 ‘사람’이 될 수 없으니 반올림하면 <b>135명</b>이라는 주장. 이 논리로 통과를 선포했다."
+      : "135.333…명 이상이 찬성해야 하므로 사람 수로는 <b>136명</b>이 필요하다. 1표가 부족해 <b>부결</b>.";
+    $("#rLaw").setAttribute("aria-pressed", String(!round));
+    $("#rRound").setAttribute("aria-pressed", String(round));
+  }
+  $("#rLaw").addEventListener("click", function () { setRound(false); });
+  $("#rRound").addEventListener("click", function () { setRound(true); });
+  setRound(false);
+
+  /* 막대 애니메이션 */
+  function fillBars(root) { $$(".fill", root).forEach(function (f) { f.style.width = f.dataset.w + "%"; }); }
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { fillBars(e.target); io.unobserve(e.target); } }); }, { threshold: .3 });
+    io.observe($("#bars")); io.observe($("#coopBars"));
+    setTimeout(function () { fillBars(document); }, 2500);
+  } else { fillBars(document); }
+
+  /* 삼백 흐름 */
+  $$("#flow .item").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var k = b.dataset.k, on = !b.classList.contains("on");
+      $$("#flow .item").forEach(function (x) { x.classList.toggle("on", on && x.dataset.k === k); });
+    });
+  });
+
+  /* 그래프 */
+  function axes(s, x0, y0, w, h, max, step, fmt) {
+    var g = el("g", { class: "grid" }, s);
+    for (var v = 0; v <= max; v += step) {
+      var y = y0 - v / max * h;
+      el("line", { x1: x0, y1: y, x2: x0 + w, y2: y }, g);
+      el("text", { x: x0 - 6, y: y + 3.5, "text-anchor": "end" }, s, fmt(v));
+    }
+  }
+  (function cotton() {
+    var s = $("#cotton"), x0 = 52, y0 = 200, w = 300, h = 180, max = 120000;
+    var data = [[1955, 2210, 66408], [1956, 1723, 76905], [1957, 110, 105271], [1958, 80, 110690]];
+    axes(s, x0, y0, w, h, max, 20000, function (v) { return v.toLocaleString(); });
+    var bw = 26, slot = w / data.length;
+    data.forEach(function (d, i) {
+      var cx = x0 + slot * i + slot / 2;
+      var hd = d[1] / max * h, hf = d[2] / max * h;
+      el("rect", { x: cx - bw - 2, y: y0 - Math.max(hd, 1), width: bw, height: Math.max(hd, 1), fill: "var(--gold)" }, s);
+      el("rect", { x: cx + 2, y: y0 - hf, width: bw, height: hf, fill: "var(--south)" }, s);
+      el("text", { x: cx - bw / 2 - 2, y: y0 - hd - 5, "text-anchor": "middle", style: "fill:var(--gold)" }, s, d[1].toLocaleString());
+      el("text", { x: cx + bw / 2 + 2, y: y0 - hf - 5, "text-anchor": "middle", style: "fill:var(--ink)" }, s, d[2].toLocaleString());
+      el("text", { x: cx, y: y0 + 16, "text-anchor": "middle" }, s, d[0]);
+    });
+    el("line", { x1: x0, y1: y0, x2: x0 + w, y2: y0, stroke: "var(--ink-2)" }, s);
+    el("rect", { x: x0 + 8, y: 6, width: 9, height: 9, fill: "var(--gold)" }, s); el("text", { x: x0 + 21, y: 14 }, s, "국내산");
+    el("rect", { x: x0 + 70, y: 6, width: 9, height: 9, fill: "var(--south)" }, s); el("text", { x: x0 + 83, y: 14 }, s, "외국산");
+  })();
+  (function aid() {
+    var s = $("#aidChart"), x0 = 36, y0 = 200, w = 316, h = 180, max = 400;
+    var yrs = [1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960];
+    var aid = [194, 150, 234, 320, 397, 330, 222, 246];
+    var imp = [155, 93, 108, 67, 46, 48, 81, 97];
+    var exp = [40, 25, 18, 24, 22, 17, 20, 32];
+    axes(s, x0, y0, w, h, max, 100, String);
+    var slot = w / yrs.length, bw = slot * .58;
+    function X(i) { return x0 + slot * i + slot / 2; }
+    function Y(v) { return y0 - v / max * h; }
+    yrs.forEach(function (y, i) {
+      el("rect", { x: X(i) - bw / 2, y: Y(aid[i]), width: bw, height: y0 - Y(aid[i]), fill: "var(--south)", opacity: i === 4 ? 1 : .55 }, s);
+      el("text", { x: X(i), y: y0 + 16, "text-anchor": "middle" }, s, String(y).slice(2));
+    });
+    el("text", { x: X(4), y: Y(aid[4]) - 6, "text-anchor": "middle", style: "fill:var(--ink)" }, s, "정점");
+    [[imp, "var(--seal)"], [exp, "var(--gold)"]].forEach(function (p) {
+      el("polyline", { points: p[0].map(function (v, i) { return X(i) + "," + Y(v); }).join(" "), fill: "none", stroke: p[1], "stroke-width": 2 }, s);
+      p[0].forEach(function (v, i) { el("circle", { cx: X(i), cy: Y(v), r: 3, fill: "var(--sheet)", stroke: p[1], "stroke-width": 2 }, s); });
+    });
+    el("line", { x1: x0, y1: y0, x2: x0 + w, y2: y0, stroke: "var(--ink-2)" }, s);
+  })();
+
+  /* 북한 숙청 */
+  var purgeSteps = [
+    { gone: [], note: "김일성 계열을 중심으로 옌안파, 남로당계, 갑산계 등이 함께 정권을 이루었다." },
+    { gone: [], part: "yenan", note: "전쟁 중 옌안파 일부를 숙청. 아직 연합은 유지된다." },
+    { gone: ["namro"], part: "yenan", note: "정전 후 전쟁 책임을 물어 박헌영 등 남로당계를 숙청." },
+    { gone: ["namro", "yenan"], note: "스탈린 사망 후 소련에서 개인숭배 비판이 일자 북한에서도 김일성 비판이 나타남(1956, 8월 종파 사건). 김일성은 이를 빌미로 옌안파를 완전히 숙청하고, 중·소 대립 틈에서 독자 노선을 강조." },
+    { gone: ["namro", "yenan", "gapsan"], note: "함께 활동하던 갑산계까지 제거. 김일성 1인 독재 체제가 완성된다." }
+  ];
+  function setPurge(i) {
+    var st = purgeSteps[i];
+    $$("#ptl button").forEach(function (b) { b.setAttribute("aria-pressed", String(+b.dataset.s === i)); });
+    $$("#factions .fac").forEach(function (f) {
+      f.classList.toggle("gone", st.gone.indexOf(f.dataset.f) > -1);
+      f.style.borderStyle = st.part === f.dataset.f ? "dashed" : "";
+      f.style.borderColor = st.part === f.dataset.f ? "var(--seal)" : "";
+    });
+    $("#purgeNote").textContent = st.note;
+  }
+  $$("#ptl button").forEach(function (b) { b.addEventListener("click", function () { setPurge(+b.dataset.s); }); });
+  setPurge(0);
+
+  /* 정답 가리기 */
+  $$(".reveal").forEach(function (b) {
+    b.setAttribute("aria-label", "가려진 답, 눌러서 보기");
+    b.addEventListener("click", function () {
+      var h = b.dataset.hidden === "true";
+      b.dataset.hidden = String(!h);
+      b.setAttribute("aria-label", h ? b.textContent : "가려진 답, 눌러서 보기");
+    });
+  });
+  var allShown = false;
+  $("#answers").addEventListener("click", function () {
+    allShown = !allShown;
+    $$(".reveal").forEach(function (b) { b.dataset.hidden = String(!allShown); });
+    this.textContent = allShown ? "정답 다시 가리기" : "정답 모두 보기";
+  });
+
+  /* 글자 크기 */
+  function setBig(on) {
+    document.documentElement.classList.toggle("big", on);
+    $("#size").setAttribute("aria-pressed", String(on));
+    $("#size").textContent = on ? "글자 보통" : "글자 크게";
+    try { localStorage.setItem("pk-big", on ? "1" : "0"); } catch (e) {}
+  }
+  $("#size").addEventListener("click", function () { setBig(!document.documentElement.classList.contains("big")); });
+  try { if (localStorage.getItem("pk-big") === "1") setBig(true); } catch (e) {}
+
+  /* 현재 단원 표시 + 주소의 #으로 바로 이동 (PPT 링크용) */
+  var links = $$("#nav a");
+  if ("IntersectionObserver" in window) {
+    var so = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id); });
+      });
+    }, { rootMargin: "-40% 0px -55% 0px" });
+    $$("section.part").forEach(function (s) { so.observe(s); });
+  }
+  function go() {
+    var id = location.hash.slice(1);
+    var t = id && document.getElementById(id);
+    if (t) t.scrollIntoView({ block: "start" });
+  }
+  window.addEventListener("hashchange", go);
+  if (location.hash) setTimeout(go, 60);
+})();
+</script>
+</body>
+</html>
