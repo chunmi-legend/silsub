@@ -7,7 +7,7 @@
 <title>전후 남북한의 정치와 경제</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
 <style>
 /* 레이아웃: 화면 하나에 움직이는 도해 하나. 위에 짧은 제목, 아래는 도해가 화면을 채운다. */
 :root {
@@ -688,7 +688,9 @@ svg text { font-family: var(--f-body); }
     } catch (e) {}
   });
   // 주소에 #이 없으면 폴더 이름(/silsub/sasaoip/)으로 화면을 고른다. PPT 링크가 #을 망가뜨리는 경우 대비
-  var folder = location.pathname.split("/").filter(function (x) { return x && !/\.html?$/.test(x); }).pop() || "";
+  var segs = location.pathname.split("/").filter(Boolean).map(function (x) { return decodeURIComponent(x).replace(/\.html?$/, ""); });
+  if (segs[segs.length - 1] === "index") segs.pop();
+  var folder = segs.pop() || "";
   show(location.hash.slice(1) || folder);
   (function loop(now) { if (cur) pages[cur].frame(now); requestAnimationFrame(loop); })(performance.now());
 })();
