@@ -684,7 +684,9 @@ svg text { font-family: var(--f-body); }
       else { var p = document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(function () {}); }
     } catch (e) {}
   });
-  show(location.hash.slice(1));
+  // 주소에 #이 없으면 폴더 이름(/silsub/sasaoip/)으로 화면을 고른다. PPT 링크가 #을 망가뜨리는 경우 대비
+  var folder = location.pathname.split("/").filter(function (x) { return x && !/\.html?$/.test(x); }).pop() || "";
+  show(location.hash.slice(1) || folder);
   (function loop(now) { if (cur) pages[cur].frame(now); requestAnimationFrame(loop); })(performance.now());
 })();
 </script>
