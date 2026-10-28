@@ -40,6 +40,9 @@
 html, body { height: 100%; }
 body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6; word-break: keep-all; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+/* 전자칠판 터치: 두 번 탭 확대와 길게 눌러 글자 선택 막기 */
+button, a, input, .fig { touch-action: manipulation; }
+.fig, .tabs, .chips, .legend { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 
 .app { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
 
