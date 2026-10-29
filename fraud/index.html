@@ -289,56 +289,71 @@ svg text { font-family: var(--f-body); }
     mk("line", { x1: 0, x2: 1000, y1: GROUND, y2: GROUND, stroke: "var(--rule)", "stroke-width": 2 }, svg);
     var scenes = [0, 1, 2, 3].map(function () { return mk("g", {}, svg); });
 
-    // ① 3인조·9인조 공개 투표
+    // ① 3인조·9인조 공개 투표: 조장도 3명 중 1명. 셋이 함께 기표소에 들어가 조장이 가운데서 양쪽을 확인
     var s1 = scenes[0];
-    var c1 = caption(s1, 1, "3인조·9인조 공개 투표", ["유권자를 3명, 9명씩 묶고 조장이 따라다니며", "누구를 찍었는지 확인한 뒤 투표함에 넣게 했다."]);
+    var c1 = caption(s1, 1, "3인조·9인조 공개 투표", ["유권자 3명을 한 조로 묶고, 그중 1명인 조장이 기표소 가운데서", "양쪽 조원의 기표를 확인했다. 기표한 표는 자유당 선거위원에게", "보여 준 뒤에야 투표함에 넣었다. (9인조 조장은 3인조 조장 중 1명)"]);
     var booth = mk("g", {}, s1);
-    mk("rect", { x: 560, y: GROUND - 150, width: 110, height: 150, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, booth);
-    mk("rect", { x: 560, y: GROUND - 172, width: 110, height: 24, fill: "var(--ink-2)" }, booth);
-    mk("text", { x: 615, y: GROUND - 155, "class": "mid", style: "fill:var(--sheet);font-size:13px;font-weight:700" }, booth, "기표소");
-    mk("path", { d: "M560," + (GROUND - 148) + " q14,60 0,148", fill: "none", stroke: "var(--seal)", "stroke-width": 2, "stroke-dasharray": "4 3" }, booth);
-    mk("text", { x: 615, y: GROUND + 40, "class": "t2 mid" }, booth, "가림막이 열려 있음");
-    var box1 = ballotBox(s1); at(box1, 830, GROUND);
-    var voters1 = [0, 1, 2].map(function (i) { return person(s1, { shirt: VOTER[i], label: "유권자" }); });
-    var leader = person(s1, { shirt: "var(--ink-2)", band: true, label: "조장" });
+    mk("rect", { x: 380, y: GROUND - 150, width: 240, height: 150, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, booth);
+    mk("rect", { x: 380, y: GROUND - 172, width: 240, height: 24, fill: "var(--ink-2)" }, booth);
+    mk("text", { x: 500, y: GROUND - 155, "class": "mid", style: "fill:var(--sheet);font-size:13px;font-weight:700" }, booth, "기표소");
+    mk("text", { x: 500, y: GROUND + 50, "class": "t2 mid" }, booth, "셋이 한꺼번에 들어감");
+    var desk = mk("g", {}, s1);
+    mk("rect", { x: 712, y: GROUND - 56, width: 84, height: 56, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, desk);
+    var box1 = ballotBox(s1); at(box1, 925, GROUND);
+    var member = [
+      person(s1, { shirt: VOTER[0], label: "조원" }),
+      person(s1, { shirt: VOTER[2], band: true, label: "조장" }),
+      person(s1, { shirt: VOTER[1], label: "조원" })
+    ];
+    var judge = person(s1, { shirt: "var(--ink-2)", band: true, label: "자유당 선거위원" });
     var papers1 = [0, 1, 2].map(function () { return paper(s1, true); });
     var eye = mk("g", {}, s1);
     mk("path", { d: "M-22,0 q22,-18 44,0 q-22,18 -44,0 z", fill: "var(--sheet)", stroke: "var(--seal)", "stroke-width": 2.5 }, eye);
     mk("circle", { cx: 0, cy: 0, r: 6, fill: "var(--seal)" }, eye);
-    var bubble = mk("g", {}, s1);
-    mk("rect", { x: -40, y: -24, width: 80, height: 30, rx: 6, fill: "var(--sheet)", stroke: "var(--seal)", "stroke-width": 2 }, bubble);
-    mk("text", { x: 0, y: -4, "class": "mid", style: "fill:var(--seal);font-size:14px;font-weight:700" }, bubble, "확인!");
+    function bubbleOf(text) {
+      var g = mk("g", {}, s1);
+      mk("rect", { x: -48, y: -24, width: 96, height: 30, rx: 6, fill: "var(--sheet)", stroke: "var(--seal)", "stroke-width": 2 }, g);
+      mk("text", { x: 0, y: -4, "class": "mid", style: "fill:var(--seal);font-size:14px;font-weight:700" }, g, text);
+      return g;
+    }
+    var bubL = bubbleOf("확인!"), bubJ = bubbleOf("검수 끝");
     var grp = mk("g", {}, s1);
-    mk("rect", { x: -175, y: -165, width: 350, height: 200, rx: 10, fill: "none", stroke: "var(--seal)", "stroke-width": 1.5, "stroke-dasharray": "6 5" }, grp);
-    mk("text", { x: -163, y: -148, "class": "tm", style: "fill:var(--seal)" }, grp, "3인조");
+    mk("rect", { x: -115, y: -165, width: 230, height: 200, rx: 10, fill: "none", stroke: "var(--seal)", "stroke-width": 1.5, "stroke-dasharray": "6 5" }, grp);
+    mk("text", { x: -103, y: -148, "class": "tm", style: "fill:var(--seal)" }, grp, "3인조");
+    // 각 사람의 이동: [시작, 끝, 출발 x, 도착 x]
+    var routes = [0, 1, 2].map(function (k) {
+      return [[200, 2400, -260 + k * 70, 430 + k * 70], [5000, 6200, 430 + k * 70, 560 + k * 60], [7300, 8800, 560 + k * 60, 1080 + k * 70]];
+    });
+    function routeX(r, lt) {
+      var x = r[0][2], moving = false;
+      r.forEach(function (sg) { if (lt >= sg[0]) x = lerp(sg[2], sg[3], ease(seg(lt, sg[0], sg[1]))); if (lt > sg[0] && lt < sg[1]) moving = true; });
+      return [x, moving];
+    }
 
     function scene1(lt) {
       op(c1, seg(lt, 300, 900));
-      var gx = 0;
-      // 등장: 조장과 3명이 한 조로 걸어옴
-      [0, 1, 2].forEach(function (i) {
-        var base = 300 + i * 60, stand = 380 + i * 60;
-        var turn = 3200 + i * 900;
-        var x = walkTo(voters1[i], -140 + i * 60, stand, GROUND, lt, 200, 2400);
-        if (lt > turn) x = walkTo(voters1[i], stand, 600, GROUND, lt, turn, turn + 450);
-        if (lt > turn + 700) x = walkTo(voters1[i], 600, 800 - i * 12, GROUND, lt, turn + 700, turn + 1250);
-        if (lt > turn + 1500) x = walkTo(voters1[i], 800 - i * 12, 1120, GROUND, lt, turn + 1500 + (2 - i) * 120, 8400, 1);
-        var p = papers1[i], showPaper = lt > turn + 300 && lt < turn + 1400;
-        show(p, showPaper);
-        if (showPaper) {
-          var k = seg(lt, turn + 1050, turn + 1350);
-          at(p, lerp(x + 16, 830, k), lerp(GROUND - 165, GROUND - 66, k));
+      var xs = [];
+      member.forEach(function (m, k) {
+        var r = routeX(routes[k], lt), x = r[0];
+        xs.push(x);
+        var face = 1;
+        if (k === 1 && lt > 2700 && lt < 3900) face = -1;   // 조장이 왼쪽 조원을 봄
+        var raise = (lt > 2700 && lt < 5000 && k !== 1) || (lt > 6300 && lt < 7100);
+        m.set(x, GROUND, r[1] ? lt / 95 : 0, face, raise);
+        var p = papers1[k], has = lt > 2600 && lt < 7600 + k * 150;
+        show(p, has);
+        if (has) {
+          var fly = seg(lt, 7250 + k * 150, 7600 + k * 150), up = raise ? 172 : 95;
+          at(p, lerp(x + 18, 925, ease(fly)), lerp(GROUND - up, GROUND - 66, ease(fly)) - Math.sin(fly * Math.PI) * 50);
         }
-        voters1[i].set(x, GROUND, lt > 200 && lt < 2400 || (lt > turn && lt < turn + 450) || (lt > turn + 700 && lt < turn + 1250) || (lt > turn + 1500 && lt < 8400) ? lt / 95 : 0, 1, lt > turn + 300 && lt < turn + 700);
-        if (i === 1) gx = x;
       });
-      var lx = walkTo(leader, -60, 680, GROUND, lt, 200, 2600, -1);
-      leader.set(lx, GROUND, lt > 200 && lt < 2600 ? lt / 95 : 0, lt < 2600 ? 1 : -1);
-      op(grp, lt < 3000 ? 1 : 1 - seg(lt, 3000, 3300)); at(grp, gx, GROUND);
-      var watching = lt > 3400 && lt < 6400;
-      op(eye, watching ? .5 + .5 * Math.abs(Math.sin(lt / 220)) : 0); at(eye, 680, GROUND - 190);
-      var b = (lt > 3500 && lt < 3950) || (lt > 4400 && lt < 4850) || (lt > 5300 && lt < 5750);
-      op(bubble, b ? 1 : 0); at(bubble, 720, GROUND - 228);
+      judge.set(810, GROUND, 0, -1, lt > 6400 && lt < 7000);
+      op(grp, lt < 2500 ? 1 : 1 - seg(lt, 2500, 2800)); at(grp, xs[1], GROUND);
+      var left = lt > 2800 && lt < 3800, right = lt > 3950 && lt < 4950;
+      op(eye, left || right ? .55 + .45 * Math.abs(Math.sin(lt / 200)) : 0);
+      at(eye, left ? 465 : 535, GROUND - 205);
+      op(bubL, (lt > 3200 && lt < 3800) || (lt > 4350 && lt < 4950) ? 1 : 0); at(bubL, 500, GROUND - 250);
+      op(bubJ, lt > 6500 && lt < 7200 ? 1 : 0); at(bubJ, 810, GROUND - 230);
     }
 
     // ② 4할 사전 투표
