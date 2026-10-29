@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>4·19 혁명</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<style>
+/* 레이아웃: 화면 하나에 움직이는 도해 하나. 위에 짧은 제목, 아래는 도해가 화면을 채운다. */
+:root {
+  --paper: #f3f4f1;
+  --sheet: #fbfbf9;
+  --ink: #1d2422;
+  --ink-2: #56615d;
+  --rule: #d3d8d4;
+  --south: #1f5873;
+  --south-soft: #dbe7ec;
+  --north: #8a3b32;
+  --seal: #c0352b;
+  --gold: #a87a1c;
+  --gold-soft: #f6e7b8;
+  --mute: #a2aba7;
+  --f-display: "Nanum Myeongjo", "Noto Serif KR", "AppleMyungjo", serif;
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #161b1a; --sheet: #1d2321; --ink: #e8ece9; --ink-2: #a9b4b0; --rule: #34403c;
+  --south: #79b4cf; --south-soft: #20343d; --north: #df8f84;
+  --seal: #ef6a5d; --gold: #d9ad55; --gold-soft: #5a4a1e; --mute: #6b7773; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --paper: #161b1a; --sheet: #1d2321; --ink: #e8ece9; --ink-2: #a9b4b0; --rule: #34403c;
+  --south: #79b4cf; --south-soft: #20343d; --north: #df8f84;
+  --seal: #ef6a5d; --gold: #d9ad55; --gold-soft: #5a4a1e; --mute: #6b7773; color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6; word-break: keep-all; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+/* 전자칠판 터치: 두 번 탭 확대와 길게 눌러 글자 선택 막기 */
+button, a, input, .fig { touch-action: manipulation; }
+.fig, .tabs, .chips, .legend { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+.app { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+
+.top { background: var(--sheet); border-bottom: 1px solid var(--rule); }
+.top-in { display: flex; align-items: center; gap: 24px; padding-block: 8px; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.brand { font-family: var(--f-display); font-weight: 800; font-size: .95rem; white-space: nowrap; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; flex: 1; min-width: 0; scrollbar-width: none; }
+.tabs a { flex: none; display: grid; color: var(--ink-2); text-decoration: none; font-weight: 600; font-size: .86rem; line-height: 1.25; padding: 6px 14px; border-radius: 4px; }
+.tabs a small { font-weight: 400; font-size: .66rem; color: var(--ink-2); }
+.tabs a:hover { color: var(--ink); background: var(--paper); }
+.tabs a[aria-current="true"] { color: var(--sheet); background: var(--ink); }
+.tabs a[aria-current="true"] small { color: var(--sheet); opacity: .7; }
+#fsBtn { font: 500 .74rem var(--f-body); color: var(--ink-2); background: transparent; border: 1px solid var(--rule); border-radius: 4px; padding: 5px 9px; cursor: pointer; flex: none; }
+.lesson-link { flex: none; font: 600 .78rem var(--f-body); color: var(--sheet); background: var(--seal); text-decoration: none; border-radius: 4px; padding: 6px 11px; white-space: nowrap; }
+.lesson-link:hover { filter: brightness(1.08); }
+@media (max-width: 720px) { .brand, #fsBtn { display: none; } }
+
+main { min-height: 0; overflow: auto; }
+.page { min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px; padding-block: 18px 22px; padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px)); max-width: 1500px; margin: 0 auto; }
+.head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 28px; flex-wrap: wrap; }
+.head h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(1.4rem, 2.4vw, 2rem); line-height: 1.25; margin: 0; text-wrap: balance; }
+.head p { margin: 4px 0 0; color: var(--ink-2); font-size: .92rem; max-width: 46em; }
+.ctrls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.btn { font: 600 .8rem var(--f-body); color: var(--ink); background: transparent; border: 1px solid var(--ink); border-radius: 5px; padding: 7px 13px; cursor: pointer; }
+.btn:hover { background: var(--sheet); }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+
+.fig { position: relative; width: min(100%, calc((100dvh - 210px) * 1.786)); min-width: min(100%, 560px); aspect-ratio: 1000 / 560; margin-inline: auto; background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; }
+.fig.short { width: min(100%, calc((100dvh - 270px) * 1.786)); }
+.fig svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+svg text { font-family: var(--f-body); }
+.t { fill: var(--ink); font-size: 15px; }
+.t2 { fill: var(--ink-2); font-size: 13px; }
+.tb { fill: var(--ink); font-size: 17px; font-weight: 700; }
+.tm { fill: var(--ink-2); font-family: var(--f-mono); font-size: 12px; }
+.big { font-family: var(--f-display); font-weight: 800; fill: var(--ink); }
+.mid { text-anchor: middle; } .end { text-anchor: end; }
+.fade { transition: opacity .6s ease; }
+
+/* 범례 버튼 (제2대 국회) */
+.legend { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.legend button { display: flex; align-items: baseline; gap: 10px; font: inherit; color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: 5px; padding: 8px 14px; cursor: pointer; }
+.legend button[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.legend i { width: 12px; height: 12px; border-radius: 50%; align-self: center; }
+.legend span { font-size: .86rem; }
+.legend small { color: var(--ink-2); font-size: .72rem; }
+.legend b { font-family: var(--f-display); font-weight: 800; font-size: 1.35rem; min-width: 2.2ch; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* 재생 막대 (사사오입) */
+.scrub { display: flex; align-items: center; gap: 12px; width: min(100%, calc((100dvh - 270px) * 1.786)); margin-inline: auto; }
+.scrub input { flex: 1; min-width: 0; accent-color: var(--seal); }
+.chips { display: flex; gap: 4px; }
+.chips button { font: 500 .74rem var(--f-body); color: var(--ink-2); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+.chips button.on { color: var(--seal); border-color: var(--seal); }
+.hint { flex: 1; min-width: 0; text-align: right; font-size: .76rem; color: var(--ink-2); }
+.btn:disabled { opacity: .35; cursor: default; }
+
+@media (max-width: 720px) {
+  .page { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .fig, .scrub { width: 100%; min-width: 0; }
+  .scrub { flex-wrap: wrap; }
+}
+
+/* 2차시: 등장인물 색 */
+:root { --skin: #efcfae; --v1: #c58f5c; --v2: #7c9767; --v3: #8a7bb2; --v4: #c47a78; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="top">
+    <div class="top-in">
+      <span class="brand">4·19 혁명</span>
+      <nav class="tabs" aria-label="화면">
+        <a href="#fraud"><small>1960. 3. 15</small>3·15 부정 선거</a>
+        <a href="#bicameral"><small>장면 내각</small>양원제 국회</a>
+      </nav>
+      <a class="lesson-link" data-lesson="1" href="index.html">◀ 이전 차시</a>
+      <button type="button" id="fsBtn">전체 화면</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- 3·15 부정 선거 -->
+    <section class="page" id="p-fraud" data-name="fraud">
+      <div class="head">
+        <div>
+          <h1>3·15 부정 선거, 이렇게 저질렀다</h1>
+          <p>1960년 제4대 정·부통령 선거. 이승만 정부와 자유당은 이기붕을 부통령에 당선시키려 경찰·공무원·마을 이장 등을 동원했다.</p>
+        </div>
+      </div>
+      <div class="fig short"><svg id="svgFraud" viewBox="0 0 1000 560" role="img" aria-label="부정 선거의 유형: 3인조·9인조 공개 투표, 4할 사전 투표, 투표함 바꾸기, 득표율 조정"></svg></div>
+      <div class="scrub">
+        <div class="chips" id="chips-fraud">
+          <button type="button" data-t="0">공개 투표</button>
+          <button type="button" data-t="9000">4할 사전 투표</button>
+          <button type="button" data-t="17500">투표함 바꾸기</button>
+          <button type="button" data-t="26000">득표율 조정</button>
+        </div>
+        <span class="hint" id="hint-fraud"></span>
+        <button type="button" class="btn" id="next-fraud">다음 장면 ▶</button>
+      </div>
+    </section>
+
+    <!-- 양원제 국회 -->
+    <section class="page" id="p-bicameral" data-name="bicameral" hidden>
+      <div class="head">
+        <div>
+          <h1>양원제 국회와 장면 내각</h1>
+          <p>4·19 혁명 이후 개정된 헌법은 국회를 민의원과 참의원으로 나누고(양원제), 국회 다수당이 내각을 구성하게 했다(내각 책임제).</p>
+        </div>
+      </div>
+      <div class="fig short"><svg id="svgBicameral" viewBox="0 0 1000 560" role="img" aria-label="민의원 233석 중 민주당 175석, 참의원 58석 중 민주당 31석. 양원 합동회의가 대통령 윤보선을 선출하고, 윤보선이 지명한 장면이 민의원 동의를 얻어 국무총리가 되어 내각을 구성"></svg></div>
+      <div class="scrub">
+        <div class="chips" id="chips-bicameral">
+          <button type="button" data-t="0">양원제</button>
+          <button type="button" data-t="4000">총선거 결과</button>
+          <button type="button" data-t="7600">장면 내각</button>
+        </div>
+        <span class="hint" id="hint-bicameral"></span>
+        <button type="button" class="btn" id="next-bicameral">다음 장면 ▶</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function mk(tag, attrs, parent, text) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function seg(t, a, b) { return clamp((t - a) / (b - a)); }
+  function ease(k) { return k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
+  function easeOut(k) { return 1 - Math.pow(1 - k, 3); }
+  function lerp(a, b, k) { return a + (b - a) * k; }
+  function op(el, v) { el.style.opacity = v.toFixed(3); }
+  function at(el, x, y, s) { el.setAttribute("transform", "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ")" + (s != null && s !== 1 ? " scale(" + s.toFixed(3) + ")" : "")); }
+  function show(el, on) { el.style.display = on ? "" : "none"; }
+
+  // 장면마다 멈추고, 누르면 다음 장면을 재생하는 시간축
+  function stepper(name, STOPS, render, svg) {
+    var END = STOPS[STOPS.length - 1], t = 0, target = STOPS[0], playing = true, prev = 0;
+    var chips = $$("#chips-" + name + " button"), nextBtn = $("#next-" + name), hint = $("#hint-" + name);
+    function draw() {
+      render(t);
+      chips.forEach(function (c, ci) {
+        var a = +c.dataset.t, b = ci < chips.length - 1 ? +chips[ci + 1].dataset.t : Infinity;
+        c.classList.toggle("on", t >= a && t < b);
+      });
+      nextBtn.disabled = playing;
+      nextBtn.textContent = playing ? "재생 중" : t >= END ? "처음부터 ▶" : "다음 장면 ▶";
+      hint.textContent = playing || t >= END ? "" : "그림을 눌러도 넘어갑니다";
+    }
+    function stopAfter(v) { for (var i = 0; i < STOPS.length; i++) if (STOPS[i] > v) return STOPS[i]; return END; }
+    function play(from) { t = from; target = stopAfter(t); playing = true; prev = performance.now(); draw(); }
+    function advance() { if (!playing) play(t >= END ? 0 : t); }
+    chips.forEach(function (c) { c.addEventListener("click", function () { play(+c.dataset.t); }); });
+    nextBtn.addEventListener("click", advance);
+    svg.parentNode.addEventListener("click", advance);
+    svg.parentNode.style.cursor = "pointer";
+    return {
+      start: function () { play(0); },
+      frame: function (now) { var dt = Math.min(100, now - prev); prev = now; if (!playing) { render(t, true); return; } t += dt; if (t >= target) { t = target; playing = false; } draw(); }
+    };
+  }
+
+  /* ── 등장인물 ── */
+  function person(parent, o) {
+    var outer = mk("g", {}, parent), g = mk("g", {}, outer), pants = o.pants || "var(--ink)";
+    var legL = mk("rect", { x: -8, y: -27, width: 7, height: 27, rx: 3.5, fill: pants }, g);
+    var legR = mk("rect", { x: 1, y: -27, width: 7, height: 27, rx: 3.5, fill: pants }, g);
+    var armB = mk("rect", { x: -3, y: -63, width: 7, height: 31, rx: 3.5, fill: o.shirt, opacity: .75 }, g);
+    mk("rect", { x: -15, y: -67, width: 30, height: 45, rx: 10, fill: o.shirt }, g);
+    if (o.band) mk("rect", { x: -15, y: -55, width: 30, height: 7, fill: "var(--seal)" }, g);
+    var armF = mk("rect", { x: -3, y: -63, width: 7, height: 31, rx: 3.5, fill: o.shirt, stroke: "var(--ink)", "stroke-opacity": .25 }, g);
+    mk("circle", { cx: 0, cy: -82, r: 13, fill: "var(--skin)" }, g);
+    if (o.cap) {
+      mk("rect", { x: -14, y: -100, width: 28, height: 12, rx: 3, fill: o.cap }, g);
+      mk("rect", { x: 2, y: -91, width: 17, height: 4, rx: 2, fill: o.cap }, g);
+    } else mk("path", { d: "M-13,-84 a13,13 0 0 1 26,0 q-9,-5 -26,0 z", fill: o.hair || "var(--ink)" }, g);
+    mk("circle", { cx: 5, cy: -82, r: 1.8, fill: "var(--ink)" }, g);
+    mk("circle", { cx: 11, cy: -82, r: 1.8, fill: "var(--ink)" }, g);
+    var lab = o.label ? mk("text", { x: 0, y: 20, "class": "tm mid", style: "fill:var(--ink);font-size:12px" }, outer, o.label) : null;
+    return {
+      g: outer,
+      set: function (x, y, walk, face, raise) {
+        at(outer, x, y, o.s || 1.35);
+        g.setAttribute("transform", face < 0 ? "scale(-1 1)" : "");
+        var a = walk ? 24 * Math.sin(walk) : 0;
+        legL.setAttribute("transform", "rotate(" + a.toFixed(1) + " -4.5 -27)");
+        legR.setAttribute("transform", "rotate(" + (-a).toFixed(1) + " 4.5 -27)");
+        armB.setAttribute("transform", "rotate(" + (-a).toFixed(1) + " 0 -60)");
+        armF.setAttribute("transform", "rotate(" + (raise ? -150 : a).toFixed(1) + " 0 -60)");
+      }
+    };
+  }
+  function walkTo(p, x0, x1, y, lt, a, b, faceEnd) {
+    var k = seg(lt, a, b), x = lerp(x0, x1, ease(k));
+    p.set(x, y, k > 0 && k < 1 ? lt / 95 : 0, k < 1 ? (x1 >= x0 ? 1 : -1) : (faceEnd || (x1 >= x0 ? 1 : -1)));
+    return x;
+  }
+  function ballotBox(parent, label, tag, tagColor) {
+    var g = mk("g", {}, parent);
+    mk("rect", { x: -40, y: -64, width: 80, height: 64, rx: 3, fill: "var(--paper)", stroke: "var(--ink)", "stroke-width": 2 }, g);
+    mk("rect", { x: -18, y: -66, width: 36, height: 5, rx: 2, fill: "var(--ink)" }, g);
+    mk("text", { x: 0, y: -26, "class": "t mid", style: "font-weight:700" }, g, label || "투표함");
+    if (tag) {
+      mk("rect", { x: -34, y: -18, width: 68, height: 14, rx: 2, fill: tagColor }, g);
+      mk("text", { x: 0, y: -7.5, "class": "mid", style: "fill:var(--sheet);font-size:10px;font-weight:700" }, g, tag);
+    }
+    return g;
+  }
+  function paper(parent, mark) {
+    var g = mk("g", {}, parent);
+    mk("rect", { x: -9, y: -12, width: 18, height: 24, rx: 1.5, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 1.5 }, g);
+    mk("line", { x1: -5, x2: 5, y1: -5, y2: -5, stroke: "var(--ink-2)" }, g);
+    mk("line", { x1: -5, x2: 5, y1: 2, y2: 2, stroke: "var(--ink-2)" }, g);
+    if (mark) mk("circle", { cx: 3, cy: -5, r: 3.4, fill: "none", stroke: "var(--seal)", "stroke-width": 1.6 }, g);
+    return g;
+  }
+  function caption(parent, n, title, lines) {
+    var g = mk("g", {}, parent);
+    mk("text", { x: 30, y: 44, "class": "tm", style: "fill:var(--seal)" }, g, "유형 " + n + " / 4");
+    mk("text", { x: 30, y: 74, "class": "big", "font-size": 26 }, g, title);
+    var d = mk("g", { style: "opacity:0" }, g);
+    lines.forEach(function (l, i) { mk("text", { x: 30, y: 104 + i * 22, "class": "t", style: "fill:var(--ink-2)" }, d, l); });
+    return d;
+  }
+  var VOTER = ["var(--v1)", "var(--v2)", "var(--v3)", "var(--v4)"];
+  var GROUND = 470;
+
+  /* ───────── 3·15 부정 선거 ───────── */
+  var fraud = (function () {
+    var svg = $("#svgFraud");
+    mk("rect", { x: 0, y: GROUND, width: 1000, height: 90, fill: "var(--paper)" }, svg);
+    mk("line", { x1: 0, x2: 1000, y1: GROUND, y2: GROUND, stroke: "var(--rule)", "stroke-width": 2 }, svg);
+    var scenes = [0, 1, 2, 3].map(function () { return mk("g", {}, svg); });
+
+    // ① 3인조·9인조 공개 투표
+    var s1 = scenes[0];
+    var c1 = caption(s1, 1, "3인조·9인조 공개 투표", ["유권자를 3명, 9명씩 묶고 조장이 따라다니며", "누구를 찍었는지 확인한 뒤 투표함에 넣게 했다."]);
+    var booth = mk("g", {}, s1);
+    mk("rect", { x: 560, y: GROUND - 150, width: 110, height: 150, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, booth);
+    mk("rect", { x: 560, y: GROUND - 172, width: 110, height: 24, fill: "var(--ink-2)" }, booth);
+    mk("text", { x: 615, y: GROUND - 155, "class": "mid", style: "fill:var(--sheet);font-size:13px;font-weight:700" }, booth, "기표소");
+    mk("path", { d: "M560," + (GROUND - 148) + " q14,60 0,148", fill: "none", stroke: "var(--seal)", "stroke-width": 2, "stroke-dasharray": "4 3" }, booth);
+    mk("text", { x: 615, y: GROUND + 40, "class": "t2 mid" }, booth, "가림막이 열려 있음");
+    var box1 = ballotBox(s1); at(box1, 830, GROUND);
+    var voters1 = [0, 1, 2].map(function (i) { return person(s1, { shirt: VOTER[i], label: "유권자" }); });
+    var leader = person(s1, { shirt: "var(--ink-2)", band: true, label: "조장" });
+    var papers1 = [0, 1, 2].map(function () { return paper(s1, true); });
+    var eye = mk("g", {}, s1);
+    mk("path", { d: "M-22,0 q22,-18 44,0 q-22,18 -44,0 z", fill: "var(--sheet)", stroke: "var(--seal)", "stroke-width": 2.5 }, eye);
+    mk("circle", { cx: 0, cy: 0, r: 6, fill: "var(--seal)" }, eye);
+    var bubble = mk("g", {}, s1);
+    mk("rect", { x: -40, y: -24, width: 80, height: 30, rx: 6, fill: "var(--sheet)", stroke: "var(--seal)", "stroke-width": 2 }, bubble);
+    mk("text", { x: 0, y: -4, "class": "mid", style: "fill:var(--seal);font-size:14px;font-weight:700" }, bubble, "확인!");
+    var grp = mk("g", {}, s1);
+    mk("rect", { x: -175, y: -165, width: 350, height: 200, rx: 10, fill: "none", stroke: "var(--seal)", "stroke-width": 1.5, "stroke-dasharray": "6 5" }, grp);
+    mk("text", { x: -163, y: -148, "class": "tm", style: "fill:var(--seal)" }, grp, "3인조");
+
+    function scene1(lt) {
+      op(c1, seg(lt, 300, 900));
+      var gx = 0;
+      // 등장: 조장과 3명이 한 조로 걸어옴
+      [0, 1, 2].forEach(function (i) {
+        var base = 300 + i * 60, stand = 380 + i * 60;
+        var turn = 3200 + i * 900;
+        var x = walkTo(voters1[i], -140 + i * 60, stand, GROUND, lt, 200, 2400);
+        if (lt > turn) x = walkTo(voters1[i], stand, 600, GROUND, lt, turn, turn + 450);
+        if (lt > turn + 700) x = walkTo(voters1[i], 600, 800 - i * 12, GROUND, lt, turn + 700, turn + 1250);
+        if (lt > turn + 1500) x = walkTo(voters1[i], 800 - i * 12, 1120, GROUND, lt, turn + 1500 + (2 - i) * 120, 8400, 1);
+        var p = papers1[i], showPaper = lt > turn + 300 && lt < turn + 1400;
+        show(p, showPaper);
+        if (showPaper) {
+          var k = seg(lt, turn + 1050, turn + 1350);
+          at(p, lerp(x + 16, 830, k), lerp(GROUND - 165, GROUND - 66, k));
+        }
+        voters1[i].set(x, GROUND, lt > 200 && lt < 2400 || (lt > turn && lt < turn + 450) || (lt > turn + 700 && lt < turn + 1250) || (lt > turn + 1500 && lt < 8400) ? lt / 95 : 0, 1, lt > turn + 300 && lt < turn + 700);
+        if (i === 1) gx = x;
+      });
+      var lx = walkTo(leader, -60, 680, GROUND, lt, 200, 2600, -1);
+      leader.set(lx, GROUND, lt > 200 && lt < 2600 ? lt / 95 : 0, lt < 2600 ? 1 : -1);
+      op(grp, lt < 3000 ? 1 : 1 - seg(lt, 3000, 3300)); at(grp, gx, GROUND);
+      var watching = lt > 3400 && lt < 6400;
+      op(eye, watching ? .5 + .5 * Math.abs(Math.sin(lt / 220)) : 0); at(eye, 680, GROUND - 190);
+      var b = (lt > 3500 && lt < 3950) || (lt > 4400 && lt < 4850) || (lt > 5300 && lt < 5750);
+      op(bubble, b ? 1 : 0); at(bubble, 720, GROUND - 228);
+    }
+
+    // ② 4할 사전 투표
+    var s2 = scenes[1];
+    var c2 = caption(s2, 2, "4할(40%) 사전 투표", ["투표가 시작되기 전에 전체 표의 40%를", "미리 기표해 투표함에 넣어 두었다."]);
+    var night = mk("rect", { x: 0, y: 0, width: 1000, height: GROUND, fill: "var(--ink)", opacity: .1 }, s2);
+    var sign = mk("g", {}, s2);
+    mk("rect", { x: 700, y: 160, width: 230, height: 46, rx: 4, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 2 }, sign);
+    var signT = mk("text", { x: 815, y: 190, "class": "tb mid" }, sign, "투표 시작 전");
+    var box2 = ballotBox(s2); at(box2, 560, GROUND);
+    var gauge = mk("g", {}, s2), cells = [];
+    for (var i = 0; i < 10; i++) cells.push(mk("rect", { x: 620, y: GROUND - 20 - i * 14, width: 26, height: 12, rx: 2, fill: "var(--rule)" }, gauge));
+    var gLab = mk("text", { x: 656, y: GROUND - 60, "class": "tb", style: "fill:var(--seal)" }, gauge, "");
+    mk("text", { x: 633, y: GROUND + 22, "class": "tm mid" }, gauge, "투표함 속 표");
+    var off2 = [person(s2, { shirt: "var(--ink-2)", band: true, label: "공무원" }), person(s2, { shirt: "var(--south)", cap: "var(--ink)", label: "경찰" })];
+    var stack = mk("g", {}, s2);
+    for (i = 0; i < 6; i++) mk("rect", { x: -14, y: -i * 5, width: 28, height: 5, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 1 }, stack);
+    var flying = [0, 1, 2, 3].map(function () { return paper(s2, true); });
+    var voters2 = [0, 1, 2].map(function (k) { return person(s2, { shirt: VOTER[k + 1], label: "유권자" }); });
+
+    function scene2(lt) {
+      op(c2, seg(lt, 300, 900));
+      var day = seg(lt, 5600, 6200);
+      night.setAttribute("opacity", (.1 * (1 - day) + .0).toFixed(3));
+      signT.textContent = lt < 5900 ? "투표 시작 전" : "투표 시작";
+      var a = walkTo(off2[0], -80, 440, GROUND, lt, 300, 2000);
+      walkTo(off2[1], -150, 360, GROUND, lt, 300, 2000);
+      show(stack, lt > 0 && lt < 4600); at(stack, a + 24, GROUND - 84);
+      var filled = 0;
+      flying.forEach(function (p, k) {
+        var s = 2300 + k * 550, e = s + 450, kk = seg(lt, s, e);
+        show(p, kk > 0 && kk < 1);
+        at(p, lerp(a + 24, 560, kk), lerp(GROUND - 95, GROUND - 66, kk) - Math.sin(kk * Math.PI) * 60);
+        if (lt >= e) filled++;
+      });
+      cells.forEach(function (c, k) { c.setAttribute("fill", k < filled ? "var(--seal)" : "var(--rule)"); });
+      gLab.textContent = filled ? (filled * 10) + "%" : "";
+      // 공무원 퇴장, 유권자 입장
+      if (lt > 4700) { walkTo(off2[0], 440, -120, GROUND, lt, 4700, 6000); walkTo(off2[1], 360, -200, GROUND, lt, 4700, 6000); }
+      voters2.forEach(function (v, k) { walkTo(v, 1080 + k * 60, 760 + k * 60, GROUND, lt, 6200 + k * 150, 7800, -1); });
+    }
+
+    // ③ 투표함 바꾸기
+    var s3 = scenes[2];
+    var c3 = caption(s3, 3, "투표함 바꾸기", ["유권자가 넣은 진짜 투표함을 옮기는 도중에", "미리 표를 채워 둔 가짜 투표함으로 바꿔치기했다."]);
+    var wall = mk("g", {}, s3);
+    var dest = mk("g", {}, s3);
+    mk("rect", { x: 840, y: GROUND - 150, width: 140, height: 150, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, dest);
+    mk("text", { x: 910, y: GROUND - 120, "class": "tb mid" }, dest, "개표소");
+    var real = ballotBox(s3, "투표함", "국민의 표", "var(--south)");
+    var fake = ballotBox(s3, "투표함", "미리 채운 표", "var(--seal)");
+    var carA = person(s3, { shirt: "var(--south)", cap: "var(--ink)", label: "경찰" });
+    var carB = person(s3, { shirt: "var(--ink-2)", band: true, label: "공무원" });
+    mk("rect", { x: 420, y: GROUND - 230, width: 170, height: 230, fill: "var(--rule)" }, wall);
+    mk("text", { x: 505, y: GROUND - 200, "class": "t mid", style: "font-weight:600" }, wall, "바꿔치기 장소");
+    mk("rect", { x: 470, y: GROUND - 130, width: 70, height: 130, fill: "var(--ink-2)" }, wall);
+    mk("text", { x: 505, y: GROUND + 22, "class": "tm mid" }, wall, "뒷문");
+    var wallFront = mk("rect", { x: 420, y: GROUND - 230, width: 170, height: 230, fill: "var(--rule)", opacity: .62 }, s3);
+    var swapMark = mk("g", {}, s3);
+    mk("path", { d: "M-24,-8 h40 l-8,-8 M24,8 h-40 l8,8", fill: "none", stroke: "var(--seal)", "stroke-width": 4, "stroke-linecap": "round", "stroke-linejoin": "round" }, swapMark);
+    at(swapMark, 505, GROUND - 150);
+
+    function scene3(lt) {
+      op(c3, seg(lt, 300, 900));
+      // 경찰이 진짜 투표함을 들고 왼쪽에서 가림막 뒤로
+      var ax = walkTo(carA, 40, 480, GROUND, lt, 600, 2800);
+      at(real, ax + 34, GROUND - 52, .75);
+      // 가림막 뒤: 진짜는 뒷문 쪽으로 사라지고 가짜가 나옴
+      var hidden = lt > 2900 && lt < 4600;
+      op(swapMark, hidden ? .5 + .5 * Math.abs(Math.sin(lt / 180)) : 0);
+      // 진짜 투표함은 뒷문으로 빠져나감
+      if (lt > 2800) { var rk = ease(seg(lt, 3000, 4200)); at(real, lerp(ax + 30, 505, rk), GROUND - 40 + rk * 10, .75 - rk * .2); op(real, 1 - seg(lt, 3900, 4300)); }
+      else op(real, 1);
+      var bx = walkTo(carB, 530, 820, GROUND, lt, 4600, 7000);
+      show(carB.g, lt > 4300);
+      if (lt > 2800) { show(carA.g, lt < 3200); }
+      else show(carA.g, true);
+      show(fake, lt > 4300);
+      at(fake, bx + 34, GROUND - 52, .75);
+      if (lt >= 7000) at(fake, 900, GROUND, .9);
+    }
+
+    // ④ 득표율 조정
+    var s4 = scenes[3];
+    var c4 = caption(s4, 4, "득표율 조정", ["이기붕의 득표율이 100%에 가깝게 나오자", "부정이 드러날까 봐 79%로 낮춰 발표했다."]);
+    var board = mk("g", {}, s4);
+    mk("rect", { x: 380, y: 150, width: 580, height: 230, rx: 6, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 2 }, board);
+    mk("text", { x: 400, y: 182, "class": "tb" }, board, "부통령 선거 개표 결과");
+    mk("text", { x: 400, y: 232, "class": "t" }, board, "이기붕");
+    mk("text", { x: 400, y: 254, "class": "tm" }, board, "자유당");
+    mk("text", { x: 400, y: 312, "class": "t" }, board, "장면");
+    mk("text", { x: 400, y: 334, "class": "tm" }, board, "민주당");
+    mk("rect", { x: 480, y: 214, width: 420, height: 34, fill: "var(--paper)" }, board);
+    mk("rect", { x: 480, y: 294, width: 420, height: 34, fill: "var(--paper)" }, board);
+    var barA = mk("rect", { x: 480, y: 214, width: 0, height: 34, fill: "var(--north)" }, board);
+    var barB = mk("rect", { x: 480, y: 294, width: 0, height: 34, fill: "var(--south)" }, board);
+    var labA = mk("text", { x: 0, y: 236, "class": "tb" }, board, "");
+    var mark79 = mk("g", {}, board);
+    mk("line", { x1: 480 + 420 * .79, x2: 480 + 420 * .79, y1: 200, y2: 262, stroke: "var(--seal)", "stroke-width": 2.5, "stroke-dasharray": "5 4" }, mark79);
+    var eraser = mk("g", {}, s4);
+    mk("rect", { x: -16, y: -9, width: 32, height: 18, rx: 3, fill: "var(--seal)" }, eraser);
+    mk("rect", { x: -16, y: -9, width: 12, height: 18, rx: 3, fill: "var(--sheet)", stroke: "var(--seal)" }, eraser);
+    var o4a = person(s4, { shirt: "var(--ink-2)", band: true, label: "공무원" });
+    var o4b = person(s4, { shirt: "var(--south)", cap: "var(--ink)", label: "경찰" });
+    var shock = mk("text", { x: 230, y: 330, "class": "big mid", "font-size": 40, fill: "var(--seal)" }, s4, "!");
+
+    function scene4(lt) {
+      op(c4, seg(lt, 300, 900));
+      walkTo(o4a, -60, 200, GROUND, lt, 300, 1800); walkTo(o4b, -140, 120, GROUND, lt, 300, 1800);
+      var rise = ease(seg(lt, 1800, 3400)), cut = ease(seg(lt, 4600, 6000));
+      var wA = 420 * lerp(0, .985, rise); wA = lerp(wA, 420 * .79, cut);
+      barA.setAttribute("width", wA.toFixed(1));
+      barB.setAttribute("width", (420 * .17 * rise).toFixed(1));
+      labA.setAttribute("x", (480 + wA - 8).toFixed(1));
+      labA.setAttribute("text-anchor", "end");
+      labA.style.fill = "var(--sheet)";
+      labA.textContent = lt < 3400 ? "" : lt < 4600 ? "100%에 가까움" : cut >= 1 ? "79%로 조정" : "";
+      op(mark79, seg(lt, 4000, 4400));
+      op(shock, lt > 3500 && lt < 4600 ? 1 : 0);
+      var ek = seg(lt, 4600, 6000);
+      op(eraser, ek > 0 && ek < 1 ? 1 : 0);
+      at(eraser, 480 + lerp(420 * .985, 420 * .79, ease(ek)) + 18, 231 + Math.sin(lt / 60) * 6);
+      o4a.set(200, GROUND, 0, 1, lt > 4500 && lt < 6100);
+    }
+
+    var SC = [[0, 9000, scene1], [9000, 17500, scene2], [17500, 26000, scene3], [26000, 34000, scene4]];
+    function render(t, idle) {
+      SC.forEach(function (s, i) {
+        var on = t >= s[0] && (t < s[1] || i === SC.length - 1);
+        show(scenes[i], on);
+        if (on) s[2](t - s[0], idle);
+      });
+    }
+    return stepper("fraud", [8999, 17499, 25999, 34000], render, svg);
+  })();
+
+  /* ───────── 양원제 국회 ───────── */
+  var bicameral = (function () {
+    var svg = $("#svgBicameral");
+    var PARTIES = [["민주당", "var(--south)"], ["자유당", "var(--north)"], ["무소속 등", "var(--mute)"]];
+    function hemi(n, cx, cy, r0, r1, rows) {
+      var radii = [], sum = 0, k;
+      for (k = 0; k < rows; k++) { var r = r0 + (r1 - r0) * k / (rows - 1); radii.push(r); sum += r; }
+      var counts = radii.map(function (r) { return Math.round(n * r / sum); });
+      counts[rows - 1] += n - counts.reduce(function (a, b) { return a + b; }, 0);
+      var out = [];
+      radii.forEach(function (r, ri) { for (var j = 0; j < counts[ri]; j++) { var a = Math.PI - (j + .5) / counts[ri] * Math.PI; out.push({ x: cx + r * Math.cos(a), y: cy - r * Math.sin(a), a: a, r: r }); } });
+      out.sort(function (p, q) { return q.a - p.a || p.r - q.r; });
+      return out;
+    }
+    function house(cx, cy, r0, r1, rows, dot, split, name, sub, term) {
+      var seats = hemi(split[0] + split[1] + split[2], cx, cy, r0, r1, rows), idx = 0, g = mk("g", {}, svg);
+      split.forEach(function (n, pi) { for (var j = 0; j < n; j++) seats[idx++].p = pi; });
+      seats.forEach(function (s, k) { s.el = mk("circle", { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: dot, fill: "var(--rule)" }, g); s.k = k; });
+      mk("text", { x: cx, y: cy - r1 - 34, "class": "big mid", "font-size": 24 }, svg, name);
+      mk("text", { x: cx, y: cy - r1 - 14, "class": "t2 mid" }, svg, sub);
+      var total = mk("text", { x: cx, y: cy - 8, "class": "big mid", "font-size": 30 }, svg, "");
+      mk("text", { x: cx, y: cy + 22, "class": "tm mid" }, svg, term);
+      var legend = mk("text", { x: cx, y: cy + 46, "class": "t mid" }, svg, "");
+      return { seats: seats, total: total, legend: legend, split: split, n: seats.length, cx: cx, cy: cy };
+    }
+    mk("text", { x: 30, y: 40, "class": "tb" }, svg, "국회 = 민의원 + 참의원");
+    mk("text", { x: 30, y: 62, "class": "tm" }, svg, "1960. 7. 29 총선거 결과");
+    var lower = house(300, 300, 96, 200, 8, 6.2, [175, 2, 56], "민의원", "하원", "임기 4년");
+    var upper = house(760, 300, 62, 124, 5, 6.2, [31, 4, 23], "참의원", "상원", "임기 6년");
+    var pk = mk("g", {}, svg);
+    PARTIES.forEach(function (p, i) { mk("rect", { x: 700 + i * 92, y: 30, width: 12, height: 12, rx: 6, fill: p[1] }, pk); mk("text", { x: 716 + i * 92, y: 41, "class": "t2" }, pk, p[0]); });
+
+    var win = mk("g", {}, svg);
+    mk("text", { x: 300, y: 384, "class": "tb mid", style: "fill:var(--south)" }, win, "민주당 175석 · 약 75%");
+    mk("text", { x: 760, y: 384, "class": "tb mid", style: "fill:var(--south)" }, win, "민주당 31석 · 약 53%");
+
+    // 흐름도
+    var flow = mk("g", {}, svg);
+    function node(x, w, title, sub, fill, txt) {
+      var g = mk("g", {}, flow);
+      mk("rect", { x: x, y: 420, width: w, height: 64, rx: 5, fill: fill, stroke: "var(--ink)", "stroke-width": fill === "var(--sheet)" ? 1.5 : 0 }, g);
+      mk("text", { x: x + w / 2, y: 448, "class": "mid", style: "fill:" + txt + ";font-size:16px;font-weight:700" }, g, title);
+      mk("text", { x: x + w / 2, y: 470, "class": "mid", style: "fill:" + txt + ";font-size:12px;opacity:.85" }, g, sub);
+      return g;
+    }
+    var n1 = node(40, 180, "양원 합동 회의", "민의원 + 참의원", "var(--sheet)", "var(--ink)");
+    var n2 = node(290, 180, "대통령 윤보선", "국가 원수 · 상징적 지위", "var(--sheet)", "var(--ink)");
+    var n3 = node(540, 180, "국무총리 장면", "행정의 실권", "var(--south)", "var(--sheet)");
+    var n4 = node(790, 180, "장면 내각", "국회 다수당(민주당)", "var(--south)", "var(--sheet)");
+    function arrow(d, label, lx, ly, muted) {
+      var g = mk("g", {}, flow);
+      var p = mk("path", { d: d, fill: "none", stroke: muted ? "var(--ink-2)" : "var(--seal)", "stroke-width": muted ? 1.8 : 2.5, pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 }, g);
+      var tx = mk("text", { x: lx, y: ly, "class": "t mid", style: "fill:var(--seal);font-weight:700" }, g, label);
+      return { p: p, t: tx };
+    }
+    var a0 = arrow("M300,360 C300,396 140,392 130,416", "", 0, 0, true);
+    var a0b = arrow("M760,360 C760,400 190,396 165,416", "", 0, 0, true);
+    var a1 = arrow("M222,452 H286", "선출", 254, 442);
+    var a2 = arrow("M472,452 H536", "지명", 504, 442);
+    var a3 = arrow("M340,360 C350,382 600,380 630,416", "민의원 동의", 470, 376);
+    var a4 = arrow("M722,452 H786", "구성", 754, 442);
+    var cap = mk("text", { x: 500, y: 530, "class": "t mid", style: "font-weight:700" }, svg, "");
+
+    function paintHouse(h, t, t0) {
+      var c = [0, 0, 0];
+      h.seats.forEach(function (s) {
+        var on = t >= t0 + s.k * (1800 / h.n);
+        var dim = t > 4300 && s.p !== 0 ? seg(t, 4300, 4800) : 0;
+        s.el.setAttribute("fill", on ? PARTIES[s.p][1] : "var(--rule)");
+        s.el.style.opacity = (1 - .75 * dim * (t < 7600 ? 1 : 1 - seg(t, 7600, 8000))).toFixed(3);
+        if (on) c[s.p]++;
+      });
+      h.total.textContent = (c[0] + c[1] + c[2]) + "석";
+      h.legend.textContent = t < t0 ? "" : "민주당 " + c[0] + " · 자유당 " + c[1] + " · 무소속 등 " + c[2];
+    }
+    function drawA(a, k) { a.p.setAttribute("stroke-dashoffset", (1 - k).toFixed(3)); op(a.t, k > .9 ? 1 : 0); }
+    function render(t) {
+      paintHouse(lower, t, 600); paintHouse(upper, t, 1200);
+      op(pk, seg(t, 300, 900));
+      op(win, seg(t, 4300, 4900) * (1 - seg(t, 7600, 8000)));
+      op(flow, t < 7600 ? 0 : 1);
+      [[a0, 7800, 8600], [a0b, 7800, 8600]].forEach(function (x) { drawA(x[0], ease(seg(t, x[1], x[2]))); });
+      op(n1, seg(t, 8400, 8800));
+      drawA(a1, ease(seg(t, 8900, 9400))); op(n2, seg(t, 9300, 9700));
+      drawA(a2, ease(seg(t, 9900, 10400))); op(n3, seg(t, 10300, 10700));
+      drawA(a3, ease(seg(t, 10800, 11800)));
+      drawA(a4, ease(seg(t, 12100, 12600))); op(n4, seg(t, 12500, 12900));
+      cap.textContent = t < 1500 ? "" : t < 4000 ? "국회를 두 개의 원으로 나눔 (양원제)" : t < 7600 ? "4·19 혁명 이후 총선거에서 민주당이 크게 승리" : t < 13200 ? "" : "내각 책임제: 국회 다수당이 내각을 구성하고, 국무총리가 실제 행정을 이끈다";
+      cap.style.fill = t >= 13200 ? "var(--seal)" : "var(--ink)";
+    }
+    return stepper("bicameral", [3999, 7599, 13800], render, svg);
+  })();
+
+  /* ── 화면 전환 ── */
+  var pages = { fraud: fraud, bicameral: bicameral }, names = ["fraud", "bicameral"], cur = null;
+  function go(name) {
+    if (names.indexOf(name) < 0) name = "fraud";
+    names.forEach(function (n) { $("#p-" + n).hidden = n !== name; });
+    $$(".tabs a").forEach(function (a) { a.setAttribute("aria-current", String(a.getAttribute("href") === "#" + name)); });
+    if (cur !== name) { cur = name; pages[name].start(); }
+  }
+  $$(".tabs a").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      var n = a.getAttribute("href").slice(1);
+      try { history.replaceState(null, "", "#" + n); } catch (err) {}
+      go(n);
+    });
+  });
+  window.addEventListener("hashchange", function () { go(location.hash.slice(1)); });
+  $("#fsBtn").addEventListener("click", function () {
+    try {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else { var p = document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(function () {}); }
+    } catch (e) {}
+  });
+  // 차시 이동 링크: 내 컴퓨터 파일, GitHub 사이트, claude.ai 각각에 맞는 주소
+  $$(".lesson-link").forEach(function (a) {
+    var one = a.dataset.lesson === "1";
+    if (location.protocol === "file:") a.href = one ? "index.html" : "419.html";
+    else if (/github\.io$/.test(location.hostname)) a.href = one ? "/silsub/" : "/silsub/419/";
+    else { a.href = one ? "https://claude.ai/artifact/TvCLu1AaMkF7Lt2YpeSu75" : location.href; a.target = "_blank"; a.rel = "noopener"; }
+  });
+  var segs = location.pathname.split("/").filter(Boolean).map(function (x) { return decodeURIComponent(x).replace(/\.html?$/, ""); });
+  if (segs[segs.length - 1] === "index") segs.pop();
+  go(location.hash.slice(1) || segs.pop() || "");
+  (function loop(now) { if (cur) pages[cur].frame(now); requestAnimationFrame(loop); })(performance.now());
+})();
+</script>
+</body>
+</html>
