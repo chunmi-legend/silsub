@@ -152,10 +152,10 @@ svg text { font-family: var(--f-body); }
       <div class="head">
         <div>
           <h1>양원제 국회와 장면 내각</h1>
-          <p>4·19 혁명 이후 개정된 헌법은 국회를 민의원과 참의원으로 나누고(양원제), 국회 다수당이 내각을 구성하게 했다(내각 책임제).</p>
+          <p>4·19 혁명 이후 과도 정부가 구성되어, 양원제 국회와 내각 책임제를 중심으로 헌법을 개정하였다.</p>
         </div>
       </div>
-      <div class="fig short"><svg id="svgBicameral" viewBox="0 0 1000 560" role="img" aria-label="민의원 233석 중 민주당 175석, 참의원 58석 중 민주당 31석. 양원 합동회의가 대통령 윤보선을 선출하고, 윤보선이 지명한 장면이 민의원 동의를 얻어 국무총리가 되어 내각을 구성"></svg></div>
+      <div class="fig short"><svg id="svgBicameral" viewBox="0 0 1000 560" role="img" aria-label="민의원 233석 중 민주당 175석, 자유당 2석. 참의원 58석 중 민주당 31석, 자유당 4석. 국회에서 윤보선을 대통령으로 선출하고, 윤보선이 지명한 장면이 국무총리로 인준을 받아 장면 내각이 세워짐"></svg></div>
       <div class="scrub">
         <div class="chips" id="chips-bicameral">
           <button type="button" data-t="0">양원제</button>
@@ -493,7 +493,7 @@ svg text { font-family: var(--f-body); }
   /* ───────── 양원제 국회 ───────── */
   var bicameral = (function () {
     var svg = $("#svgBicameral");
-    var PARTIES = [["민주당", "var(--south)"], ["자유당", "var(--north)"], ["무소속 등", "var(--mute)"]];
+    var PARTIES = [["민주당", "var(--south)"], ["자유당", "var(--north)"], ["그 외", "var(--mute)"]];
     function hemi(n, cx, cy, r0, r1, rows) {
       var radii = [], sum = 0, k;
       for (k = 0; k < rows; k++) { var r = r0 + (r1 - r0) * k / (rows - 1); radii.push(r); sum += r; }
@@ -504,54 +504,50 @@ svg text { font-family: var(--f-body); }
       out.sort(function (p, q) { return q.a - p.a || p.r - q.r; });
       return out;
     }
-    function house(cx, cy, r0, r1, rows, dot, split, name, sub, term) {
+    function house(cx, cy, r0, r1, rows, dot, split, name, sub) {
       var seats = hemi(split[0] + split[1] + split[2], cx, cy, r0, r1, rows), idx = 0, g = mk("g", {}, svg);
       split.forEach(function (n, pi) { for (var j = 0; j < n; j++) seats[idx++].p = pi; });
       seats.forEach(function (s, k) { s.el = mk("circle", { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: dot, fill: "var(--rule)" }, g); s.k = k; });
       mk("text", { x: cx, y: cy - r1 - 34, "class": "big mid", "font-size": 24 }, svg, name);
       mk("text", { x: cx, y: cy - r1 - 14, "class": "t2 mid" }, svg, sub);
       var total = mk("text", { x: cx, y: cy - 8, "class": "big mid", "font-size": 30 }, svg, "");
-      mk("text", { x: cx, y: cy + 22, "class": "tm mid" }, svg, term);
-      var legend = mk("text", { x: cx, y: cy + 46, "class": "t mid" }, svg, "");
+      var legend = mk("text", { x: cx, y: cy + 34, "class": "t mid" }, svg, "");
       return { seats: seats, total: total, legend: legend, split: split, n: seats.length, cx: cx, cy: cy };
     }
     mk("text", { x: 30, y: 40, "class": "tb" }, svg, "국회 = 민의원 + 참의원");
-    mk("text", { x: 30, y: 62, "class": "tm" }, svg, "1960. 7. 29 총선거 결과");
-    var lower = house(300, 300, 96, 200, 8, 6.2, [175, 2, 56], "민의원", "하원", "임기 4년");
-    var upper = house(760, 300, 62, 124, 5, 6.2, [31, 4, 23], "참의원", "상원", "임기 6년");
+    mk("text", { x: 30, y: 62, "class": "tm" }, svg, "새 헌법에 따라 실시된 총선거 결과");
+    var lower = house(300, 300, 96, 200, 8, 6.2, [175, 2, 56], "민의원", "하원");
+    var upper = house(760, 300, 62, 124, 5, 6.2, [31, 4, 23], "참의원", "상원");
     var pk = mk("g", {}, svg);
     PARTIES.forEach(function (p, i) { mk("rect", { x: 700 + i * 92, y: 30, width: 12, height: 12, rx: 6, fill: p[1] }, pk); mk("text", { x: 716 + i * 92, y: 41, "class": "t2" }, pk, p[0]); });
 
-    var win = mk("g", {}, svg);
-    mk("text", { x: 300, y: 384, "class": "tb mid", style: "fill:var(--south)" }, win, "민주당 175석 · 약 75%");
-    mk("text", { x: 760, y: 384, "class": "tb mid", style: "fill:var(--south)" }, win, "민주당 31석 · 약 53%");
 
     // 흐름도
     var flow = mk("g", {}, svg);
     function node(x, w, title, sub, fill, txt) {
       var g = mk("g", {}, flow);
-      mk("rect", { x: x, y: 420, width: w, height: 64, rx: 5, fill: fill, stroke: "var(--ink)", "stroke-width": fill === "var(--sheet)" ? 1.5 : 0 }, g);
-      mk("text", { x: x + w / 2, y: 448, "class": "mid", style: "fill:" + txt + ";font-size:16px;font-weight:700" }, g, title);
-      mk("text", { x: x + w / 2, y: 470, "class": "mid", style: "fill:" + txt + ";font-size:12px;opacity:.85" }, g, sub);
+      mk("rect", { x: x, y: 396, width: w, height: 64, rx: 5, fill: fill, stroke: "var(--ink)", "stroke-width": fill === "var(--sheet)" ? 1.5 : 0 }, g);
+      mk("text", { x: x + w / 2, y: sub ? 424 : 434, "class": "mid", style: "fill:" + txt + ";font-size:16px;font-weight:700" }, g, title);
+      if (sub) mk("text", { x: x + w / 2, y: 446, "class": "mid", style: "fill:" + txt + ";font-size:12px;opacity:.85" }, g, sub);
       return g;
     }
-    var n1 = node(40, 180, "양원 합동 회의", "민의원 + 참의원", "var(--sheet)", "var(--ink)");
-    var n2 = node(290, 180, "대통령 윤보선", "국가 원수 · 상징적 지위", "var(--sheet)", "var(--ink)");
-    var n3 = node(540, 180, "국무총리 장면", "행정의 실권", "var(--south)", "var(--sheet)");
-    var n4 = node(790, 180, "장면 내각", "국회 다수당(민주당)", "var(--south)", "var(--sheet)");
+    var n1 = node(40, 180, "국회", "민의원 + 참의원", "var(--sheet)", "var(--ink)");
+    var n2 = node(290, 180, "대통령 윤보선", "", "var(--sheet)", "var(--ink)");
+    var n3 = node(540, 180, "국무총리 장면", "", "var(--south)", "var(--sheet)");
+    var n4 = node(790, 180, "장면 내각", "국회 다수당 민주당", "var(--south)", "var(--sheet)");
     function arrow(d, label, lx, ly, muted) {
       var g = mk("g", {}, flow);
       var p = mk("path", { d: d, fill: "none", stroke: muted ? "var(--ink-2)" : "var(--seal)", "stroke-width": muted ? 1.8 : 2.5, pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 }, g);
       var tx = mk("text", { x: lx, y: ly, "class": "t mid", style: "fill:var(--seal);font-weight:700" }, g, label);
       return { p: p, t: tx };
     }
-    var a0 = arrow("M300,360 C300,396 140,392 130,416", "", 0, 0, true);
-    var a0b = arrow("M760,360 C760,400 190,396 165,416", "", 0, 0, true);
-    var a1 = arrow("M222,452 H286", "선출", 254, 442);
-    var a2 = arrow("M472,452 H536", "지명", 504, 442);
-    var a3 = arrow("M340,360 C350,382 600,380 630,416", "민의원 동의", 470, 376);
-    var a4 = arrow("M722,452 H786", "구성", 754, 442);
-    var cap = mk("text", { x: 500, y: 530, "class": "t mid", style: "font-weight:700" }, svg, "");
+    var a0 = arrow("M300,352 C300,380 140,372 130,392", "", 0, 0, true);
+    var a0b = arrow("M760,352 C760,384 190,376 165,392", "", 0, 0, true);
+    var a1 = arrow("M222,428 H286", "선출", 254, 418);
+    var a2 = arrow("M472,428 H536", "지명", 504, 418);
+    var a3 = arrow("M130,462 C140,504 620,504 630,462", "인준 (국회가 동의)", 380, 518);
+    var a4 = arrow("M722,428 H786", "구성", 754, 418);
+    var cap = mk("text", { x: 500, y: 548, "class": "t mid", style: "font-weight:700" }, svg, "");
 
     function paintHouse(h, t, t0) {
       var c = [0, 0, 0];
@@ -563,13 +559,12 @@ svg text { font-family: var(--f-body); }
         if (on) c[s.p]++;
       });
       h.total.textContent = (c[0] + c[1] + c[2]) + "석";
-      h.legend.textContent = t < t0 ? "" : "민주당 " + c[0] + " · 자유당 " + c[1] + " · 무소속 등 " + c[2];
+      h.legend.textContent = t < t0 ? "" : "민주당 " + c[0] + " · 자유당 " + c[1];
     }
     function drawA(a, k) { a.p.setAttribute("stroke-dashoffset", (1 - k).toFixed(3)); op(a.t, k > .9 ? 1 : 0); }
     function render(t) {
       paintHouse(lower, t, 600); paintHouse(upper, t, 1200);
       op(pk, seg(t, 300, 900));
-      op(win, seg(t, 4300, 4900) * (1 - seg(t, 7600, 8000)));
       op(flow, t < 7600 ? 0 : 1);
       [[a0, 7800, 8600], [a0b, 7800, 8600]].forEach(function (x) { drawA(x[0], ease(seg(t, x[1], x[2]))); });
       op(n1, seg(t, 8400, 8800));
@@ -577,7 +572,7 @@ svg text { font-family: var(--f-body); }
       drawA(a2, ease(seg(t, 9900, 10400))); op(n3, seg(t, 10300, 10700));
       drawA(a3, ease(seg(t, 10800, 11800)));
       drawA(a4, ease(seg(t, 12100, 12600))); op(n4, seg(t, 12500, 12900));
-      cap.textContent = t < 1500 ? "" : t < 4000 ? "국회를 두 개의 원으로 나눔 (양원제)" : t < 7600 ? "4·19 혁명 이후 총선거에서 민주당이 크게 승리" : t < 13200 ? "" : "내각 책임제: 국회 다수당이 내각을 구성하고, 국무총리가 실제 행정을 이끈다";
+      cap.textContent = t < 1500 ? "" : t < 4000 ? "양원제: 국회를 상·하원으로 구성하는 제도" : t < 7600 ? "새 헌법에 따라 실시된 총선거에서 민주당이 크게 승리" : t < 13200 ? "" : "내각 책임제: 국회 다수당이 내각을 구성하는 정치 형태";
       cap.style.fill = t >= 13200 ? "var(--seal)" : "var(--ink)";
     }
     return stepper("bicameral", [3999, 7599, 13800], render, svg);
