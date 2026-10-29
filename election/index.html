@@ -221,7 +221,6 @@ svg text { font-family: var(--f-body); }
   function shuffle(arr, r) { for (var i = arr.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var x = arr[i]; arr[i] = arr[j]; arr[j] = x; } return arr; }
   // 움직임이 이 자료의 핵심이라 OS의 "애니메이션 줄이기" 설정과 관계없이 재생한다
   var reduce = false;
-  var LESSON1_WEB = "https://claude.ai/artifact/TvCLu1AaMkF7Lt2YpeSu75", LESSON2_WEB = "https://claude.ai/artifact/WLi4fUxa5aQNsBAGDCghpB";
 
   // 반원형 의석 배치
   function hemicycle(n, cx, cy, r0, r1, rows) {
@@ -692,11 +691,16 @@ svg text { font-family: var(--f-body); }
     } catch (e) {}
   });
   // 차시 이동 링크: 내 컴퓨터 파일, GitHub 사이트, claude.ai 각각에 맞는 주소
+  var LESSONS = {
+    1: ["index.html", "/silsub/", "https://claude.ai/artifact/TvCLu1AaMkF7Lt2YpeSu75"],
+    2: ["419.html", "/silsub/419/", "https://claude.ai/artifact/WLi4fUxa5aQNsBAGDCghpB"],
+    3: ["yushin.html", "/silsub/yushin/", "https://claude.ai/artifact/42jTCQZPoHke5ViLRt8wVe"]
+  };
   $$(".lesson-link").forEach(function (a) {
-    var one = a.dataset.lesson === "1";
-    if (location.protocol === "file:") a.href = one ? "index.html" : "419.html";
-    else if (/github\.io$/.test(location.hostname)) a.href = one ? "/silsub/" : "/silsub/419/";
-    else { a.href = one ? LESSON1_WEB : LESSON2_WEB; a.target = "_blank"; a.rel = "noopener"; }
+    var L = LESSONS[a.dataset.lesson];
+    if (location.protocol === "file:") a.href = L[0];
+    else if (/github\.io$/.test(location.hostname)) a.href = L[1];
+    else { a.href = L[2]; a.target = "_blank"; a.rel = "noopener"; }
   });
   // 주소에 #이 없으면 폴더 이름(/silsub/sasaoip/)으로 화면을 고른다. PPT 링크가 #을 망가뜨리는 경우 대비
   var segs = location.pathname.split("/").filter(Boolean).map(function (x) { return decodeURIComponent(x).replace(/\.html?$/, ""); });

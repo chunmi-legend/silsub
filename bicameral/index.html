@@ -106,7 +106,7 @@ svg text { font-family: var(--f-body); }
   .scrub { flex-wrap: wrap; }
 }
 
-/* 2차시: 등장인물 색 */
+/* 등장인물·정당 색 */
 :root { --skin: #efcfae; --v1: #c58f5c; --v2: #7c9767; --v3: #8a7bb2; --v4: #c47a78; }
 </style>
 </head>
@@ -121,6 +121,7 @@ svg text { font-family: var(--f-body); }
         <a href="#bicameral"><small>장면 내각</small>양원제 국회</a>
       </nav>
       <a class="lesson-link" data-lesson="1" href="index.html">◀ 이전 차시</a>
+      <a class="lesson-link" data-lesson="3" href="yushin.html">다음 차시 · 유신 체제 ▶</a>
       <button type="button" id="fsBtn">전체 화면</button>
     </div>
   </header>
@@ -602,11 +603,16 @@ svg text { font-family: var(--f-body); }
     } catch (e) {}
   });
   // 차시 이동 링크: 내 컴퓨터 파일, GitHub 사이트, claude.ai 각각에 맞는 주소
+  var LESSONS = {
+    1: ["index.html", "/silsub/", "https://claude.ai/artifact/TvCLu1AaMkF7Lt2YpeSu75"],
+    2: ["419.html", "/silsub/419/", "https://claude.ai/artifact/WLi4fUxa5aQNsBAGDCghpB"],
+    3: ["yushin.html", "/silsub/yushin/", "https://claude.ai/artifact/42jTCQZPoHke5ViLRt8wVe"]
+  };
   $$(".lesson-link").forEach(function (a) {
-    var one = a.dataset.lesson === "1";
-    if (location.protocol === "file:") a.href = one ? "index.html" : "419.html";
-    else if (/github\.io$/.test(location.hostname)) a.href = one ? "/silsub/" : "/silsub/419/";
-    else { a.href = one ? "https://claude.ai/artifact/TvCLu1AaMkF7Lt2YpeSu75" : location.href; a.target = "_blank"; a.rel = "noopener"; }
+    var L = LESSONS[a.dataset.lesson];
+    if (location.protocol === "file:") a.href = L[0];
+    else if (/github\.io$/.test(location.hostname)) a.href = L[1];
+    else { a.href = L[2]; a.target = "_blank"; a.rel = "noopener"; }
   });
   var segs = location.pathname.split("/").filter(Boolean).map(function (x) { return decodeURIComponent(x).replace(/\.html?$/, ""); });
   if (segs[segs.length - 1] === "index") segs.pop();
