@@ -27,10 +27,11 @@ button { font: inherit; touch-action: manipulation; }
 #map { display: block; width: min(100vw, calc((100dvh - 56px - env(safe-area-inset-top, 0px)) * 1.5)); max-width: 100%; aspect-ratio: 3 / 2; image-rendering: pixelated; }
 
 /* 방향 버튼 */
-.pad { position: absolute; left: max(12px, env(safe-area-inset-left, 0px)); bottom: max(12px, env(safe-area-inset-bottom, 0px)); display: grid; grid-template-columns: repeat(3, 62px); grid-template-rows: repeat(3, 62px); gap: 4px; opacity: .88; }
-.pad button { border: 0; border-radius: 12px; background: rgba(20, 32, 27, .72); color: #fff; font-size: 26px; cursor: pointer; }
-.pad button:active, .pad button.on { background: rgba(232, 178, 58, .95); color: var(--night); }
-.pad .u { grid-column: 2; grid-row: 1; } .pad .l { grid-column: 1; grid-row: 2; } .pad .r { grid-column: 3; grid-row: 2; } .pad .d { grid-column: 2; grid-row: 3; }
+/* 조이스틱: 가운데 손잡이를 끄는 방향으로 걷는다 */
+.stick { position: absolute; left: max(18px, env(safe-area-inset-left, 0px)); bottom: max(18px, env(safe-area-inset-bottom, 0px)); width: 150px; height: 150px; border-radius: 50%; background: rgba(20, 32, 27, .55); border: 3px solid rgba(255, 255, 255, .55); touch-action: none; cursor: grab; }
+.stick::before { content: ""; position: absolute; inset: 22%; border-radius: 50%; border: 2px dashed rgba(255, 255, 255, .35); }
+.knob { position: absolute; left: 50%; top: 50%; width: 66px; height: 66px; margin: -33px 0 0 -33px; border-radius: 50%; background: var(--gold); border: 4px solid var(--line); box-shadow: 0 4px 0 rgba(0, 0, 0, .3); pointer-events: none; transition: transform .12s ease-out; }
+.stick.on .knob { transition: none; }
 .tip { position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); bottom: max(12px, env(safe-area-inset-bottom, 0px)); background: rgba(20, 32, 27, .78); color: #fff; font-size: 14px; padding: 8px 12px; border-radius: 8px; max-width: 46%; }
 
 /* 겹쳐 뜨는 화면 */
@@ -65,11 +66,13 @@ button { font: inherit; touch-action: manipulation; }
 .nameplate { position: absolute; left: 6%; top: 10%; background: var(--paper); border: 4px solid var(--line); border-radius: 10px; padding: 8px 14px; font-weight: 800; font-size: 20px; }
 .nameplate small { display: block; font-size: 12px; color: var(--muted); font-weight: 700; }
 /* 개념 캡슐 (포획 도구) */
-.capsule { position: absolute; width: 54px; height: 34px; border-radius: 17px; background: linear-gradient(90deg, var(--gold) 0 50%, #fff 50% 100%); border: 4px solid var(--line); left: 8%; bottom: 8%; opacity: 0; z-index: 2; }
-.capsule::after { content: ""; position: absolute; left: 50%; top: -4px; bottom: -4px; width: 4px; margin-left: -2px; background: var(--line); }
+/* 포획 도구: 선생님이 넣은 그림. 없으면 빈 칸(점선)만 보인다 */
+.capsule { position: absolute; width: 64px; height: 64px; left: 8%; bottom: 8%; opacity: 0; z-index: 2; display: grid; place-items: center; }
+.capsule img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.capsule .empty { width: 100%; height: 100%; border: 3px dashed var(--line); border-radius: 12px; background: rgba(255, 255, 255, .4); }
 .capsule.throw { opacity: 1; animation: throw .7s cubic-bezier(.3, .6, .4, 1) forwards; }
-@keyframes throw { to { left: calc(88% - min(21vh, 20%) - 27px); bottom: 34%; transform: rotate(720deg); } }
-.capsule.wob { opacity: 1; left: calc(88% - min(21vh, 20%) - 27px); bottom: 34%; animation: wob .5s ease-in-out 3; }
+@keyframes throw { to { left: calc(88% - min(21vh, 20%) - 32px); bottom: 34%; transform: rotate(720deg); } }
+.capsule.wob { opacity: 1; left: calc(88% - min(21vh, 20%) - 32px); bottom: 34%; animation: wob .5s ease-in-out 3; }
 @keyframes wob { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-22deg); } 70% { transform: rotate(22deg); } }
 .stars { position: absolute; left: calc(88% - min(21vh, 20%) - 60px); bottom: 34%; font-size: 34px; color: var(--gold); opacity: 0; letter-spacing: 8px; text-shadow: 0 2px 0 var(--line); }
 .stars.on { animation: pop .8s ease-out forwards; }
@@ -128,13 +131,8 @@ button { font: inherit; touch-action: manipulation; }
   </div>
   <div id="stage">
     <canvas id="map" width="768" height="512"></canvas>
-    <div class="pad" id="pad">
-      <button type="button" class="u" data-d="up" aria-label="위">▲</button>
-      <button type="button" class="l" data-d="left" aria-label="왼쪽">◀</button>
-      <button type="button" class="r" data-d="right" aria-label="오른쪽">▶</button>
-      <button type="button" class="d" data-d="down" aria-label="아래">▼</button>
-    </div>
-    <div class="tip" id="tip">풀숲(진한 초록)을 돌아다니면 몬스터가 나타나요!</div>
+    <div class="stick" id="stick" aria-label="조이스틱"><div class="knob" id="knob"></div></div>
+    <div class="tip" id="tip">조이스틱을 끌어 풀숲(진한 초록)을 돌아다니면 몬스터가 나타나요!</div>
     <div id="flash"></div>
 
     <!-- 시작 -->
@@ -206,6 +204,7 @@ button { font: inherit; touch-action: manipulation; }
   try { DATA = JSON.parse(document.getElementById("game-data").textContent); }
   catch (e) { DATA = { title: "개념 도감", rate: .2, reveal: false, monsters: [] }; }
   var MONS = DATA.monsters || [];
+  var BALL = (DATA.ballName || "").trim() || "포획 도구";
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
@@ -341,13 +340,23 @@ button { font: inherit; touch-action: manipulation; }
     if (KEYS[e.key]) { held = KEYS[e.key]; e.preventDefault(); }
   });
   document.addEventListener("keyup", function (e) { if (KEYS[e.key] === held) held = null; });
-  Array.prototype.forEach.call(document.querySelectorAll("#pad button"), function (b) {
-    function on(e) { e.preventDefault(); if (mode === "map") { held = b.dataset.d; b.classList.add("on"); } }
-    function off() { if (held === b.dataset.d) held = null; b.classList.remove("on"); }
-    b.addEventListener("pointerdown", on);
-    b.addEventListener("pointerup", off); b.addEventListener("pointerleave", off); b.addEventListener("pointercancel", off);
-    b.addEventListener("contextmenu", function (e) { e.preventDefault(); });
-  });
+  // 조이스틱: 손잡이가 많이 기운 쪽(가로/세로)으로 한 칸씩 걷는다
+  (function () {
+    var st = $("stick"), kn = $("knob"), pid = null;
+    function move(e) {
+      var r = st.getBoundingClientRect(), R = r.width / 2;
+      var dx = e.clientX - (r.left + R), dy = e.clientY - (r.top + R), len = Math.sqrt(dx * dx + dy * dy), lim = R * .62;
+      if (len > lim) { dx = dx / len * lim; dy = dy / len * lim; }
+      kn.style.transform = "translate(" + dx.toFixed(0) + "px," + dy.toFixed(0) + "px)";
+      if (len < R * .22 || mode !== "map") { held = null; return; }
+      held = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
+    }
+    function end() { pid = null; held = null; st.classList.remove("on"); kn.style.transform = ""; }
+    st.addEventListener("pointerdown", function (e) { e.preventDefault(); pid = e.pointerId; try { st.setPointerCapture(pid); } catch (x) {} st.classList.add("on"); move(e); });
+    st.addEventListener("pointermove", function (e) { if (e.pointerId === pid) move(e); });
+    st.addEventListener("pointerup", end); st.addEventListener("pointercancel", end); st.addEventListener("lostpointercapture", end);
+    st.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  })();
 
   /* ── 화면 표시 ── */
   function showOnly(id) { ["titleL", "battleL", "quizL", "dexL", "doneL"].forEach(function (k) { $(k).hidden = k !== id; }); }
@@ -391,7 +400,7 @@ button { font: inherit; touch-action: manipulation; }
       showOnly("battleL");
       $("bName").innerHTML = esc(m.name) + "<small>야생</small>";
       var w = $("bMon"); w.className = "monwrap"; w.innerHTML = monPic(m); void w.offsetWidth; w.classList.add("enter");
-      $("bCap").className = "capsule"; $("bStars").className = "stars";
+      $("bCap").className = "capsule"; $("bCap").innerHTML = DATA.ball ? '<img src="' + DATA.ball + '" alt="">' : '<div class="empty"></div>'; $("bStars").className = "stars";
       acts([]);
       say("앗! 야생의 " + j(m.name, "이", "가") + " 나타났다!", function () {
         acts([{ label: "문제 풀고 잡기", fn: quiz }, { label: "도망가기", alt: true, fn: run }]);
@@ -425,7 +434,7 @@ button { font: inherit; touch-action: manipulation; }
     else ok = String(v) === String(m.answer);
     mode = "battle"; showOnly("battleL"); acts([]);
     if (ok) {
-      say("정답! 개념 캡슐을 던졌다!", function () {
+      say("정답! " + j(BALL, "을", "를") + " 던졌다!", function () {
         var cap = $("bCap"); cap.className = "capsule throw";
         setTimeout(function () { $("bMon").classList.add("suck"); }, 650);
         setTimeout(function () { cap.className = "capsule wob"; }, 1150);
