@@ -63,10 +63,11 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
 .battle.intro .mside { flex: 1; }
 .nameplate { justify-self: start; background: var(--paper); border: 4px solid var(--line); border-radius: 10px; padding: 8px 14px; min-width: min(260px, 100%); box-shadow: 0 4px 0 rgba(0, 0, 0, .15); }
 .nameplate b { font-size: 20px; }
-.gauge { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 12px; font-weight: 800; color: var(--muted); }
+.gauge { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.gauge .hp { font-size: 13px; font-weight: 900; color: #e8a33a; background: var(--line); border-radius: 4px; padding: 0 6px; letter-spacing: .04em; }
 .gauge .bar { flex: 1; height: 12px; border-radius: 6px; background: #dfe6e2; border: 2px solid var(--line); overflow: hidden; }
-.gauge .fill { height: 100%; width: 0; background: var(--gold); transition: width .8s ease-out; }
-.gauge .pc { min-width: 3.2em; text-align: right; color: var(--ink); font-size: 15px; }
+.gauge .fill { height: 100%; width: 100%; background: #3fbf5f; transition: width .8s ease-out, background-color .4s; }
+.gauge .fill.mid { background: #f2c230; } .gauge .fill.low { background: #e5533d; }
 .monwrap { position: relative; justify-self: center; align-self: center; width: min(100%, 46vh); aspect-ratio: 1; display: grid; place-items: center; }
 .monwrap::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 3%; height: 15%; background: rgba(60, 110, 50, .45); border-radius: 50%; z-index: 0; }
 .mon { position: relative; z-index: 1; max-width: 90%; max-height: 90%; object-fit: contain; filter: drop-shadow(0 6px 6px rgba(0, 0, 0, .2)); }
@@ -138,6 +139,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
     <span class="t" id="gTitle">개념 도감</span>
     <span class="who" id="gWho"></span>
     <span class="sp"></span>
+    <button type="button" class="hbtn" id="muteBtn" hidden>소리 켜짐</button>
     <button type="button" class="hbtn" id="dexBtn">도감 0/0</button>
   </div>
   <div id="stage">
@@ -149,7 +151,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
     <div class="layer" id="titleL">
       <div class="card">
         <h1 id="tTitle">개념 도감</h1>
-        <p>풀숲을 돌아다니다 몬스터를 만나면 문제를 맞혀 포획 확률을 올리고, 포획 도구를 던져 잡으세요. 모든 몬스터를 잡으면 도감 완성!</p>
+        <p>풀숲을 돌아다니다 몬스터를 만나면 문제를 맞혀 몬스터의 HP를 깎고, 포획 도구를 던져 잡으세요. HP가 낮을수록 잘 잡혀요. 모든 몬스터를 잡으면 도감 완성!</p>
         <p class="small" style="margin-top:14px">내 이름</p>
         <input type="text" id="nameIn" maxlength="12" placeholder="이름을 입력하세요" autocomplete="off">
         <div class="row">
@@ -165,7 +167,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
         <div class="qcard" id="qCard" hidden><div class="qh"><b id="qNo"></b><span id="qHint"></span></div><div class="qb" id="qBody"></div></div>
         <div class="mside">
           <div class="nameplate"><b id="bName"></b>
-            <div class="gauge">포획 확률<div class="bar"><div class="fill" id="gFill"></div></div><span class="pc" id="gPc">0%</span></div>
+            <div class="gauge"><span class="hp">HP</span><div class="bar"><div class="fill" id="gFill"></div></div></div>
           </div>
           <div class="monwrap" id="bMon"></div>
         </div>
@@ -392,15 +394,32 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
     });
   }
   function clearActs() { var box = $("bActs"); box.className = ""; box.innerHTML = ""; }
-  function backToMap() { mode = "map"; showOnly(null); hud(); P.cool = 90; }
+  function backToMap() { mode = "map"; showOnly(null); hud(); P.cool = 90; music("map"); }
+
+  /* ── 음악: 배경 음악(지도)과 배틀 음악. 첫 터치(모험 시작) 뒤에만 재생할 수 있다 ── */
+  var SONG = {}, nowSong = null, muted = false;
+  [["map", DATA.bgm], ["battle", DATA.battleBgm]].forEach(function (x) { if (x[1]) { var a = new Audio(x[1]); a.loop = true; a.volume = .55; SONG[x[0]] = a; } });
+  function music(which) {
+    nowSong = which;
+    Object.keys(SONG).forEach(function (k) {
+      var a = SONG[k];
+      if (k === which && !muted) { if (a.paused) { if (k === "battle") a.currentTime = 0; var pr = a.play(); if (pr && pr.catch) pr.catch(function () {}); } }
+      else a.pause();
+    });
+  }
+  if (SONG.map || SONG.battle) {
+    $("muteBtn").hidden = false;
+    $("muteBtn").addEventListener("click", function () { muted = !muted; this.textContent = muted ? "소리 꺼짐" : "소리 켜짐"; music(nowSong); });
+  }
   function anim(el, cls, ms) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); setTimeout(function () { el.classList.remove(cls); }, ms || 600); }
 
-  /* ── 배틀: 만남 → 문제(최대 3개)로 포획 확률을 올림 → 포획 도구 던지기 ── */
+  /* ── 배틀: 만남 → 문제(최대 3개)를 맞힐 때마다 HP가 깎임 → 포획 도구 던지기 (잡힐 확률 = 깎인 HP 비율) ── */
   var B = null;
-  function setGauge() { var p = Math.round(B.chance * 100); $("gFill").style.width = p + "%"; $("gPc").textContent = p + "%"; }
+  function setGauge() { var hp = Math.round((1 - B.chance) * 100), f = $("gFill"); f.style.width = hp + "%"; f.className = "fill" + (hp <= 20 ? " low" : hp <= 50 ? " mid" : ""); }
   function encounter(m) {
     mode = "battle"; keys = {}; stickV = { x: 0, y: 0 };
     B = { m: m, i: 0, chance: 0 };
+    music("battle");
     var fl = $("flash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go");
     setTimeout(function () {
       showOnly("battleL");
@@ -415,10 +434,10 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
     }, 760);
   }
   function menu() {
-    var m = B.m, more = B.i < m.qs.length, p = Math.round(B.chance * 100);
+    var m = B.m, more = B.i < m.qs.length;
     buttons([
       { label: more ? "문제 " + (B.i + 1) + " 풀기" : "남은 문제 없음", fn: ask, disabled: !more },
-      { label: BALL + " 던지기 (" + p + "%)", fn: throwBall, disabled: B.chance <= 0, alt: true },
+      { label: BALL + " 던지기", fn: throwBall, disabled: B.chance <= 0, alt: true },
       { label: "도망가기", fn: run, alt: true }
     ]);
   }
@@ -464,7 +483,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
         save.right = (save.right || 0) + 1; store();
         anim($("bMon"), "hit", 520);
         B.chance = Math.min(.99, B.chance + STEP); setGauge();
-        setTimeout(function () { say("효과가 굉장했다! 포획 확률이 " + Math.round(STEP * 100) + "% 올랐다!", afterAnswer); }, 450);
+        setTimeout(function () { say("효과가 굉장했다! " + m.name + "의 HP가 줄었다!", afterAnswer); }, 450);
       } else {
         save.wrong++; store();
         anim($("bMon"), "dodge", 520);
@@ -524,6 +543,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
   $("dexBtn").addEventListener("click", function () { if (mode === "map" || mode === "done") openDex(); });
 
   function finish() {
+    music("map");
     mode = "done"; if (!save.end) { save.end = Date.now(); store(); }
     showOnly("doneL");
     $("doneWho").textContent = (save.name ? j(save.name, "이", "가") + " " : "") + "모든 몬스터를 잡았어요!";
