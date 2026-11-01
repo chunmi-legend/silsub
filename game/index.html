@@ -208,7 +208,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
   </div>
 </div>
 
-<script id="game-data" type="application/json">{"title": "개념 도감 (샘플)", "rate": 0.25, "step": 0.3, "reveal": false, "ball": "", "ballName": "", "monsters": [{"id": "sample1", "name": "샘플몬", "img": "", "qs": [{"q": "", "qText": "번호형 샘플 문제예요. 정답은 1번!\n(이 자리에 선생님이 만든 문제 사진이 들어가요)", "type": "choice", "choices": 4, "answer": "1", "opts": []}, {"q": "", "qText": "기술형 샘플 문제예요. 알맞은 기술을 고르세요.", "type": "skill", "choices": 4, "answer": "1", "opts": ["정답 기술", "오답 기술 1", "오답 기술 2", "오답 기술 3"]}, {"q": "", "qText": "세 번째 샘플 문제예요. 정답은 2번!", "type": "choice", "choices": 4, "answer": "2", "opts": []}]}, {"id": "sample2", "name": "견본몬", "img": "", "qs": [{"q": "", "qText": "견본몬 문제 1. 정답은 3번!", "type": "choice", "choices": 4, "answer": "3", "opts": []}, {"q": "", "qText": "견본몬 문제 2. 알맞은 기술은?", "type": "skill", "choices": 4, "answer": "2", "opts": ["오답 기술", "정답 기술", "오답 기술 2"]}, {"q": "", "qText": "견본몬 문제 3. 정답은 1번!", "type": "choice", "choices": 4, "answer": "1", "opts": []}]}]}</script>
+<script id="game-data" type="application/json">{"title": "개념 도감 (샘플)", "rate": 0.25, "step": 0.4, "reveal": false, "ball": "", "ballName": "", "monsters": [{"id": "sample1", "name": "샘플몬", "img": "", "qs": [{"q": "", "qText": "번호형 샘플 문제예요. 정답은 1번!\n(이 자리에 선생님이 만든 문제 사진이 들어가요)", "type": "choice", "choices": 4, "answer": "1", "opts": []}, {"q": "", "qText": "기술형 샘플 문제예요. 알맞은 기술을 고르세요.", "type": "skill", "choices": 4, "answer": "1", "opts": ["정답 기술", "오답 기술 1", "오답 기술 2", "오답 기술 3"]}]}, {"id": "sample2", "name": "견본몬", "img": "", "qs": [{"q": "", "qText": "견본몬 문제 1. 정답은 3번!", "type": "choice", "choices": 4, "answer": "3", "opts": []}, {"q": "", "qText": "견본몬 문제 2. 정답을 입력하세요(정답: 포획)", "type": "text", "choices": 4, "answer": "포획", "opts": []}]}]}</script>
 <script>
 (function () {
   "use strict";
@@ -222,7 +222,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
     return m;
   });
   var BALL = (DATA.ballName || "").trim() || "포획 도구";
-  var STEP = Math.max(.05, Math.min(1, +DATA.step || .3));
+  var STEP = Math.max(.05, Math.min(1, +DATA.step || .4));
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function jong(w) { if (!w) return false; var c = w.charCodeAt(w.length - 1); if (c < 0xAC00 || c > 0xD7A3) return false; return (c - 0xAC00) % 28 !== 0; }
@@ -417,7 +417,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
   }
   function anim(el, cls, ms) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); setTimeout(function () { el.classList.remove(cls); }, ms || 600); }
 
-  /* ── 배틀: 만남 → 문제(최대 3개)를 맞힐 때마다 HP가 깎임 → 포획 도구 던지기 (잡힐 확률 = 깎인 HP 비율) ── */
+  /* ── 배틀: 만남 → 문제(몬스터마다 2개)를 맞힐 때마다 HP가 깎임 → 포획 도구 던지기 (잡힐 확률 = 깎인 HP 비율) ── */
   var B = null;
   function setGauge() { var hp = Math.round((1 - B.chance) * 100), f = $("gFill"); f.style.width = hp + "%"; f.className = "fill" + (hp <= 20 ? " low" : hp <= 50 ? " mid" : ""); }
   function encounter(m) {
