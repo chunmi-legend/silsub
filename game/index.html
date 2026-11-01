@@ -55,7 +55,15 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
 .field { position: relative; overflow: hidden; display: flex; gap: 14px; padding: 14px max(14px, env(safe-area-inset-right, 0px)) 14px max(14px, env(safe-area-inset-left, 0px)); }
 .qcard { flex: 1.5; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); background: #fff; border: 4px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 5px 0 rgba(0, 0, 0, .2); }
 .qcard .qh { background: var(--line); color: #fff; font-weight: 800; font-size: 15px; padding: 6px 12px; display: flex; gap: 10px; }
-.qcard .qh span { margin-left: auto; font-weight: 600; opacity: .8; font-size: 12px; }
+.qcard .qh { align-items: center; flex-wrap: wrap; }
+/* 필기 도구 */
+.itools { margin-left: auto; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.tb { font-weight: 800; font-size: 13px; color: #fff; background: transparent; border: 2px solid rgba(255, 255, 255, .8); border-radius: 7px; padding: 4px 9px; cursor: pointer; white-space: nowrap; }
+.tb.on { background: var(--gold); color: var(--line); border-color: var(--gold); }
+.sw { width: 26px; height: 26px; border-radius: 50%; border: 3px solid #fff; padding: 0; cursor: pointer; background: var(--c); }
+.sw.on { box-shadow: 0 0 0 3px var(--gold); }
+.ink { position: absolute; inset: 8px; width: calc(100% - 16px); height: calc(100% - 16px); pointer-events: none; touch-action: none; }
+.inking .ink { pointer-events: auto; cursor: crosshair; }
 .qcard .qb { position: relative; display: grid; place-items: center; padding: 8px; min-height: 0; overflow: auto; }
 /* 문제 사진은 카드 크기에 맞춰 통째로 보이게(잘리지 않게) */
 .qcard .qb img { position: absolute; inset: 8px; width: calc(100% - 16px); height: calc(100% - 16px); object-fit: contain; cursor: zoom-in; }
@@ -115,8 +123,11 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
 .typeans input { flex: 1; min-width: 0; font: inherit; font-size: 22px; font-weight: 700; padding: 12px 14px; border: 3px solid var(--line); border-radius: 12px; background: #fff; -webkit-user-select: text; user-select: text; }
 .typeans .big { flex: none; min-width: 120px; }
 
-#zoom { position: absolute; inset: 0; background: rgba(0, 0, 0, .9); display: grid; place-items: center; padding: 10px; z-index: 9; }
-#zoom img { max-width: 100%; max-height: 100%; object-fit: contain; }
+#zoom { position: absolute; inset: 0; background: rgba(0, 0, 0, .92); display: grid; grid-template-rows: auto minmax(0, 1fr); z-index: 9; }
+#zoom .zbar { display: flex; align-items: center; gap: 10px; padding: 10px max(12px, env(safe-area-inset-left, 0px)); background: var(--line); color: #fff; }
+#zoom .zbar b { font-size: 15px; }
+#zoom .zarea { position: relative; margin: 10px; }
+#zoom .zarea img { position: absolute; inset: 8px; width: calc(100% - 16px); height: calc(100% - 16px); object-fit: contain; }
 
 /* 도감 */
 .dex { position: absolute; inset: 0; background: var(--paper); display: grid; grid-template-rows: auto minmax(0, 1fr); }
@@ -179,7 +190,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
 
     <div class="battle" id="battleL" hidden>
       <div class="field" id="field">
-        <div class="qcard" id="qCard" hidden><div class="qh"><b id="qNo"></b><span id="qHint"></span></div><div class="qb" id="qBody"></div></div>
+        <div class="qcard" id="qCard" hidden><div class="qh"><b id="qNo"></b><div class="itools" id="qTools"></div></div><div class="qb" id="qBody"></div></div>
         <div class="mside">
           <div class="nameplate"><b id="bName"></b>
             <div class="gauge"><span class="hp">HP</span><div class="bar"><div class="fill" id="gFill"></div></div></div>
@@ -215,7 +226,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
       </div>
     </div>
 
-    <div id="zoom" hidden><img alt="문제 크게 보기"></div>
+    <div id="zoom" hidden><div class="zbar"><b>크게 보기</b><div class="itools" id="zTools"></div><button type="button" class="tb" id="zClose">닫기</button></div><div class="zarea" id="zArea"><img id="zImg" alt="문제 크게 보기"><canvas class="ink" id="zInk"></canvas></div></div>
   </div>
 </div>
 
@@ -462,9 +473,13 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     var m = B.m, q = m.qs[B.i];
     $("qCard").hidden = false;
     $("qNo").textContent = "문제 " + (B.i + 1) + " / " + m.qs.length;
-    $("qHint").textContent = q.q ? "사진을 누르면 크게 보여요" : "";
     var body = $("qBody");
-    if (q.q) { body.innerHTML = '<img src="' + q.q + '" alt="문제">'; body.firstChild.addEventListener("click", function () { var z = $("zoom"); z.firstChild.src = q.q; z.hidden = false; }); }
+    INK.clear(q.q);
+    if (q.q) {
+      body.innerHTML = '<img src="' + q.q + '" alt="문제"><canvas class="ink"></canvas>';
+      INK.attach(body, body.querySelector("img"), body.querySelector("canvas"));
+      body.querySelector("img").addEventListener("click", openZoom);
+    }
     else body.innerHTML = '<div class="qt">' + esc(q.qText) + "</div>";
     clearActs();
     var box = $("bActs");
@@ -569,7 +584,78 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
       }, 2700);
     });
   }
-  $("zoom").addEventListener("click", function () { $("zoom").hidden = true; });
+  /* ── 문제 사진에 필기: 문제 카드와 크게 보기 화면이 같은 필기를 함께 보여 준다 ── */
+  var INK = (function () {
+    var strokes = [], on = false, color = "#e5533d", views = [], src = "";
+    var COLORS = [["#e5533d", "빨강"], ["#2f6fd6", "파랑"], ["#1c2321", "검정"]];
+    function fit(img, cw, ch) {
+      var nw = img.naturalWidth || 1, nh = img.naturalHeight || 1, k = Math.min(cw / nw, ch / nh);
+      return { x: (cw - nw * k) / 2, y: (ch - nh * k) / 2, w: nw * k, h: nh * k };
+    }
+    function size(v) {
+      var r = v.cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+      if (v.cv.width !== Math.round(r.width * d) || v.cv.height !== Math.round(r.height * d)) { v.cv.width = Math.round(r.width * d); v.cv.height = Math.round(r.height * d); }
+      v.cw = r.width; v.ch = r.height; v.d = d; v.rect = fit(v.img, r.width, r.height);
+    }
+    function draw(v) {
+      if (!v.cv.isConnected) return;
+      size(v);
+      var g = v.cv.getContext("2d"); g.setTransform(v.d, 0, 0, v.d, 0, 0); g.clearRect(0, 0, v.cw, v.ch);
+      g.lineCap = "round"; g.lineJoin = "round";
+      strokes.forEach(function (s) {
+        g.strokeStyle = s.c; g.lineWidth = Math.max(1.5, s.w * v.rect.w); g.beginPath();
+        s.p.forEach(function (pt, i) { var x = v.rect.x + pt[0] * v.rect.w, y = v.rect.y + pt[1] * v.rect.h; if (i) g.lineTo(x, y); else g.moveTo(x, y); });
+        if (s.p.length === 1) g.lineTo(v.rect.x + s.p[0][0] * v.rect.w + .1, v.rect.y + s.p[0][1] * v.rect.h);
+        g.stroke();
+      });
+    }
+    function redraw() { views = views.filter(function (v) { return v.cv.isConnected; }); views.forEach(draw); }
+    function attach(box, img, cv) {
+      var v = { box: box, img: img, cv: cv }, cur = null, pid = null;
+      views.push(v);
+      box.classList.toggle("inking", on);
+      if (img.complete) draw(v); else img.addEventListener("load", function () { draw(v); });
+      function pt(e) { var r = cv.getBoundingClientRect(); return [(e.clientX - r.left - v.rect.x) / v.rect.w, (e.clientY - r.top - v.rect.y) / v.rect.h]; }
+      cv.addEventListener("pointerdown", function (e) {
+        if (!on) return; e.preventDefault(); size(v); pid = e.pointerId; try { cv.setPointerCapture(pid); } catch (x) {}
+        cur = { c: color, w: 5 / v.rect.w, p: [pt(e)] }; strokes.push(cur); redraw();
+      });
+      cv.addEventListener("pointermove", function (e) { if (cur && e.pointerId === pid) { cur.p.push(pt(e)); redraw(); } });
+      function end() { cur = null; pid = null; }
+      cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+    }
+    function tools(box, withZoom) {
+      box.innerHTML = "";
+      if (!src) return;
+      function b(label, cls, fn) { var x = document.createElement("button"); x.type = "button"; x.className = cls; x.textContent = label; x.addEventListener("click", function (e) { e.stopPropagation(); fn(); }); box.appendChild(x); return x; }
+      b(on ? "✏️ 필기 중" : "✏️ 필기", "tb" + (on ? " on" : ""), function () { on = !on; refresh(); });
+      if (on) {
+        COLORS.forEach(function (c) { var s = b("", "sw" + (color === c[0] ? " on" : ""), function () { color = c[0]; refresh(); }); s.style.setProperty("--c", c[0]); s.setAttribute("aria-label", c[1]); });
+        b("되돌리기", "tb", function () { strokes.pop(); redraw(); });
+        b("모두 지우기", "tb", function () { strokes = []; redraw(); });
+      }
+      if (withZoom) b("크게 보기", "tb", openZoom);
+    }
+    function refresh() {
+      tools($("qTools"), true); tools($("zTools"), false);
+      views.forEach(function (v) { v.box.classList.toggle("inking", on); });
+    }
+    window.addEventListener("resize", function () { setTimeout(redraw, 60); });
+    return {
+      clear: function (s) { strokes = []; on = false; src = s || ""; views = views.filter(function (v) { return v.box.id === "zArea"; }); refresh(); },
+      attach: attach, redraw: redraw, refresh: refresh, src: function () { return src; }
+    };
+  })();
+  var zoomAttached = false;
+  function openZoom() {
+    if (!INK.src()) return;
+    var z = $("zoom"), img = $("zImg");
+    img.src = INK.src(); z.hidden = false;
+    if (!zoomAttached) { INK.attach($("zArea"), img, $("zInk")); zoomAttached = true; }
+    INK.refresh(); setTimeout(INK.redraw, 30);
+  }
+  $("zClose").addEventListener("click", function () { $("zoom").hidden = true; INK.redraw(); });
+  $("zArea").addEventListener("click", function (e) { if (!$("zArea").classList.contains("inking") && e.target === $("zImg")) { $("zoom").hidden = true; INK.redraw(); } });
 
   /* ── 도감 ── */
   function openDex() {
