@@ -109,6 +109,10 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
 .skills button:active { background: #fff6dc; }
 .skills.nums button { text-align: center; padding-left: 16px; font-size: 24px; }
 .skills.nums button::before { display: none; }
+/* 글자 입력(주관식) */
+.typeans { display: flex; gap: 10px; }
+.typeans input { flex: 1; min-width: 0; font: inherit; font-size: 22px; font-weight: 700; padding: 12px 14px; border: 3px solid var(--line); border-radius: 12px; background: #fff; -webkit-user-select: text; user-select: text; }
+.typeans .big { flex: none; min-width: 120px; }
 
 #zoom { position: absolute; inset: 0; background: rgba(0, 0, 0, .9); display: grid; place-items: center; padding: 10px; z-index: 9; }
 #zoom img { max-width: 100%; max-height: 100%; object-fit: contain; }
@@ -213,7 +217,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
   catch (e) { DATA = { title: "개념 도감", rate: .2, monsters: [] }; }
   // 예전 형식(몬스터당 문제 1개)도 읽는다
   var MONS = (DATA.monsters || []).map(function (m) {
-    if (!m.qs) m.qs = [{ q: m.q, qText: m.qText, type: m.type === "text" ? "skill" : "choice", choices: m.choices, answer: m.type === "text" ? "1" : m.answer, opts: m.type === "text" ? [m.answer] : [] }];
+    if (!m.qs) m.qs = [{ q: m.q, qText: m.qText, type: m.type === "text" ? "text" : "choice", choices: m.choices, answer: m.answer, opts: [] }];
     m.qs = m.qs.filter(function (q) { return q && (q.q || (q.qText || "").trim()); });
     return m;
   });
@@ -462,6 +466,15 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
           b.addEventListener("click", function () { answer(String(k + 1), o); }); box.appendChild(b);
         });
       });
+    } else if (q.type === "text") {
+      say("정답을 입력해서 공격하자!", function () {
+        box.className = "typeans"; box.innerHTML = '<input type="text" id="ansIn" placeholder="정답을 입력하세요" autocomplete="off"><button type="button" class="big" id="ansGo">공격!</button>';
+        var inp = $("ansIn");
+        function go() { var v = inp.value.trim(); if (!v) { inp.focus(); return; } answer(v, v); }
+        $("ansGo").addEventListener("click", go);
+        inp.addEventListener("keydown", function (e) { if (e.key === "Enter") go(); });
+        setTimeout(function () { inp.focus(); }, 50);
+      });
     } else {
       say("정답 번호를 골라 공격하자!", function () {
         box.className = "skills nums"; box.innerHTML = "";
@@ -473,8 +486,12 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
       });
     }
   }
+  // 띄어쓰기와 문장 부호는 무시하고 채점
+  function norm(s) { return String(s || "").toLowerCase().replace(/[\s·.,'"‘’“”()\[\]~!?-]/g, ""); }
   function answer(v, label) {
-    var m = B.m, q = m.qs[B.i], ok = String(v) === String(q.answer);
+    var m = B.m, q = m.qs[B.i], ok;
+    if (q.type === "text") ok = String(q.answer || "").split(/[,/]/).some(function (a) { return norm(a) && norm(a) === norm(v); });
+    else ok = String(v) === String(q.answer);
     clearActs();
     B.i++;
     var who = save.name || "나";
@@ -488,7 +505,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
         save.wrong++; store();
         anim($("bMon"), "dodge", 520);
         var msg = "효과가 없는 것 같다…";
-        if (DATA.reveal) msg += " (정답: " + (q.type === "skill" ? q.opts[+q.answer - 1] : q.answer + "번") + ")";
+        if (DATA.reveal) msg += " (정답: " + (q.type === "skill" ? q.opts[+q.answer - 1] : q.type === "text" ? String(q.answer).split(/[,/]/)[0].trim() : q.answer + "번") + ")";
         setTimeout(function () { say(msg, afterAnswer); }, 450);
       }
     });
