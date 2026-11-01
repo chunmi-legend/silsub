@@ -467,8 +467,9 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
         });
       });
     } else if (q.type === "text") {
-      say("정답을 입력해서 공격하자!", function () {
-        box.className = "typeans"; box.innerHTML = '<input type="text" id="ansIn" placeholder="정답을 입력하세요" autocomplete="off"><button type="button" class="big" id="ansGo">공격!</button>';
+      var need = q.all ? parts(q.answer).length : 0;
+      say(need > 1 ? "정답 " + need + "개를 모두 입력해서 공격하자! (순서는 상관없어)" : "정답을 입력해서 공격하자!", function () {
+        box.className = "typeans"; box.innerHTML = '<input type="text" id="ansIn" placeholder="' + (need > 1 ? "정답 " + need + "개를 쉼표(,)로 나누어 입력" : "정답을 입력하세요") + '" autocomplete="off"><button type="button" class="big" id="ansGo">공격!</button>';
         var inp = $("ansIn");
         function go() { var v = inp.value.trim(); if (!v) { inp.focus(); return; } answer(v, v); }
         $("ansGo").addEventListener("click", go);
@@ -488,9 +489,21 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
   }
   // 띄어쓰기와 문장 부호는 무시하고 채점
   function norm(s) { return String(s || "").toLowerCase().replace(/[\s·.,'"‘’“”()\[\]~!?-]/g, ""); }
+  // '모두 써야 정답': 쉼표로 나눈 정답을 순서 상관없이 전부 써야 함. "/"는 같은 뜻으로 인정할 다른 표현
+  function parts(ans) { return String(ans || "").split(",").map(function (p) { return p.split("/").map(function (x) { return x.trim(); }).filter(Boolean); }).filter(function (p) { return p.length; }); }
+  function allParts(ans, v) {
+    var rest = norm(v), ps = parts(ans).map(function (alts) { return alts.map(norm).filter(Boolean).sort(function (a, b) { return b.length - a.length; }); });
+    ps.sort(function (a, b) { return b[0].length - a[0].length; });   // 긴 정답부터 지워서 겹치는 낱말 문제를 막음
+    for (var i = 0; i < ps.length; i++) {
+      var hit = false;
+      for (var k = 0; k < ps[i].length; k++) { var at = rest.indexOf(ps[i][k]); if (at >= 0) { rest = rest.slice(0, at) + rest.slice(at + ps[i][k].length); hit = true; break; } }
+      if (!hit) return false;
+    }
+    return rest.replace(/(와|과|그리고|및)/g, "") === "";
+  }
   function answer(v, label) {
     var m = B.m, q = m.qs[B.i], ok;
-    if (q.type === "text") ok = String(q.answer || "").split(/[,/]/).some(function (a) { return norm(a) && norm(a) === norm(v); });
+    if (q.type === "text") ok = q.all ? allParts(q.answer, v) : String(q.answer || "").split(/[,/]/).some(function (a) { return norm(a) && norm(a) === norm(v); });
     else ok = String(v) === String(q.answer);
     clearActs();
     B.i++;
@@ -505,7 +518,7 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
         save.wrong++; store();
         anim($("bMon"), "dodge", 520);
         var msg = "효과가 없는 것 같다…";
-        if (DATA.reveal) msg += " (정답: " + (q.type === "skill" ? q.opts[+q.answer - 1] : q.type === "text" ? String(q.answer).split(/[,/]/)[0].trim() : q.answer + "번") + ")";
+        if (DATA.reveal) msg += " (정답: " + (q.type === "skill" ? q.opts[+q.answer - 1] : q.type === "text" ? (q.all ? parts(q.answer).map(function (p) { return p[0]; }).join(", ") : String(q.answer).split(/[,/]/)[0].trim()) : q.answer + "번") + ")";
         setTimeout(function () { say(msg, afterAnswer); }, 450);
       }
     });
