@@ -134,22 +134,18 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
 .dexhead { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--line); color: #fff; }
 .dexhead b { font-size: 20px; flex: 1; }
 .dexgrid { overflow: auto; padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-content: start; }
-.dc { font: inherit; color: var(--ink); cursor: pointer; border: 3px solid var(--line); border-radius: 12px; background: #fff; padding: 10px; display: grid; gap: 6px; justify-items: center; text-align: center; }
-.dc:active { background: #fff6dc; }
-/* 도감 상세 */
-.dd { background: var(--paper); border: 4px solid var(--line); border-radius: 14px; width: min(640px, 100%); max-height: 100%; overflow: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 18px; padding: 20px; box-shadow: 0 6px 0 rgba(0, 0, 0, .25); }
-.dd .pic { aspect-ratio: 1; display: grid; place-items: center; background: #eef4ea; border-radius: 10px; }
-.dd .pic img { max-width: 88%; max-height: 88%; object-fit: contain; }
-.dd .pic.no img { filter: brightness(0) opacity(.35); }
-.dd .pic .ph { font-size: 60px; font-weight: 900; color: #9aaba3; }
-.dd .txt { display: grid; gap: 8px; align-content: start; }
-.dd h2 { margin: 0; font-size: 26px; }
-.dd p { margin: 0; font-size: 18px; line-height: 1.65; white-space: pre-wrap; }
-@media (max-width: 560px) { .dd { grid-template-columns: 1fr; } }
+.dc { font: inherit; color: var(--ink); border: 3px solid var(--line); border-radius: 12px; background: #fff; padding: 10px; display: grid; gap: 6px; justify-items: center; text-align: center; }
 /* 해설 */
 .qcard { position: relative; }
 .exp { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; border-top: 4px solid var(--line); padding: 12px 16px; display: grid; gap: 6px; max-height: 60%; overflow: auto; animation: expin .3s ease-out; }
 @keyframes expin { from { transform: translateY(30%); opacity: 0; } to { transform: none; opacity: 1; } }
+/* 힌트 */
+.hintb:disabled { opacity: .6; cursor: default; }
+.hintb.ready { background: #ffd84d; color: var(--line); border-color: #ffd84d; animation: glow 1.2s ease-in-out infinite; }
+@keyframes glow { 50% { box-shadow: 0 0 0 4px rgba(255, 216, 77, .45); } }
+.hintp { position: absolute; left: 0; right: 0; top: 38px; background: #fff7d1; border-bottom: 4px solid var(--line); padding: 10px 14px; display: flex; gap: 10px; align-items: flex-start; z-index: 2; animation: expin .3s ease-out; }
+.hintp p { margin: 0; flex: 1; font-size: clamp(16px, 2.2vw, 19px); font-weight: 700; line-height: 1.55; white-space: pre-wrap; }
+.hintp button { flex: none; font: 700 13px inherit; border: 2px solid var(--line); background: #fff; border-radius: 6px; padding: 3px 8px; cursor: pointer; }
 .exp b { font-size: 18px; } .exp.ok b { color: var(--ok); } .exp.no b { color: var(--bad); }
 .exp .ans { font-weight: 800; font-size: 16px; }
 .exp p { margin: 0; font-size: clamp(16px, 2.2vw, 19px); line-height: 1.6; white-space: pre-wrap; }
@@ -208,7 +204,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
 
     <div class="battle" id="battleL" hidden>
       <div class="field" id="field">
-        <div class="qcard" id="qCard" hidden><div class="qh"><b id="qNo"></b><div class="itools" id="qTools"></div></div><div class="qb" id="qBody"></div></div>
+        <div class="qcard" id="qCard" hidden><div class="qh"><b id="qNo"></b><button type="button" class="tb hintb" id="hintBtn" hidden></button><div class="itools" id="qTools"></div></div><div class="qb" id="qBody"></div></div>
         <div class="mside">
           <div class="nameplate"><b id="bName"></b>
             <div class="gauge"><span class="hp">HP</span><div class="bar"><div class="fill" id="gFill"></div></div></div>
@@ -227,7 +223,6 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     <div class="dex" id="dexL" hidden>
       <div class="dexhead"><b id="dexTitle">도감</b><button type="button" class="hbtn" id="dexClose">닫기</button></div>
       <div class="dexgrid" id="dexGrid"></div>
-      <div class="layer" id="dexD" hidden></div>
     </div>
 
     <div class="layer" id="doneL" hidden>
@@ -249,7 +244,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   </div>
 </div>
 
-<script id="game-data" type="application/json">{"title": "개념 도감 (샘플)", "rate": 0.25, "step": 0.4, "reveal": false, "ball": "", "ballName": "", "monsters": [{"id": "sample1", "name": "샘플몬", "img": "", "desc": "도감 설명 예시예요. 잡은 뒤 도감에서 이 몬스터를 누르면 보여요.", "qs": [{"q": "", "qText": "번호형 샘플 문제예요. 정답은 1번!\n(이 자리에 선생님이 만든 문제 사진이 들어가요)", "type": "choice", "choices": 4, "answer": "1", "opts": [], "exp": "해설 예시: 답을 고른 뒤 이렇게 해설이 나와요."}, {"q": "", "qText": "기술형 샘플 문제예요. 알맞은 기술을 고르세요.", "type": "skill", "choices": 4, "answer": "1", "opts": ["정답 기술", "오답 기술 1", "오답 기술 2", "오답 기술 3"], "exp": ""}]}, {"id": "sample2", "name": "견본몬", "img": "", "desc": "선생님이 적은 개념 요약이 여기에 들어가요.", "qs": [{"q": "", "qText": "견본몬 문제 1. 정답은 3번!", "type": "choice", "choices": 4, "answer": "3", "opts": [], "exp": ""}, {"q": "", "qText": "견본몬 문제 2. 정답을 입력하세요(정답: 포획)", "type": "text", "choices": 4, "answer": "포획", "opts": [], "exp": ""}]}]}</script>
+<script id="game-data" type="application/json">{"title": "개념 도감 (샘플)", "rate": 0.25, "step": 0.4, "reveal": false, "ball": "", "ballName": "", "monsters": [{"id": "sample1", "name": "샘플몬", "img": "", "qs": [{"q": "", "qText": "번호형 샘플 문제예요. 정답은 1번!\n(이 자리에 선생님이 만든 문제 사진이 들어가요)", "type": "choice", "choices": 4, "answer": "1", "opts": [], "exp": "해설 예시: 답을 고른 뒤 이렇게 해설이 나와요.", "hint": "힌트 예시: 문제를 본 지 1분이 지나면 열 수 있어요."}, {"q": "", "qText": "기술형 샘플 문제예요. 알맞은 기술을 고르세요.", "type": "skill", "choices": 4, "answer": "1", "opts": ["정답 기술", "오답 기술 1", "오답 기술 2", "오답 기술 3"], "exp": "", "hint": ""}]}, {"id": "sample2", "name": "견본몬", "img": "", "qs": [{"q": "", "qText": "견본몬 문제 1. 정답은 3번!", "type": "choice", "choices": 4, "answer": "3", "opts": [], "exp": "", "hint": ""}, {"q": "", "qText": "견본몬 문제 2. 정답을 입력하세요(정답: 포획)", "type": "text", "choices": 4, "answer": "포획", "opts": [], "exp": "", "hint": ""}]}]}</script>
 <script>
 (function () {
   "use strict";
@@ -352,9 +347,8 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
       g.fillStyle = "#e9eef1"; g.fillRect(x + 2, y + 16, w - 4, h - 18); g.strokeRect(x + 2, y + 16, w - 4, h - 18);
       g.fillStyle = "#4d6b85"; g.fillRect(x, y + 4, w, 16); g.strokeRect(x, y + 4, w, 16);
       g.fillStyle = "#6f8ea8"; g.fillRect(x + 2, y + 6, w - 4, 3);
-      g.fillStyle = "#1f3a52"; g.fillRect(x + w / 2 - 34, y + 22, 68, 14);
-      g.fillStyle = "#fff"; g.font = "bold 9px sans-serif"; g.textAlign = "center"; g.fillText("개념 연구소", x + w / 2, y + 33);
-      [x + 8, x + w - 22].forEach(function (wx) { g.fillStyle = "#bfe3f5"; g.fillRect(wx, y + 40, 14, 10); g.strokeRect(wx, y + 40, 14, 10); });
+      [x + 8, x + 27, x + w - 41, x + w - 22].forEach(function (wx) { g.fillStyle = "#bfe3f5"; g.fillRect(wx, y + 24, 14, 12); g.strokeRect(wx, y + 24, 14, 12); });
+      [x + 8, x + w - 22].forEach(function (wx) { g.fillStyle = "#bfe3f5"; g.fillRect(wx, y + 42, 14, 12); g.strokeRect(wx, y + 42, 14, 12); });
       g.fillStyle = "#9fd3ea"; g.fillRect(x + w / 2 - 10, y + h - 22, 20, 20); g.strokeRect(x + w / 2 - 10, y + h - 22, 20, 20);
       g.beginPath(); g.moveTo(x + w / 2, y + h - 22); g.lineTo(x + w / 2, y + h - 2); g.stroke();
       return;
@@ -555,11 +549,12 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
       { label: "도망가기", fn: run, alt: true }
     ]);
   }
-  function run() { restIfWrong(); clearActs(); $("qCard").hidden = true; say("무사히 도망쳤다!", function () { setTimeout(backToMap, 500); }); }
+  function run() { hint(""); restIfWrong(); clearActs(); $("qCard").hidden = true; say("무사히 도망쳤다!", function () { setTimeout(backToMap, 500); }); }
   function ask() {
     var m = B.m, q = m.qs[B.i];
     $("qCard").hidden = false;
     $("qNo").textContent = "문제 " + (B.i + 1) + " / " + m.qs.length;
+    hint(B.i === 0 ? q.hint : "");
     var body = $("qBody");
     INK.clear(q.q);
     if (q.q) {
@@ -619,6 +614,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     return rest.replace(/(와|과|그리고|및)/g, "") === "";
   }
   function answer(v, label) {
+    hint("");
     var m = B.m, q = m.qs[B.i], ok;
     if (q.type === "text") ok = q.all ? allParts(q.answer, v) : String(q.answer || "").split(/[,/]/).some(function (a) { return norm(a) && norm(a) === norm(v); });
     else ok = String(v) === String(q.answer);
@@ -651,6 +647,33 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     buttons([{ label: "계속하기", fn: function () { box.remove(); afterAnswer(); } }]);
   }
   function afterAnswer() { $("qCard").hidden = true; menu(); }
+  // 문제 1의 힌트: 문제를 본 지 1분이 지나야 열 수 있다
+  var HINT_WAIT = 60, hintT = null;
+  function hint(text) {
+    var btn = $("hintBtn");
+    clearInterval(hintT);
+    Array.prototype.forEach.call(document.querySelectorAll("#qCard .hintp"), function (e) { e.remove(); });
+    text = String(text || "").trim();
+    btn.hidden = !text; btn.className = "tb hintb"; btn.onclick = null;
+    if (!text) return;
+    var start = Date.now();
+    function tick() {
+      var left = HINT_WAIT - Math.floor((Date.now() - start) / 1000);
+      if ($("qCard").hidden) { clearInterval(hintT); return; }
+      if (left > 0) { btn.disabled = true; btn.textContent = "💡 힌트 " + Math.floor(left / 60) + ":" + ("0" + left % 60).slice(-2); return; }
+      clearInterval(hintT);
+      btn.disabled = false; btn.classList.add("ready"); btn.textContent = "💡 힌트 보기";
+      btn.onclick = function () {
+        btn.classList.remove("ready");
+        if ($("qCard").querySelector(".hintp")) return;
+        var p = document.createElement("div"); p.className = "hintp";
+        p.innerHTML = "<p>💡 " + esc(text) + '</p><button type="button">닫기</button>';
+        p.querySelector("button").addEventListener("click", function () { p.remove(); });
+        $("qCard").appendChild(p);
+      };
+    }
+    tick(); hintT = setInterval(tick, 500);
+  }
   function throwBall() {
     var m = B.m;
     clearActs(); $("qCard").hidden = true;
@@ -764,19 +787,9 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     $("dexGrid").innerHTML = MONS.map(function (m, i) {
       var got = save.caught.indexOf(m.id) >= 0;
       var pic = m.img ? '<img src="' + m.img + '" alt="">' : '<span class="ph">?</span>';
-      return '<button type="button" class="dc' + (got ? "" : " no") + '" data-i="' + i + '"><div class="pic">' + pic + '</div><div class="nm' + (got ? "" : " no-n") + '">No.' + (i + 1) + " " + (got ? esc(m.name) : "???") + "</div></button>";
+      return '<div class="dc' + (got ? "" : " no") + '"><div class="pic">' + pic + '</div><div class="nm' + (got ? "" : " no-n") + '">No.' + (i + 1) + " " + (got ? esc(m.name) : "???") + "</div></div>";
     }).join("");
-    Array.prototype.forEach.call(document.querySelectorAll("#dexGrid .dc"), function (c) { c.addEventListener("click", function () { dexDetail(+c.dataset.i); }); });
     $("dexClose").onclick = function () { if (MONS.length && save.caught.length >= MONS.length) finish(); else backToMap(); };
-  }
-  function dexDetail(i) {
-    var m = MONS[i], got = save.caught.indexOf(m.id) >= 0, d = $("dexD");
-    d.innerHTML = '<div class="dd"><div class="pic' + (got ? "" : " no") + '">' + (m.img ? '<img src="' + m.img + '" alt="">' : '<span class="ph">?</span>') + '</div>' +
-      '<div class="txt"><span class="small">No.' + (i + 1) + "</span><h2>" + (got ? esc(m.name) : "???") + "</h2>" +
-      "<p>" + (got ? esc((m.desc || "").trim() || "도감 설명이 아직 없어요.") : "아직 잡지 못한 몬스터예요. 풀숲에서 찾아보세요!") + "</p>" +
-      '<button type="button" class="big alt" id="ddClose">돌아가기</button></div></div>';
-    d.hidden = false;
-    $("ddClose").addEventListener("click", function () { d.hidden = true; });
   }
   $("dexBtn").addEventListener("click", function () { if (mode === "map" || mode === "done") openDex(); });
 
