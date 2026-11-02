@@ -47,6 +47,8 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
 .small { font-size: 13px; color: var(--muted); }
 
 #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+/* 포획 연출용 요소(평소엔 투명)가 힌트·필기 버튼 위에 겹쳐 눌림을 막지 않게 */
+.capsule, .stars { pointer-events: none; }
 #flash.go { animation: flash .75s steps(2) 1; }
 @keyframes flash { 0%, 100% { opacity: 0; } 20%, 60% { opacity: 1; } 40%, 80% { opacity: 0; } }
 
@@ -167,6 +169,31 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
   .mside { flex: 1; grid-template-columns: minmax(190px, 42%) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); align-items: center; }
   .nameplate { align-self: start; justify-self: stretch; min-width: 0; }
   .monwrap { width: min(100%, 30vh); height: auto; }
+}
+/* 폰 가로 화면(높이가 낮음): 왼쪽에 문제 카드를 크게, 오른쪽에 대화창과 버튼 */
+@media (orientation: landscape) and (max-height: 500px) {
+  .hud { padding-block: 5px; } .hbtn { padding: 6px 10px; }
+  .battle { grid-template-columns: minmax(0, 1fr) minmax(250px, 40%); grid-template-rows: minmax(0, 1fr); background: linear-gradient(#dff1f6 0 62%, #a7d98b 62% 100%); }
+  .field { flex-direction: column; gap: 8px; padding: 8px 10px 8px max(10px, env(safe-area-inset-left, 0px)); }
+  .qcard { flex: 1; }
+  .qcard .qh { padding: 4px 10px; font-size: 14px; }
+  .mside { flex: none; height: 78px; grid-template-columns: minmax(150px, 55%) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); align-items: center; }
+  .qcard[hidden] + .mside { flex: 1; height: auto; }
+  .qcard[hidden] + .mside .monwrap { height: auto; width: min(100%, 52vh); }
+  .nameplate { align-self: center; justify-self: stretch; min-width: 0; padding: 5px 10px; } .nameplate b { font-size: 16px; }
+  .gauge { margin-top: 3px; }
+  .monwrap { width: auto; height: 100%; max-width: 100%; }
+  .msg { border-top: 0; border-left: 5px solid var(--line); align-content: start; overflow: auto; gap: 10px; padding: 10px max(12px, env(safe-area-inset-right, 0px)) max(10px, env(safe-area-inset-bottom, 0px)) 12px; }
+  .msg p { font-size: 17px; }
+  .acts { flex-direction: column; flex-wrap: nowrap; } .acts .big { flex: none; min-width: 0; font-size: 16px; padding: 10px; }
+  .skills { gap: 8px; } .skills button { font-size: 15px; padding: 10px 8px 10px 38px; min-height: 46px; }
+  .skills.nums button { font-size: 20px; padding-left: 8px; }
+  .typeans input { font-size: 18px; padding: 10px; } .typeans .big { min-width: 76px; padding-inline: 10px; font-size: 16px; }
+  .itools { gap: 4px; } .tb { padding: 2px 7px; font-size: 12px; } .sw { width: 22px; height: 22px; }
+  .stick { width: 120px; height: 120px; left: max(10px, env(safe-area-inset-left, 0px)); bottom: max(10px, env(safe-area-inset-bottom, 0px)); }
+  .knob { width: 54px; height: 54px; margin: -27px 0 0 -27px; }
+  .tip { font-size: 13px; max-width: max(120px, calc(50vw - (100dvh - 40px) * .75 - 20px)); }
+  .card { padding: 14px 18px; } .card h1 { font-size: 21px; }
 }
 /* Netlify 주소에서는 오른쪽 아래 'Powered by Netlify' 표시가 버튼을 가리지 않도록 아래 여백을 둔다 */
 @media (max-width: 480px) {
