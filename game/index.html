@@ -134,7 +134,25 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
 .dexhead { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--line); color: #fff; }
 .dexhead b { font-size: 20px; flex: 1; }
 .dexgrid { overflow: auto; padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-content: start; }
-.dc { border: 3px solid var(--line); border-radius: 12px; background: #fff; padding: 10px; display: grid; gap: 6px; justify-items: center; text-align: center; }
+.dc { font: inherit; color: var(--ink); cursor: pointer; border: 3px solid var(--line); border-radius: 12px; background: #fff; padding: 10px; display: grid; gap: 6px; justify-items: center; text-align: center; }
+.dc:active { background: #fff6dc; }
+/* 도감 상세 */
+.dd { background: var(--paper); border: 4px solid var(--line); border-radius: 14px; width: min(640px, 100%); max-height: 100%; overflow: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 18px; padding: 20px; box-shadow: 0 6px 0 rgba(0, 0, 0, .25); }
+.dd .pic { aspect-ratio: 1; display: grid; place-items: center; background: #eef4ea; border-radius: 10px; }
+.dd .pic img { max-width: 88%; max-height: 88%; object-fit: contain; }
+.dd .pic.no img { filter: brightness(0) opacity(.35); }
+.dd .pic .ph { font-size: 60px; font-weight: 900; color: #9aaba3; }
+.dd .txt { display: grid; gap: 8px; align-content: start; }
+.dd h2 { margin: 0; font-size: 26px; }
+.dd p { margin: 0; font-size: 18px; line-height: 1.65; white-space: pre-wrap; }
+@media (max-width: 560px) { .dd { grid-template-columns: 1fr; } }
+/* 해설 */
+.qcard { position: relative; }
+.exp { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; border-top: 4px solid var(--line); padding: 12px 16px; display: grid; gap: 6px; max-height: 60%; overflow: auto; animation: expin .3s ease-out; }
+@keyframes expin { from { transform: translateY(30%); opacity: 0; } to { transform: none; opacity: 1; } }
+.exp b { font-size: 18px; } .exp.ok b { color: var(--ok); } .exp.no b { color: var(--bad); }
+.exp .ans { font-weight: 800; font-size: 16px; }
+.exp p { margin: 0; font-size: clamp(16px, 2.2vw, 19px); line-height: 1.6; white-space: pre-wrap; }
 .dc .pic { width: 100%; aspect-ratio: 1; display: grid; place-items: center; background: #eef4ea; border-radius: 8px; overflow: hidden; }
 .dc .pic img { max-width: 90%; max-height: 90%; object-fit: contain; }
 .dc.no .pic img { filter: brightness(0) opacity(.35); }
@@ -209,6 +227,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     <div class="dex" id="dexL" hidden>
       <div class="dexhead"><b id="dexTitle">도감</b><button type="button" class="hbtn" id="dexClose">닫기</button></div>
       <div class="dexgrid" id="dexGrid"></div>
+      <div class="layer" id="dexD" hidden></div>
     </div>
 
     <div class="layer" id="doneL" hidden>
@@ -230,7 +249,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   </div>
 </div>
 
-<script id="game-data" type="application/json">{"title": "개념 도감 (샘플)", "rate": 0.25, "step": 0.4, "reveal": false, "ball": "", "ballName": "", "monsters": [{"id": "sample1", "name": "샘플몬", "img": "", "qs": [{"q": "", "qText": "번호형 샘플 문제예요. 정답은 1번!\n(이 자리에 선생님이 만든 문제 사진이 들어가요)", "type": "choice", "choices": 4, "answer": "1", "opts": []}, {"q": "", "qText": "기술형 샘플 문제예요. 알맞은 기술을 고르세요.", "type": "skill", "choices": 4, "answer": "1", "opts": ["정답 기술", "오답 기술 1", "오답 기술 2", "오답 기술 3"]}]}, {"id": "sample2", "name": "견본몬", "img": "", "qs": [{"q": "", "qText": "견본몬 문제 1. 정답은 3번!", "type": "choice", "choices": 4, "answer": "3", "opts": []}, {"q": "", "qText": "견본몬 문제 2. 정답을 입력하세요(정답: 포획)", "type": "text", "choices": 4, "answer": "포획", "opts": []}]}]}</script>
+<script id="game-data" type="application/json">{"title": "개념 도감 (샘플)", "rate": 0.25, "step": 0.4, "reveal": false, "ball": "", "ballName": "", "monsters": [{"id": "sample1", "name": "샘플몬", "img": "", "desc": "도감 설명 예시예요. 잡은 뒤 도감에서 이 몬스터를 누르면 보여요.", "qs": [{"q": "", "qText": "번호형 샘플 문제예요. 정답은 1번!\n(이 자리에 선생님이 만든 문제 사진이 들어가요)", "type": "choice", "choices": 4, "answer": "1", "opts": [], "exp": "해설 예시: 답을 고른 뒤 이렇게 해설이 나와요."}, {"q": "", "qText": "기술형 샘플 문제예요. 알맞은 기술을 고르세요.", "type": "skill", "choices": 4, "answer": "1", "opts": ["정답 기술", "오답 기술 1", "오답 기술 2", "오답 기술 3"], "exp": ""}]}, {"id": "sample2", "name": "견본몬", "img": "", "desc": "선생님이 적은 개념 요약이 여기에 들어가요.", "qs": [{"q": "", "qText": "견본몬 문제 1. 정답은 3번!", "type": "choice", "choices": 4, "answer": "3", "opts": [], "exp": ""}, {"q": "", "qText": "견본몬 문제 2. 정답을 입력하세요(정답: 포획)", "type": "text", "choices": 4, "answer": "포획", "opts": [], "exp": ""}]}]}</script>
 <script>
 (function () {
   "use strict";
@@ -246,6 +265,8 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   });
   var BALL = (DATA.ballName || "").trim() || "포획 도구";
   var STEP = Math.max(.05, Math.min(1, +DATA.step || .4));
+  var REST = Math.max(0, +(DATA.rest == null ? 60 : DATA.rest));   // 틀린 몬스터가 쉬는 시간(초)
+  var HEAL = .1;                                                     // 틀리면 몬스터가 회복하는 HP
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function jong(w) { if (!w) return false; var c = w.charCodeAt(w.length - 1); if (c < 0xAC00 || c > 0xD7A3) return false; return (c - 0xAC00) % 28 !== 0; }
@@ -258,37 +279,44 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   function store() { if (DATA.preview) return; try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
 
   /* ── 지도 ── */
+  // T 나무, W 물, G 풀숲, = 길, F 꽃, H 건물, f 울타리, S 표지판, R 바위
   var MAP = [
     "TTTTTTTTTTTTTTTTTTTTTTTT",
-    "T......GGGG.......WWWWWT",
+    "T.....RGGGG.......WWWWWT",
     "T.GGG..GGGG..FF...WWWWWT",
     "T.GGG..GGGG.......WWWWWT",
-    "T.GGG.........GGG..WWW.T",
-    "T........==...GGG......T",
+    "T.GGG......HHHGGG..WWWFT",
+    "T........==HHHGGG......T",
     "T==========...GGG..GGG.T",
-    "T...F....=.........GGG.T",
-    "T.GGGG...=..TT.....GGG.T",
-    "T.GGGG...=..TT.........T",
+    "T...F...S=....HHHH.GGG.T",
+    "T.GGGG...=..TTHHHH.GGG.T",
+    "T.GGGG...=..TT...F...R.T",
     "T.GGGG...========......T",
-    "T.........F.....=..GGGGT",
-    "T..WWW..GGGG....=..GGGGT",
-    "T..WWW..GGGG..F.=..GGGGT",
-    "T.......GGGG....=......T",
+    "T......F..F.....=..GGGGT",
+    "T..WWW..GGGGHHH.=..GGGGT",
+    "T..WWW..GGGGHHH.=..GGGGT",
+    "T.......GGGG....=.fffffT",
     "TTTTTTTTTTTTTTTTTTTTTTTT"
+  ];
+  var BUILDINGS = [
+    { x: 11, y: 4, w: 3, h: 2, kind: "lab" },
+    { x: 14, y: 7, w: 4, h: 2, kind: "house", roof: "#c9503f", dark: "#9c3a2d" },
+    { x: 12, y: 12, w: 3, h: 2, kind: "house", roof: "#3d6fb0", dark: "#2c5288" }
   ];
   var COLS = 24, ROWS = 16, TS = 32;
   function tile(x, y) { if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return "T"; return MAP[y].charAt(x) || "T"; }
-  function blockedAt(px, py) { var t = tile(Math.floor(px / TS), Math.floor(py / TS)); return t === "T" || t === "W"; }
+  function blockedAt(px, py) { return "TWHfSR".indexOf(tile(Math.floor(px / TS), Math.floor(py / TS))) >= 0; }
 
   var cv = $("map"), ctx = cv.getContext("2d");
   var bg = document.createElement("canvas"); bg.width = 768; bg.height = 512;
+  var WATER = [];
   (function drawBg() {
     var g = bg.getContext("2d"), seed = 7;
     function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) {
       var t = tile(x, y), px = x * TS, py = y * TS;
       if (t === "=") { g.fillStyle = "#ead7a2"; g.fillRect(px, py, TS, TS); g.fillStyle = "#d9c285"; for (var k = 0; k < 4; k++) g.fillRect(px + Math.floor(rnd() * 30), py + Math.floor(rnd() * 30), 3, 2); continue; }
-      if (t === "W") { g.fillStyle = "#5aa9e6"; g.fillRect(px, py, TS, TS); g.fillStyle = "#8cc8f2"; g.fillRect(px + 4 + Math.floor(rnd() * 8), py + 8, 10, 2); g.fillRect(px + 14 + Math.floor(rnd() * 6), py + 20, 10, 2); continue; }
+      if (t === "W") { g.fillStyle = "#5aa9e6"; g.fillRect(px, py, TS, TS); WATER.push([px, py, rnd()]); continue; }
       g.fillStyle = "#8fd16a"; g.fillRect(px, py, TS, TS); g.fillStyle = "#7fc25b"; for (var i = 0; i < 5; i++) g.fillRect(px + Math.floor(rnd() * 30), py + Math.floor(rnd() * 30), 2, 2);
       if (t === "G") {
         g.fillStyle = "#5aa947"; g.fillRect(px, py, TS, TS); g.fillStyle = "#3f8d39";
@@ -300,9 +328,51 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
         g.fillStyle = "#7a4b2a"; g.fillRect(px + 13, py + 20, 6, 10);
         g.fillStyle = "#2f7d3a"; g.beginPath(); g.arc(px + 16, py + 14, 13, 0, Math.PI * 2); g.fill();
         g.fillStyle = "#4a9c4b"; g.beginPath(); g.arc(px + 12, py + 10, 6, 0, Math.PI * 2); g.fill();
+      } else if (t === "f") {
+        g.fillStyle = "#b07a45"; g.fillRect(px, py + 12, TS, 4); g.fillRect(px, py + 20, TS, 4);
+        g.fillStyle = "#8a5a2e"; g.fillRect(px + 2, py + 8, 5, 20); g.fillRect(px + 18, py + 8, 5, 20);
+      } else if (t === "S") {
+        g.fillStyle = "#8a5a2e"; g.fillRect(px + 14, py + 16, 4, 14);
+        g.fillStyle = "#c99a5c"; g.fillRect(px + 3, py + 4, 26, 14); g.strokeStyle = "#6b4423"; g.lineWidth = 2; g.strokeRect(px + 3, py + 4, 26, 14);
+        g.fillStyle = "#6b4423"; g.fillRect(px + 7, py + 9, 18, 2); g.fillRect(px + 7, py + 13, 12, 2);
+      } else if (t === "R") {
+        g.fillStyle = "rgba(0,0,0,.15)"; g.beginPath(); g.ellipse(px + 16, py + 26, 12, 4, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#9aa3a8"; g.beginPath(); g.ellipse(px + 16, py + 18, 12, 10, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#c2c9cd"; g.beginPath(); g.ellipse(px + 12, py + 14, 5, 3, 0, 0, Math.PI * 2); g.fill();
       }
     }
+    BUILDINGS.forEach(function (b) { drawBuilding(g, b); });
   })();
+  // 집·연구소 그리기 (도트 그림 느낌)
+  function drawBuilding(g, b) {
+    var x = b.x * TS, y = b.y * TS, w = b.w * TS, h = b.h * TS, line = "#3a2f28";
+    g.fillStyle = "rgba(0,0,0,.18)"; g.fillRect(x + 6, y + h - 4, w - 4, 6);
+    g.lineWidth = 2; g.strokeStyle = line;
+    if (b.kind === "lab") {
+      g.fillStyle = "#e9eef1"; g.fillRect(x + 2, y + 16, w - 4, h - 18); g.strokeRect(x + 2, y + 16, w - 4, h - 18);
+      g.fillStyle = "#4d6b85"; g.fillRect(x, y + 4, w, 16); g.strokeRect(x, y + 4, w, 16);
+      g.fillStyle = "#6f8ea8"; g.fillRect(x + 2, y + 6, w - 4, 3);
+      g.fillStyle = "#1f3a52"; g.fillRect(x + w / 2 - 34, y + 22, 68, 14);
+      g.fillStyle = "#fff"; g.font = "bold 9px sans-serif"; g.textAlign = "center"; g.fillText("개념 연구소", x + w / 2, y + 33);
+      [x + 8, x + w - 22].forEach(function (wx) { g.fillStyle = "#bfe3f5"; g.fillRect(wx, y + 40, 14, 10); g.strokeRect(wx, y + 40, 14, 10); });
+      g.fillStyle = "#9fd3ea"; g.fillRect(x + w / 2 - 10, y + h - 22, 20, 20); g.strokeRect(x + w / 2 - 10, y + h - 22, 20, 20);
+      g.beginPath(); g.moveTo(x + w / 2, y + h - 22); g.lineTo(x + w / 2, y + h - 2); g.stroke();
+      return;
+    }
+    var roofBase = y + h * .5;
+    g.fillStyle = "#f3e5c4"; g.fillRect(x + 4, roofBase - 2, w - 8, h - roofBase + y); g.strokeRect(x + 4, roofBase - 2, w - 8, h - roofBase + y);
+    g.fillStyle = "#7a5a3a"; g.fillRect(x + w - 26, y + 2, 9, 14);
+    g.fillStyle = b.roof; g.beginPath(); g.moveTo(x - 2, roofBase + 2); g.lineTo(x + 8, y + 6); g.lineTo(x + w - 8, y + 6); g.lineTo(x + w + 2, roofBase + 2); g.closePath(); g.fill(); g.stroke();
+    g.strokeStyle = b.dark; g.lineWidth = 1.5;
+    for (var ry = y + 12; ry < roofBase; ry += 6) { g.beginPath(); g.moveTo(x + 4, ry); g.lineTo(x + w - 4, ry); g.stroke(); }
+    g.strokeStyle = line; g.lineWidth = 2;
+    g.fillStyle = "#7a4b2a"; g.fillRect(x + w / 2 - 6, y + h - 20, 12, 18); g.strokeRect(x + w / 2 - 6, y + h - 20, 12, 18);
+    g.fillStyle = "#e8b23a"; g.fillRect(x + w / 2 + 2, y + h - 11, 2, 2);
+    [x + 10, x + w - 24].forEach(function (wx) {
+      g.fillStyle = "#bfe3f5"; g.fillRect(wx, roofBase + 6, 14, 11); g.strokeRect(wx, roofBase + 6, 14, 11);
+      g.beginPath(); g.moveTo(wx + 7, roofBase + 6); g.lineTo(wx + 7, roofBase + 17); g.stroke();
+    });
+  }
 
   /* ── 주인공: 발 위치(px, py)를 기준으로 자유롭게 이동 ── */
   var P = { x: 9.5 * TS, y: 7.8 * TS, dir: "down", walk: 0, grass: 0, cool: 0 };
@@ -328,8 +398,14 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
       P.grass += moved;
       if (P.grass >= 36) {
         P.grass = 0;
-        var left = MONS.filter(function (m) { return save.caught.indexOf(m.id) < 0 && m.qs.length; });
+        var now = Date.now(), rest = save.rest || {};
+        var notYet = MONS.filter(function (m) { return save.caught.indexOf(m.id) < 0 && m.qs.length; });
+        var left = notYet.filter(function (m) { return !(rest[m.id] > now); });
         if (left.length && Math.random() < (DATA.rate || .2)) encounter(left[Math.floor(Math.random() * left.length)]);
+        else if (!left.length && notYet.length) {
+          var soon = Math.min.apply(null, notYet.map(function (m) { return rest[m.id]; }));
+          tip("남은 몬스터들이 쉬고 있어요. " + Math.max(1, Math.ceil((soon - now) / 1000)) + "초 뒤에 다시 나타나요!");
+        }
       }
     }
   }
@@ -352,6 +428,12 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   }
   function render() {
     ctx.drawImage(bg, 0, 0);
+    var tt = performance.now() / 1000;
+    ctx.fillStyle = "#8cc8f2";
+    WATER.forEach(function (w) {
+      var o = Math.sin(tt * 1.6 + w[2] * 6) * 4;
+      ctx.fillRect(w[0] + 5 + o, w[1] + 8, 10, 2); ctx.fillRect(w[0] + 15 - o, w[1] + 20, 10, 2);
+    });
     var v = inputVec(), moving = mode === "map" && (Math.abs(v.x) + Math.abs(v.y) > .01);
     var px = Math.round(P.x - 16), py = Math.round(P.y - 29);
     drawPlayer(px, py, moving);
@@ -421,6 +503,10 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     });
   }
   function clearActs() { var box = $("bActs"); box.className = ""; box.innerHTML = ""; }
+  var tipT = null;
+  function tip(t) { var el = $("tip"); el.textContent = t; el.hidden = false; clearTimeout(tipT); tipT = setTimeout(function () { el.hidden = true; }, 3500); }
+  // 틀린 적이 있는 몬스터는 잡지 못하고 헤어지면 잠시 쉰다 (같은 문제를 찍어서 맞히는 것 방지)
+  function restIfWrong() { if (B && B.wrong && REST > 0) { save.rest = save.rest || {}; save.rest[B.m.id] = Date.now() + REST * 1000; store(); } }
   function backToMap() { mode = "map"; showOnly(null); hud(); P.cool = 90; music("map"); }
 
   /* ── 음악: 배경 음악(지도)과 배틀 음악. 첫 터치(모험 시작) 뒤에만 재생할 수 있다 ── */
@@ -445,6 +531,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   function setGauge() { var hp = Math.round((1 - B.chance) * 100), f = $("gFill"); f.style.width = hp + "%"; f.className = "fill" + (hp <= 20 ? " low" : hp <= 50 ? " mid" : ""); }
   function encounter(m) {
     mode = "battle"; keys = {}; stickV = { x: 0, y: 0 };
+    Array.prototype.forEach.call(document.querySelectorAll("#qCard .exp"), function (e) { e.remove(); });
     B = { m: m, i: 0, chance: 0 };
     music("battle");
     var fl = $("flash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go");
@@ -468,7 +555,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
       { label: "도망가기", fn: run, alt: true }
     ]);
   }
-  function run() { clearActs(); $("qCard").hidden = true; say("무사히 도망쳤다!", function () { setTimeout(backToMap, 500); }); }
+  function run() { restIfWrong(); clearActs(); $("qCard").hidden = true; say("무사히 도망쳤다!", function () { setTimeout(backToMap, 500); }); }
   function ask() {
     var m = B.m, q = m.qs[B.i];
     $("qCard").hidden = false;
@@ -487,10 +574,13 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
       say(m.name + "에게 무엇을 할까?", function () {
         box.className = "skills"; box.innerHTML = "";
         var colors = ["var(--sk1)", "var(--sk2)", "var(--sk3)", "var(--sk4)"];
-        (q.opts || []).forEach(function (o, k) {
-          if (!String(o || "").trim()) return;
-          var b = document.createElement("button"); b.type = "button"; b.textContent = o; b.dataset.n = k + 1; b.style.setProperty("--c", colors[k % 4]);
-          b.addEventListener("click", function () { answer(String(k + 1), o); }); box.appendChild(b);
+        // 만날 때마다 기술 순서를 섞는다
+        var items = [];
+        (q.opts || []).forEach(function (o, k) { if (String(o || "").trim()) items.push({ k: k, o: o }); });
+        for (var z = items.length - 1; z > 0; z--) { var r = Math.floor(Math.random() * (z + 1)), tmp = items[z]; items[z] = items[r]; items[r] = tmp; }
+        items.forEach(function (it, n) {
+          var b = document.createElement("button"); b.type = "button"; b.textContent = it.o; b.dataset.n = n + 1; b.style.setProperty("--c", colors[n % 4]);
+          b.addEventListener("click", function () { answer(String(it.k + 1), it.o); }); box.appendChild(b);
         });
       });
     } else if (q.type === "text") {
@@ -540,15 +630,25 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
         save.right = (save.right || 0) + 1; store();
         anim($("bMon"), "hit", 520);
         B.chance = Math.min(.99, B.chance + STEP); setGauge();
-        setTimeout(function () { say("효과가 굉장했다! " + m.name + "의 HP가 줄었다!", afterAnswer); }, 450);
+        setTimeout(function () { say("효과가 굉장했다! " + m.name + "의 HP가 줄었다!", function () { explain(q, true); }); }, 450);
       } else {
-        save.wrong++; store();
+        save.wrong++; store(); B.wrong = true;
         anim($("bMon"), "dodge", 520);
         var msg = "효과가 없는 것 같다…";
-        if (DATA.reveal) msg += " (정답: " + (q.type === "skill" ? q.opts[+q.answer - 1] : q.type === "text" ? (q.all ? parts(q.answer).map(function (p) { return p[0]; }).join(", ") : String(q.answer).split(/[,/]/)[0].trim()) : q.answer + "번") + ")";
-        setTimeout(function () { say(msg, afterAnswer); }, 450);
+        if (B.chance > 0) { B.chance = Math.max(0, B.chance - HEAL); setGauge(); msg += " " + j(m.name, "은", "는") + " HP를 조금 회복했다!"; }
+        setTimeout(function () { say(msg, function () { explain(q, false); }); }, 450);
       }
     });
+  }
+  function answerText(q) { return q.type === "skill" ? q.opts[+q.answer - 1] : q.type === "text" ? (q.all ? parts(q.answer).map(function (p) { return p[0]; }).join(", ") : String(q.answer).split(/[,/]/)[0].trim()) : q.answer + "번"; }
+  // 답한 뒤 해설: 선생님이 해설을 넣었거나 '틀리면 정답 보여 주기'가 켜져 있으면 문제 카드 아래에 보여 준다
+  function explain(q, ok) {
+    var showAns = !ok && DATA.reveal, exp = (q.exp || "").trim();
+    if (!exp && !showAns) { afterAnswer(); return; }
+    var box = document.createElement("div"); box.className = "exp " + (ok ? "ok" : "no");
+    box.innerHTML = "<b>" + (ok ? "정답!" : "아쉬워요") + "</b>" + (showAns ? '<span class="ans">정답: ' + esc(answerText(q)) + "</span>" : "") + (exp ? "<p>" + esc(exp) + "</p>" : "");
+    $("qCard").appendChild(box);
+    buttons([{ label: "계속하기", fn: function () { box.remove(); afterAnswer(); } }]);
   }
   function afterAnswer() { $("qCard").hidden = true; menu(); }
   function throwBall() {
@@ -576,7 +676,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
           cap.className = "capsule burst"; mon.className = "monwrap out";
           say("아깝다! " + j(m.name, "이", "가") + " 빠져나왔다!", function () {
             setTimeout(function () {
-              mon.className = "monwrap flee";
+              mon.className = "monwrap flee"; restIfWrong();
               say(j(m.name, "은", "는") + " 도망쳐 버렸다… 다시 찾아보자!", function () { buttons([{ label: "다시 찾으러 가기", fn: backToMap }]); });
             }, 400);
           });
@@ -664,9 +764,19 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     $("dexGrid").innerHTML = MONS.map(function (m, i) {
       var got = save.caught.indexOf(m.id) >= 0;
       var pic = m.img ? '<img src="' + m.img + '" alt="">' : '<span class="ph">?</span>';
-      return '<div class="dc' + (got ? "" : " no") + '"><div class="pic">' + pic + '</div><div class="nm' + (got ? "" : " no-n") + '">No.' + (i + 1) + " " + (got ? esc(m.name) : "???") + "</div></div>";
+      return '<button type="button" class="dc' + (got ? "" : " no") + '" data-i="' + i + '"><div class="pic">' + pic + '</div><div class="nm' + (got ? "" : " no-n") + '">No.' + (i + 1) + " " + (got ? esc(m.name) : "???") + "</div></button>";
     }).join("");
+    Array.prototype.forEach.call(document.querySelectorAll("#dexGrid .dc"), function (c) { c.addEventListener("click", function () { dexDetail(+c.dataset.i); }); });
     $("dexClose").onclick = function () { if (MONS.length && save.caught.length >= MONS.length) finish(); else backToMap(); };
+  }
+  function dexDetail(i) {
+    var m = MONS[i], got = save.caught.indexOf(m.id) >= 0, d = $("dexD");
+    d.innerHTML = '<div class="dd"><div class="pic' + (got ? "" : " no") + '">' + (m.img ? '<img src="' + m.img + '" alt="">' : '<span class="ph">?</span>') + '</div>' +
+      '<div class="txt"><span class="small">No.' + (i + 1) + "</span><h2>" + (got ? esc(m.name) : "???") + "</h2>" +
+      "<p>" + (got ? esc((m.desc || "").trim() || "도감 설명이 아직 없어요.") : "아직 잡지 못한 몬스터예요. 풀숲에서 찾아보세요!") + "</p>" +
+      '<button type="button" class="big alt" id="ddClose">돌아가기</button></div></div>';
+    d.hidden = false;
+    $("ddClose").addEventListener("click", function () { d.hidden = true; });
   }
   $("dexBtn").addEventListener("click", function () { if (mode === "map" || mode === "done") openDex(); });
 
