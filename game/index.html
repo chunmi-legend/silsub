@@ -420,7 +420,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   var P = { x: 9.5 * TS, y: 7.8 * TS, dir: "down", walk: 0, grass: 0, cool: 0 };
   var SPEED = 150, HW = 8, HH = 5;           // 초당 픽셀, 발밑 충돌 상자 절반 크기
   var stickV = { x: 0, y: 0 }, keys = {}, mode = "title", last = 0;
-  var BP = { x: 12.5 * TS, y: 6.75 * TS }, bossArm = true, bossPic = null;   // 보스 자리: 큰 건물 문 앞
+  var BP = { x: 12.5 * TS, y: 7 * TS }, BS = 84, bossArm = true, bossPic = null;   // 보스 자리: 큰 건물 문 앞
   if (BOSS && BOSS.img) { bossPic = new Image(); bossPic.src = BOSS.img; }
   function bossResting() { var r = (save.rest || {}).boss; return r > Date.now() ? r : 0; }
   function free(x, y) { return !blockedAt(x - HW, y - HH) && !blockedAt(x + HW, y - HH) && !blockedAt(x - HW, y + HH) && !blockedAt(x + HW, y + HH); }
@@ -441,8 +441,8 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     if (P.cool > 0) P.cool -= moved;
     if (bossOut()) {
       var bd = Math.sqrt((P.x - BP.x) * (P.x - BP.x) + (P.y - BP.y) * (P.y - BP.y));
-      if (bd > 56) bossArm = true;
-      else if (bd < 26 && bossArm) {
+      if (bd > 64) bossArm = true;
+      else if (bd < 34 && bossArm) {
         var rr = bossResting();
         bossArm = false;
         if (rr) tip("보스가 숨을 고르고 있어요. " + Math.max(1, Math.ceil((rr - Date.now()) / 1000)) + "초 뒤에 다시 도전하세요!");
@@ -486,15 +486,17 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     var c = ctx, bob = Math.sin(tt * 3) * 2, x = BP.x, y = BP.y, rest = bossResting();
     c.save();
     if (rest) c.globalAlpha = .55;
-    c.fillStyle = "rgba(0,0,0,.22)"; c.beginPath(); c.ellipse(x, y + 2, 20, 6, 0, 0, Math.PI * 2); c.fill();
-    if (!rest) { c.strokeStyle = "rgba(124,72,196," + (.45 + Math.sin(tt * 4) * .25).toFixed(2) + ")"; c.lineWidth = 3; c.beginPath(); c.ellipse(x, y + 2, 24 + Math.sin(tt * 4) * 2, 8, 0, 0, Math.PI * 2); c.stroke(); }
-    var top = y - 46 + bob;
+    c.fillStyle = "rgba(0,0,0,.22)"; c.beginPath(); c.ellipse(x, y + 2, BS * .38, 9, 0, 0, Math.PI * 2); c.fill();
+    if (!rest) { c.strokeStyle = "rgba(124,72,196," + (.45 + Math.sin(tt * 4) * .25).toFixed(2) + ")"; c.lineWidth = 4; c.beginPath(); c.ellipse(x, y + 2, BS * .46 + Math.sin(tt * 4) * 3, 12, 0, 0, Math.PI * 2); c.stroke(); }
+    var top = y - BS + bob;
     if (bossPic && bossPic.complete && bossPic.naturalWidth) {
-      var k = Math.min(48 / bossPic.naturalWidth, 48 / bossPic.naturalHeight), w = bossPic.naturalWidth * k, h = bossPic.naturalHeight * k;
+      var k = Math.min(BS / bossPic.naturalWidth, BS / bossPic.naturalHeight), w = bossPic.naturalWidth * k, h = bossPic.naturalHeight * k;
       c.drawImage(bossPic, x - w / 2, y - h + bob, w, h); top = y - h + bob;
     } else {
-      c.fillStyle = "#7c48c4"; c.strokeStyle = "#3a2160"; c.lineWidth = 3; c.beginPath(); c.arc(x, y - 20 + bob, 20, 0, Math.PI * 2); c.fill(); c.stroke();
-      c.fillStyle = "#fff"; c.font = "900 22px sans-serif"; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText("?", x, y - 19 + bob);
+      var r = BS * .42;
+      c.fillStyle = "#7c48c4"; c.strokeStyle = "#3a2160"; c.lineWidth = 3; c.beginPath(); c.arc(x, y - r + bob, r, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = "#fff"; c.font = "900 36px sans-serif"; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText("?", x, y - r + 1 + bob);
+      top = y - 2 * r + bob;
     }
     c.restore();
     // 머리 위 표시: 쉬는 중이면 남은 초, 아니면 느낌표
