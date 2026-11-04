@@ -390,32 +390,36 @@ svg text { font-family: var(--f-body); }
     var svg = $("#svgEmergency"), GROUND = 470, LEN = 11000, ACT = 8000;
     var CIT = ["var(--v1)", "var(--v2)", "var(--v3)", "var(--v4)"];
     var AGENT = { shirt: "var(--ink-2)", cap: "var(--ink)", label: "수사관" };
-    // 침해된 기본권 (판결·결정 이유에 나온 것)
-    var R = { exp: "표현의 자유", vote: "참정권", meet: "집회·시위의 자유", warrant: "영장주의·신체의 자유", court: "법관에게 재판받을 권리", study: "학문의 자유", univ: "대학의 자율성" };
+    // 위헌 이유 (헌법재판소 2010헌바132 등 결정문, 제4호는 대법원 2011도2631 판결)
+    var R = { exp: "표현의 자유", vote: "참정권(국민투표권)", petition: "청원권", clear: "죄형법정주의(명확성 원칙)", penalty: "형벌의 과잉 금지(비례 원칙)",
+      warrant: "영장주의", body: "신체의 자유", court: "법관에게 재판받을 권리", meet: "집회·시위의 자유", study: "학문의 자유·대학의 자율성", self: "자기 책임의 원리" };
     var DATA = [
-      { no: "제1호", date: "1974. 1. 8. 발표", why: "개헌 청원 100만 인 서명 운동을 막기 위해 발표 (교과서)",
-        items: [["헌법을 부정·반대·왜곡·비방하는 행위 금지", ["exp"]],
-                ["헌법 개정·폐지를 주장·발의·제안·청원하는 행위 금지", ["vote", "exp"]],
-                ["유언비어를 날조·유포하는 행위 금지", ["exp"]],
-                ["위반·비방하면 법관의 영장 없이 체포·구속, 15년 이하 징역", ["warrant"]]],
+      { no: "제1호", date: "1974. 1. 8. 발표 ~ 1974. 8. 23. 해제", why: "개헌 청원 100만 인 서명 운동을 막기 위해 발표 (교과서)",
+        items: [["헌법을 부정·반대·왜곡·비방하는 일체의 행위 금지", ["exp", "clear"]],
+                ["헌법 개정·폐지를 주장·발의·제안·청원하는 일체의 행위 금지", ["exp", "vote", "petition", "clear"]],
+                ["유언비어를 날조·유포하는 일체의 행위 금지", ["clear"]],
+                ["위반·비방하면 법관의 영장 없이 체포·구속, 15년 이하 징역", ["warrant", "penalty"]],
+                ["위반·비방한 사람은 비상군법회의에서 심판", ["court"]]],
         courts: ["헌법재판소 2013. 3. 21. 위헌 결정", "대법원 2010. 12. 16. 위헌·무효 판결"] },
-      { no: "제2호", date: "1974. 1. 8. 발표 (제1호와 같은 날)", why: "긴급 조치를 어긴 사람을 군사 법정에서 재판",
-        items: [["긴급 조치 위반자를 심판할 비상군법회의를 국방부에 설치", ["court"]],
-                ["재판장과 심판관을 현역 군 장교 등이 맡음", ["court"]]],
+      { no: "제2호", date: "1974. 1. 8. 발표 (제1호와 같은 날)", why: "긴급 조치 제1호를 어긴 사람을 군사 법정에서 재판",
+        items: [["긴급 조치 제1호 위반자를 심판할 비상군법회의 설치", ["court"]],
+                ["국군 현역 장관급 장교를 재판장·심판관으로 둠", ["court"]],
+                ["영장은 법관이 아니라 검찰관이 발부", ["warrant"]],
+                ["구속 기간의 제한을 받지 않음", ["body"]]],
         courts: ["헌법재판소 2013. 3. 21. 위헌 결정"] },
-      { no: "제4호", date: "1974. 4. 3. 발표", why: "민청학련과 학생들의 유신 반대 운동을 겨냥",
+      { no: "제4호", date: "1974. 4. 3. 발표 ~ 1974. 8. 23. 해제", why: "민청학련과 학생들의 유신 반대 운동을 겨냥",
         items: [["민청학련(전국민주청년학생총연맹)과 관련 단체의 조직·가입·지원 금지", ["exp"]],
                 ["학생의 출석·수업·시험 거부, 학교 안팎의 집회·시위 금지", ["exp", "study"]],
                 ["위반하면 사형·무기 또는 5년 이상 징역", []],
                 ["영장 없이 체포하고 비상군법회의에서 심판", ["warrant", "court"]],
-                ["위반 학생이 속한 학교는 폐교할 수 있음", ["univ"]]],
+                ["위반 학생이 속한 학교는 폐교할 수 있음", ["study"]]],
         courts: ["대법원 2013. 5. 16. 위헌·무효 판결"] },
-      { no: "제9호", date: "1975. 5. 13. 발표 ~ 1979. 12. 해제", why: "유신 헌법에 대한 비판과 개헌 논의를 모두 금지",
-        items: [["유언비어 날조·유포, 사실을 왜곡해 전파하는 행위 금지", ["exp"]],
+      { no: "제9호", date: "1975. 5. 13. 발표 ~ 1979. 12. 해제", why: "4년 7개월 동안 유지 · 유신 헌법 비판과 개헌 논의를 모두 금지",
+        items: [["유언비어를 날조·유포하거나 사실을 왜곡해 전파하는 행위 금지", ["clear"]],
                 ["집회·언론 등으로 헌법을 비방하거나 개정·폐지를 주장하는 행위 금지", ["exp", "vote"]],
-                ["허가받지 않은 학생의 집회·시위·정치 관여 금지", ["meet", "study"]],
-                ["위반하면 영장 없이 체포, 1년 이상 징역", ["warrant"]],
-                ["주무 장관이 학생 제적, 학교 휴교, 언론 정간·폐간 등을 명령", []]],
+                ["허가받지 않은 학생의 집회·시위·정치 관여 행위 금지", ["meet", "study"]],
+                ["위반·비방하면 법관의 영장 없이 체포, 1년 이상 징역", ["warrant", "penalty"]],
+                ["주무 장관이 위반 학생 제적, 소속 학교 휴업·휴교·폐쇄", ["study", "self"]]],
         courts: ["헌법재판소 2013. 3. 21. 위헌 결정", "대법원 2013. 4. 18. 위헌·무효 결정"] }
     ];
     var NUM = ["①", "②", "③", "④", "⑤"];
@@ -423,7 +427,7 @@ svg text { font-family: var(--f-body); }
     mk("rect", { x: 0, y: GROUND, width: 1000, height: 90, fill: "var(--paper)" }, svg);
     mk("line", { x1: 0, x2: 1000, y1: GROUND, y2: GROUND, stroke: "var(--rule)", "stroke-width": 2 }, svg);
     mk("text", { x: 30, y: 518, "class": "tm" }, svg, "조치 내용: 대통령 긴급 조치 제1·2·4·9호 원문을 줄여 옮김");
-    mk("text", { x: 30, y: 538, "class": "tm" }, svg, "위헌 판단: 헌법재판소 2010헌바70·132·170 결정, 대법원 2010도5986·2011초기689·2011도2631");
+    mk("text", { x: 30, y: 538, "class": "tm" }, svg, "위헌 판단: 헌법재판소 2013. 3. 21. 2010헌바70·132·170(병합) 결정 (제4호는 대법원 2011도2631 판결)");
 
     function stamp(parent, text, w, h, fs) {
       var o = mk("g", {}, parent), g = mk("g", { transform: "rotate(-8)" }, o);
@@ -475,18 +479,18 @@ svg text { font-family: var(--f-body); }
       var pan = mk("g", { style: "opacity:0" }, g);
       var keys = [];
       d.items.forEach(function (it) { it[1].forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); }); });
-      var ph = 92 + d.courts.length * 18 + keys.length * 23;
+      var ph = 92 + d.courts.length * 18 + keys.length * 21;
       mk("rect", { x: 668, y: 22, width: 306, height: ph, rx: 6, fill: "var(--sheet)", stroke: "var(--seal)", "stroke-width": 2 }, pan);
       mk("text", { x: 686, y: 50, "class": "tb", style: "fill:var(--seal)" }, pan, "위헌으로 판정");
       d.courts.forEach(function (c, i) { mk("text", { x: 686, y: 72 + i * 18, "class": "tm" }, pan, c); });
       var y0 = 72 + d.courts.length * 18 + 14;
-      mk("text", { x: 686, y: y0, "class": "t2", style: "font-weight:700" }, pan, "침해된 기본권 (판결 이유)");
+      mk("text", { x: 686, y: y0, "class": "t2", style: "font-weight:700" }, pan, "위헌 이유 (침해된 기본권·원칙)");
       var rrows = keys.map(function (k, i) {
         var nums = d.items.map(function (it, j) { return it[1].indexOf(k) >= 0 ? NUM[j] : ""; }).join("");
         var rg = mk("g", { style: "opacity:0" }, pan);
-        mk("circle", { cx: 692, cy: y0 + 19 + i * 23, r: 4, fill: "var(--seal)" }, rg);
-        mk("text", { x: 704, y: y0 + 24 + i * 23, "class": "t", style: "font-size:14.5px;font-weight:700" }, rg, R[k]);
-        mk("text", { x: 962, y: y0 + 24 + i * 23, "class": "t2 end", style: "fill:var(--seal)" }, rg, nums);
+        mk("circle", { cx: 692, cy: y0 + 18 + i * 21, r: 4, fill: "var(--seal)" }, rg);
+        mk("text", { x: 704, y: y0 + 23 + i * 21, "class": "t", style: "font-size:14px;font-weight:700" }, rg, R[k]);
+        mk("text", { x: 962, y: y0 + 23 + i * 21, "class": "t2 end", style: "fill:var(--seal)" }, rg, nums);
         return rg;
       });
       return { g: g, rows: rows, pan: pan, rrows: rrows };
@@ -609,16 +613,12 @@ svg text { font-family: var(--f-body); }
 
     // ④ 제9호: 말 한마디로 체포, 언론 정간, 학교 휴교
     var s4 = scenes[3];
-    var stand = mk("g", {}, s4);
-    mk("rect", { x: 610, y: GROUND - 70, width: 120, height: 70, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, stand);
-    for (var i = 0; i < 5; i++) mk("rect", { x: 625, y: GROUND - 82 - i * 6, width: 90, height: 6, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 1 }, stand);
-    mk("text", { x: 670, y: GROUND - 30, "class": "mid", style: "fill:var(--ink);font-size:14px;font-weight:700" }, stand, "신문");
     var sch4 = mk("g", {}, s4);
-    mk("rect", { x: 800, y: 330, width: 170, height: GROUND - 330, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, sch4);
-    mk("rect", { x: 792, y: 318, width: 186, height: 14, fill: "var(--ink-2)" }, sch4);
-    mk("rect", { x: 860, y: 400, width: 50, height: GROUND - 400, fill: "var(--ink-2)" }, sch4);
-    mk("text", { x: 885, y: 312, "class": "mid", style: "fill:var(--ink);font-size:14px;font-weight:700" }, sch4, "학교");
-    var paperStamp = stamp(s4, "정간", 64, 30, 17), schoolStamp = stamp(s4, "휴교", 64, 30, 17);
+    mk("rect", { x: 760, y: 356, width: 210, height: GROUND - 356, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, sch4);
+    mk("rect", { x: 752, y: 344, width: 226, height: 14, fill: "var(--ink-2)" }, sch4);
+    mk("rect", { x: 840, y: 410, width: 50, height: GROUND - 410, fill: "var(--ink-2)" }, sch4);
+    mk("text", { x: 865, y: 338, "class": "mid", style: "fill:var(--ink);font-size:14px;font-weight:700" }, sch4, "학교");
+    var schoolStamp = stamp(s4, "휴교", 64, 30, 17);
     var talk = [person(s4, { shirt: CIT[1], label: "시민" }), person(s4, { shirt: CIT[3], label: "시민" })];
     var say = bubble(s4, "헌법을 고쳐야 하지 않나…", 190);
     var a4 = person(s4, AGENT), w4 = warrant(s4);
@@ -629,9 +629,8 @@ svg text { font-family: var(--f-body); }
       op(say, lt > 1900 && lt < 3900 ? 1 : 0); at(say, 400, 300);
       route(a4, [[2800, 4200, -100, 310]], lt, { raise: lt > 4300 });
       op(w4, seg(lt, 4300, 4700)); at(w4, 300, 270);
-      var p = seg(lt, 5600, 6000), q = seg(lt, 6300, 6700);
-      op(paperStamp, p); at(paperStamp, 670, GROUND - 105, lerp(1.8, 1, easeOut(p)));
-      op(schoolStamp, q); at(schoolStamp, 885, 365, lerp(1.8, 1, easeOut(q)));
+      var q = seg(lt, 5600, 6000);
+      op(schoolStamp, q); at(schoolStamp, 865, 395, lerp(1.8, 1, easeOut(q)));
     }
 
     var SC = [scene1, scene2, scene3, scene4];
