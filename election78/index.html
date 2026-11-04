@@ -118,6 +118,7 @@ svg text { font-family: var(--f-body); }
       <span class="brand">5·16 군사 정변과 유신 체제</span>
       <nav class="tabs" aria-label="화면">
         <a href="#power"><small>1972 · 10월 유신</small>유신 헌법과 대통령 권한</a>
+        <a href="#emergency"><small>1974~1975</small>긴급 조치</a>
         <a href="#election78"><small>1978</small>10대 국회의원 선거</a>
       </nav>
       <a class="lesson-link" data-lesson="2" href="419.html">◀ 이전 차시</a>
@@ -145,6 +146,27 @@ svg text { font-family: var(--f-body); }
         </div>
         <span class="hint" id="hint-power"></span>
         <button type="button" class="btn" id="next-power">다음 장면 ▶</button>
+      </div>
+    </section>
+
+    <!-- 긴급 조치 -->
+    <section class="page" id="p-emergency" data-name="emergency" hidden>
+      <div class="head">
+        <div>
+          <h1>긴급 조치, 비판하면 영장 없이 잡아갔다</h1>
+          <p>유신 헌법은 대통령에게 긴급 조치권을 주었다. 박정희 정부는 총 9차례 긴급 조치를 발표하였고, 그중 1, 2, 4, 9호는 이후 위헌으로 판정받았다.</p>
+        </div>
+      </div>
+      <div class="fig short"><svg id="svgEmergency" viewBox="0 0 1000 560" role="img" aria-label="긴급 조치 제1호·제2호·제4호·제9호의 주요 내용과, 법원이 위헌으로 판단한 부분 및 침해된 기본권"></svg></div>
+      <div class="scrub">
+        <div class="chips" id="chips-emergency">
+          <button type="button" data-t="0">제1호</button>
+          <button type="button" data-t="11000">제2호</button>
+          <button type="button" data-t="22000">제4호</button>
+          <button type="button" data-t="33000">제9호</button>
+        </div>
+        <span class="hint" id="hint-emergency"></span>
+        <button type="button" class="btn" id="next-emergency">다음 장면 ▶</button>
       </div>
     </section>
 
@@ -318,6 +340,311 @@ svg text { font-family: var(--f-body); }
     return stepper("power", [2999, 6999, 11499, 14499, 18800], render, svg);
   })();
 
+
+  /* ── 등장인물 (4·19 혁명 차시의 인물과 같은 모양) ── */
+  function show(el, on) { el.style.display = on ? "" : "none"; }
+  function person(parent, o) {
+    var outer = mk("g", {}, parent), g = mk("g", {}, outer), pants = o.pants || "var(--ink)";
+    var legL = mk("rect", { x: -8, y: -27, width: 7, height: 27, rx: 3.5, fill: pants }, g);
+    var legR = mk("rect", { x: 1, y: -27, width: 7, height: 27, rx: 3.5, fill: pants }, g);
+    var armB = mk("rect", { x: -3, y: -63, width: 7, height: 31, rx: 3.5, fill: o.shirt, opacity: .75 }, g);
+    mk("rect", { x: -15, y: -67, width: 30, height: 45, rx: 10, fill: o.shirt }, g);
+    if (o.band) mk("rect", { x: -15, y: -55, width: 30, height: 7, fill: "var(--seal)" }, g);
+    var armF = mk("rect", { x: -3, y: -63, width: 7, height: 31, rx: 3.5, fill: o.shirt, stroke: "var(--ink)", "stroke-opacity": .25 }, g);
+    mk("circle", { cx: 0, cy: -82, r: 13, fill: "var(--skin)" }, g);
+    if (o.cap) {
+      mk("rect", { x: -14, y: -100, width: 28, height: 12, rx: 3, fill: o.cap }, g);
+      mk("rect", { x: 2, y: -91, width: 17, height: 4, rx: 2, fill: o.cap }, g);
+    } else mk("path", { d: "M-13,-84 a13,13 0 0 1 26,0 q-9,-5 -26,0 z", fill: o.hair || "var(--ink)" }, g);
+    mk("circle", { cx: 5, cy: -82, r: 1.8, fill: "var(--ink)" }, g);
+    mk("circle", { cx: 11, cy: -82, r: 1.8, fill: "var(--ink)" }, g);
+    var lab = o.label ? mk("text", { x: 0, y: 20, "class": "tm mid", style: "fill:var(--ink);font-size:12px" }, outer, o.label) : null;
+    return {
+      g: outer,
+      set: function (x, y, walk, face, raise) {
+        at(outer, x, y, o.s || 1.35);
+        g.setAttribute("transform", face < 0 ? "scale(-1 1)" : "");
+        var a = walk ? 24 * Math.sin(walk) : 0;
+        legL.setAttribute("transform", "rotate(" + a.toFixed(1) + " -4.5 -27)");
+        legR.setAttribute("transform", "rotate(" + (-a).toFixed(1) + " 4.5 -27)");
+        armB.setAttribute("transform", "rotate(" + (-a).toFixed(1) + " 0 -60)");
+        armF.setAttribute("transform", "rotate(" + (raise ? -150 : a).toFixed(1) + " 0 -60)");
+      }
+    };
+  }
+  // 여러 구간을 걷는 사람: legs = [[시작, 끝, 출발 x, 도착 x], ...]
+  function route(p, legs, lt, opt) {
+    opt = opt || {};
+    var x = legs[0][2], moving = false, face = opt.face || 1;
+    legs.forEach(function (L) {
+      if (lt >= L[0]) { x = lerp(L[2], L[3], ease(seg(lt, L[0], L[1]))); face = L[3] >= L[2] ? 1 : -1; }
+      if (lt > L[0] && lt < L[1]) moving = true;
+    });
+    if (!moving && opt.faceEnd && lt >= legs[legs.length - 1][1]) face = opt.faceEnd;
+    p.set(x, opt.y || 470, moving ? lt / 95 : 0, face, opt.raise);
+    return x;
+  }
+
+  /* ───────── 긴급 조치 제1·2·4·9호 ───────── */
+  var emergency = (function () {
+    var svg = $("#svgEmergency"), GROUND = 470, LEN = 11000, ACT = 8000;
+    var CIT = ["var(--v1)", "var(--v2)", "var(--v3)", "var(--v4)"];
+    var AGENT = { shirt: "var(--ink-2)", cap: "var(--ink)", label: "수사관" };
+    // 침해된 기본권 (판결·결정 이유에 나온 것)
+    var R = { exp: "표현의 자유", vote: "참정권", meet: "집회·시위의 자유", warrant: "영장주의·신체의 자유", court: "법관에게 재판받을 권리", study: "학문의 자유", univ: "대학의 자율성" };
+    var DATA = [
+      { no: "제1호", date: "1974. 1. 8. 발표", why: "개헌 청원 100만 인 서명 운동을 막기 위해 발표 (교과서)",
+        items: [["헌법을 부정·반대·왜곡·비방하는 행위 금지", ["exp"]],
+                ["헌법 개정·폐지를 주장·발의·제안·청원하는 행위 금지", ["vote", "exp"]],
+                ["유언비어를 날조·유포하는 행위 금지", ["exp"]],
+                ["위반·비방하면 법관의 영장 없이 체포·구속, 15년 이하 징역", ["warrant"]]],
+        courts: ["헌법재판소 2013. 3. 21. 위헌 결정", "대법원 2010. 12. 16. 위헌·무효 판결"] },
+      { no: "제2호", date: "1974. 1. 8. 발표 (제1호와 같은 날)", why: "긴급 조치를 어긴 사람을 군사 법정에서 재판",
+        items: [["긴급 조치 위반자를 심판할 비상군법회의를 국방부에 설치", ["court"]],
+                ["재판장과 심판관을 현역 군 장교 등이 맡음", ["court"]]],
+        courts: ["헌법재판소 2013. 3. 21. 위헌 결정"] },
+      { no: "제4호", date: "1974. 4. 3. 발표", why: "민청학련과 학생들의 유신 반대 운동을 겨냥",
+        items: [["민청학련(전국민주청년학생총연맹)과 관련 단체의 조직·가입·지원 금지", ["exp"]],
+                ["학생의 출석·수업·시험 거부, 학교 안팎의 집회·시위 금지", ["exp", "study"]],
+                ["위반하면 사형·무기 또는 5년 이상 징역", []],
+                ["영장 없이 체포하고 비상군법회의에서 심판", ["warrant", "court"]],
+                ["위반 학생이 속한 학교는 폐교할 수 있음", ["univ"]]],
+        courts: ["대법원 2013. 5. 16. 위헌·무효 판결"] },
+      { no: "제9호", date: "1975. 5. 13. 발표 ~ 1979. 12. 해제", why: "유신 헌법에 대한 비판과 개헌 논의를 모두 금지",
+        items: [["유언비어 날조·유포, 사실을 왜곡해 전파하는 행위 금지", ["exp"]],
+                ["집회·언론 등으로 헌법을 비방하거나 개정·폐지를 주장하는 행위 금지", ["exp", "vote"]],
+                ["허가받지 않은 학생의 집회·시위·정치 관여 금지", ["meet", "study"]],
+                ["위반하면 영장 없이 체포, 1년 이상 징역", ["warrant"]],
+                ["주무 장관이 학생 제적, 학교 휴교, 언론 정간·폐간 등을 명령", []]],
+        courts: ["헌법재판소 2013. 3. 21. 위헌 결정", "대법원 2013. 4. 18. 위헌·무효 결정"] }
+    ];
+    var NUM = ["①", "②", "③", "④", "⑤"];
+
+    mk("rect", { x: 0, y: GROUND, width: 1000, height: 90, fill: "var(--paper)" }, svg);
+    mk("line", { x1: 0, x2: 1000, y1: GROUND, y2: GROUND, stroke: "var(--rule)", "stroke-width": 2 }, svg);
+    mk("text", { x: 30, y: 518, "class": "tm" }, svg, "조치 내용: 대통령 긴급 조치 제1·2·4·9호 원문을 줄여 옮김");
+    mk("text", { x: 30, y: 538, "class": "tm" }, svg, "위헌 판단: 헌법재판소 2010헌바70·132·170 결정, 대법원 2010도5986·2011초기689·2011도2631");
+
+    function stamp(parent, text, w, h, fs) {
+      var o = mk("g", {}, parent), g = mk("g", { transform: "rotate(-8)" }, o);
+      mk("rect", { x: -w / 2, y: -h / 2, width: w, height: h, rx: 4, fill: "var(--sheet)", "fill-opacity": .85, stroke: "var(--seal)", "stroke-width": 2.5 }, g);
+      mk("text", { x: 0, y: fs * .36, "class": "mid", style: "fill:var(--seal);font-weight:800;font-size:" + fs + "px" }, g, text);
+      return o;
+    }
+    function noticeBoard(parent, no) {
+      var g = mk("g", {}, parent);
+      mk("rect", { x: 138, y: 330, width: 8, height: GROUND - 330, fill: "var(--ink-2)" }, g);
+      mk("rect", { x: 50, y: 262, width: 184, height: 74, rx: 4, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 2 }, g);
+      mk("text", { x: 142, y: 288, "class": "t2 mid", style: "font-weight:600" }, g, "대통령 긴급 조치");
+      mk("text", { x: 142, y: 322, "class": "big mid", "font-size": 26 }, g, no);
+      return g;
+    }
+    function warrant(parent) {   // 영장 없음
+      var g = mk("g", {}, parent);
+      mk("rect", { x: -20, y: -26, width: 40, height: 52, rx: 3, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 2 }, g);
+      mk("text", { x: 0, y: -4, "class": "mid", style: "fill:var(--ink);font-size:13px;font-weight:700" }, g, "영장");
+      mk("line", { x1: -14, x2: 14, y1: 8, y2: 8, stroke: "var(--ink-2)" }, g);
+      mk("line", { x1: -14, x2: 8, y1: 15, y2: 15, stroke: "var(--ink-2)" }, g);
+      mk("path", { d: "M-28,-32 L28,32 M28,-32 L-28,32", stroke: "var(--seal)", "stroke-width": 5, "stroke-linecap": "round" }, g);
+      mk("text", { x: 0, y: 46, "class": "mid", style: "fill:var(--seal);font-size:14px;font-weight:800" }, g, "영장 없음");
+      return g;
+    }
+    function bubble(parent, text, w) {
+      var g = mk("g", {}, parent);
+      mk("rect", { x: -w / 2, y: -30, width: w, height: 32, rx: 7, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 1.5 }, g);
+      mk("path", { d: "M-6,2 L0,14 L6,2 z", fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 1.5 }, g);
+      mk("rect", { x: -7, y: -1, width: 14, height: 4, fill: "var(--sheet)" }, g);
+      mk("text", { x: 0, y: -9, "class": "mid", style: "fill:var(--ink);font-size:14px;font-weight:700" }, g, text);
+      return g;
+    }
+
+    /* 위쪽: 조치 내용(왼쪽)과 위헌 판단(오른쪽) */
+    var heads = DATA.map(function (d, si) {
+      var g = mk("g", {}, svg);
+      mk("text", { x: 30, y: 40, "class": "tm", style: "fill:var(--seal)" }, g, "긴급 조치 " + (si + 1) + " / 4 · " + d.date);
+      mk("text", { x: 30, y: 72, "class": "big", "font-size": 27 }, g, "긴급 조치 " + d.no);
+      mk("text", { x: 30, y: 98, "class": "t2" }, g, d.why);
+      var rows = d.items.map(function (it, i) {
+        var y = 128 + i * 25, rg = mk("g", { style: "opacity:0" }, g);
+        var tx = mk("text", { x: 84, y: y, "class": "t", style: "font-size:14.5px" }, rg, NUM[i] + " " + it[0]);
+        var st = it[1].length ? stamp(g, "위헌", 44, 21, 13) : null;
+        if (st) at(st, 52, y - 5);
+        return { g: rg, tx: tx, st: st };
+      });
+      // 위헌 판단 상자
+      var pan = mk("g", { style: "opacity:0" }, g);
+      var keys = [];
+      d.items.forEach(function (it) { it[1].forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); }); });
+      var ph = 92 + d.courts.length * 18 + keys.length * 23;
+      mk("rect", { x: 668, y: 22, width: 306, height: ph, rx: 6, fill: "var(--sheet)", stroke: "var(--seal)", "stroke-width": 2 }, pan);
+      mk("text", { x: 686, y: 50, "class": "tb", style: "fill:var(--seal)" }, pan, "위헌으로 판정");
+      d.courts.forEach(function (c, i) { mk("text", { x: 686, y: 72 + i * 18, "class": "tm" }, pan, c); });
+      var y0 = 72 + d.courts.length * 18 + 14;
+      mk("text", { x: 686, y: y0, "class": "t2", style: "font-weight:700" }, pan, "침해된 기본권 (판결 이유)");
+      var rrows = keys.map(function (k, i) {
+        var nums = d.items.map(function (it, j) { return it[1].indexOf(k) >= 0 ? NUM[j] : ""; }).join("");
+        var rg = mk("g", { style: "opacity:0" }, pan);
+        mk("circle", { cx: 692, cy: y0 + 19 + i * 23, r: 4, fill: "var(--seal)" }, rg);
+        mk("text", { x: 704, y: y0 + 24 + i * 23, "class": "t", style: "font-size:14.5px;font-weight:700" }, rg, R[k]);
+        mk("text", { x: 962, y: y0 + 24 + i * 23, "class": "t2 end", style: "fill:var(--seal)" }, rg, nums);
+        return rg;
+      });
+      return { g: g, rows: rows, pan: pan, rrows: rrows };
+    });
+    function headRender(si, lt) {
+      var h = heads[si];
+      h.rows.forEach(function (r, i) {
+        op(r.g, seg(lt, 500 + i * 380, 900 + i * 380));
+        var k = seg(lt, ACT + 150 + i * 330, ACT + 450 + i * 330);
+        if (r.st) { op(r.st, k); var p = r.st.getAttribute("transform"); at(r.st, 52, 128 + i * 25 - 5, lerp(1.8, 1, easeOut(k))); }
+        r.tx.style.fill = r.st && k > .5 ? "var(--seal)" : "";
+        r.tx.style.textDecoration = r.st && k > .5 ? "underline" : "";
+      });
+      op(h.pan, seg(lt, ACT + 300, ACT + 800));
+      h.rrows.forEach(function (rg, i) { op(rg, seg(lt, ACT + 700 + i * 260, ACT + 1000 + i * 260)); });
+    }
+
+    /* 아래쪽: 장면마다 인물 애니메이션 */
+    var scenes = DATA.map(function () { return mk("g", {}, svg); });
+    var boards = DATA.map(function (d, i) { return noticeBoard(scenes[i], d.no); });
+    var bigStamps = DATA.map(function (d, i) { return stamp(scenes[i], "위헌·무효", 150, 46, 26); });
+    function boardRender(si, lt, from) {
+      var k = seg(lt, from, from + 600);
+      op(boards[si], k); at(boards[si], 0, lerp(-30, 0, easeOut(k)));
+      var s = seg(lt, ACT, ACT + 400);
+      op(bigStamps[si], s); at(bigStamps[si], 142, 300, lerp(2, 1, easeOut(s)));
+    }
+
+    // ① 제1호: 개헌 청원 서명 → 영장 없이 체포
+    var s1 = scenes[0];
+    var table = mk("g", {}, s1);
+    mk("rect", { x: 420, y: 284, width: 210, height: 30, rx: 3, fill: "var(--gold-soft)", stroke: "var(--gold)", "stroke-width": 2 }, table);
+    mk("text", { x: 525, y: 305, "class": "mid", style: "fill:var(--ink);font-size:15px;font-weight:700" }, table, "개헌 청원 서명");
+    mk("rect", { x: 440, y: GROUND - 62, width: 170, height: 10, fill: "var(--ink-2)" }, table);
+    mk("rect", { x: 452, y: GROUND - 52, width: 8, height: 52, fill: "var(--ink-2)" }, table);
+    mk("rect", { x: 590, y: GROUND - 52, width: 8, height: 52, fill: "var(--ink-2)" }, table);
+    var sheets = [0, 1, 2].map(function (k) { return mk("rect", { x: 500, y: GROUND - 66 - k * 5, width: 40, height: 5, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 1 }, s1); });
+    var c1 = [person(s1, { shirt: CIT[0], label: "시민" }), person(s1, { shirt: CIT[2], label: "시민" }), person(s1, { shirt: CIT[1], label: "시민" })];
+    var a1 = [person(s1, AGENT), person(s1, AGENT)];
+    var w1 = warrant(s1), ban1 = bubble(s1, "개헌 청원 금지!", 130);
+    function scene1(lt) {
+      boardRender(0, lt, 3300);
+      sheets.forEach(function (sh, k) { op(sh, lt > 1900 + k * 650 ? 1 : 0); });
+      route(c1[0], [[300, 1800, 1060, 580]], lt, { faceEnd: -1, raise: lt > 1900 && lt < 2500 });
+      route(c1[1], [[500, 2100, 1120, 660], [5800, 6600, 660, 760]], lt, { faceEnd: -1, raise: lt > 2550 && lt < 3150 });
+      route(c1[2], [[700, 2400, 1180, 740], [5800, 6600, 740, 850]], lt, { faceEnd: -1, raise: lt > 3200 && lt < 3700 });
+      op(ban1, lt > 3700 && lt < 5000 ? 1 : 0); at(ban1, 142, 252);
+      // 수사관이 들어와 영장 없이 붙잡음
+      route(a1[0], [[4200, 5500, -80, 520], [5500, 5501, 520, 520]], lt, { raise: lt > 5600 });
+      route(a1[1], [[4400, 5700, -150, 450]], lt);
+      op(w1, seg(lt, 5600, 6000)); at(w1, 330, 270);
+    }
+
+    // ② 제2호: 법원 대신 비상군법회의
+    var s2 = scenes[1];
+    var court = mk("g", {}, s2);
+    mk("rect", { x: 330, y: 330, width: 160, height: GROUND - 330, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, court);
+    mk("path", { d: "M320,332 L410,286 L500,332 z", fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, court);
+    [350, 380, 440, 470].forEach(function (x) { mk("rect", { x: x - 4, y: 352, width: 8, height: GROUND - 352, fill: "var(--rule)" }, court); });
+    mk("text", { x: 410, y: 322, "class": "mid", style: "fill:var(--ink);font-size:14px;font-weight:700" }, court, "법원");
+    var judge = person(s2, { shirt: "var(--ink)", label: "법관" });
+    var mil = mk("g", {}, s2);
+    mk("rect", { x: 610, y: 262, width: 360, height: GROUND - 262, fill: "var(--paper)", stroke: "var(--ink)", "stroke-width": 2 }, mil);
+    mk("rect", { x: 610, y: 238, width: 360, height: 28, fill: "var(--v2)" }, mil);
+    mk("text", { x: 790, y: 257, "class": "mid", style: "fill:var(--sheet);font-size:15px;font-weight:800" }, mil, "비상군법회의 (국방부)");
+    var officers = [0, 1, 2].map(function (k) { return person(s2, { shirt: "var(--v2)", cap: "var(--v2)", label: "" }); });
+    var bench = mk("g", {}, s2);
+    mk("rect", { x: 750, y: GROUND - 76, width: 210, height: 76, fill: "var(--v2)", "fill-opacity": .85 }, bench);
+    mk("text", { x: 855, y: GROUND - 34, "class": "mid", style: "fill:var(--sheet);font-size:14px;font-weight:700" }, bench, "현역 군 장교");
+    var a2 = person(s2, AGENT), c2 = person(s2, { shirt: CIT[3], label: "위반자" });
+    var skip = mk("g", {}, s2);
+    mk("path", { d: "M300,250 Q410,205 520,250", fill: "none", stroke: "var(--seal)", "stroke-width": 3, "stroke-dasharray": "7 6" }, skip);
+    mk("path", { d: "M512,240 L522,251 L508,256", fill: "none", stroke: "var(--seal)", "stroke-width": 3 }, skip);
+    mk("text", { x: 410, y: 214, "class": "mid", style: "fill:var(--seal);font-size:15px;font-weight:800" }, skip, "법원을 거치지 않음");
+    var verdict = bubble(s2, "심판한다", 96);
+    function scene2(lt) {
+      boardRender(1, lt, 200);
+      judge.set(410, GROUND, 0, 1);
+      judge.g.style.opacity = lt > 2600 ? .4 : 1;
+      officers.forEach(function (o, k) { o.set(800 + k * 55, GROUND - 22, 0, -1, lt > 5000 + k * 200 && lt < 5900 + k * 200); });
+      route(a2, [[400, 2600, -60, 280], [3400, 5000, 280, 640]], lt);
+      route(c2, [[400, 2600, -140, 200], [3400, 5000, 200, 705]], lt, { faceEnd: 1 });
+      op(skip, seg(lt, 2600, 3200) * (lt < 7600 ? 1 : 1));
+      op(verdict, lt > 5600 ? 1 : 0); at(verdict, 855, 304);
+    }
+
+    // ③ 제4호: 학생 시위 → 체포, 폐교
+    var s3 = scenes[2];
+    var school = mk("g", {}, s3);
+    mk("rect", { x: 690, y: 300, width: 270, height: GROUND - 300, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, school);
+    mk("rect", { x: 680, y: 288, width: 290, height: 16, fill: "var(--ink-2)" }, school);
+    [710, 770, 880, 930].forEach(function (x) { mk("rect", { x: x, y: 325, width: 34, height: 30, fill: "var(--south-soft)", stroke: "var(--ink-2)" }, school); });
+    mk("rect", { x: 800, y: 390, width: 60, height: GROUND - 390, fill: "var(--ink-2)" }, school);
+    mk("text", { x: 825, y: 282, "class": "mid", style: "fill:var(--ink);font-size:14px;font-weight:700" }, school, "학교");
+    var closed = mk("g", {}, s3);
+    mk("rect", { x: 780, y: 410, width: 100, height: 24, fill: "var(--seal)", transform: "rotate(-12 830 422)" }, closed);
+    mk("text", { x: 830, y: 428, "class": "mid", transform: "rotate(-12 830 422)", style: "fill:var(--sheet);font-size:15px;font-weight:800" }, closed, "폐교");
+    var st3 = [0, 1, 2].map(function (k) { return person(s3, { shirt: "var(--ink)", cap: "var(--ink)", label: "학생" }); });
+    var signs = [0, 1, 2].map(function () {
+      var g = mk("g", {}, s3);
+      mk("rect", { x: -2, y: -60, width: 4, height: 60, fill: "var(--ink-2)" }, g);
+      mk("rect", { x: -34, y: -88, width: 68, height: 30, rx: 2, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 1.5 }, g);
+      mk("text", { x: 0, y: -67, "class": "mid", style: "fill:var(--ink);font-size:13px;font-weight:700" }, g, "유신 반대");
+      return g;
+    });
+    var a3 = [person(s3, AGENT), person(s3, AGENT)];
+    var w3 = warrant(s3);
+    function scene3(lt) {
+      boardRender(2, lt, 200);
+      var xs = st3.map(function (p, k) {
+        var home = 470 + k * 85;
+        return route(p, [[400, 2200, 830, home], [5800, 6600, home, k === 0 ? home : home + 60]], lt, { faceEnd: -1, raise: lt > 2300 && lt < 5600 });
+      });
+      signs.forEach(function (sg, k) { show(sg, lt > 2300 && lt < 5600); at(sg, xs[k] - 8, GROUND - 150); });
+      route(a3[0], [[3800, 5200, -90, 405]], lt, { raise: lt > 5400 });
+      route(a3[1], [[4000, 5400, -160, 340]], lt);
+      op(w3, seg(lt, 5400, 5800)); at(w3, 290, 270);
+      var c = seg(lt, 6400, 6900); op(closed, c); 
+    }
+
+    // ④ 제9호: 말 한마디로 체포, 언론 정간, 학교 휴교
+    var s4 = scenes[3];
+    var stand = mk("g", {}, s4);
+    mk("rect", { x: 610, y: GROUND - 70, width: 120, height: 70, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, stand);
+    for (var i = 0; i < 5; i++) mk("rect", { x: 625, y: GROUND - 82 - i * 6, width: 90, height: 6, fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 1 }, stand);
+    mk("text", { x: 670, y: GROUND - 30, "class": "mid", style: "fill:var(--ink);font-size:14px;font-weight:700" }, stand, "신문");
+    var sch4 = mk("g", {}, s4);
+    mk("rect", { x: 800, y: 330, width: 170, height: GROUND - 330, fill: "var(--paper)", stroke: "var(--ink-2)", "stroke-width": 2 }, sch4);
+    mk("rect", { x: 792, y: 318, width: 186, height: 14, fill: "var(--ink-2)" }, sch4);
+    mk("rect", { x: 860, y: 400, width: 50, height: GROUND - 400, fill: "var(--ink-2)" }, sch4);
+    mk("text", { x: 885, y: 312, "class": "mid", style: "fill:var(--ink);font-size:14px;font-weight:700" }, sch4, "학교");
+    var paperStamp = stamp(s4, "정간", 64, 30, 17), schoolStamp = stamp(s4, "휴교", 64, 30, 17);
+    var talk = [person(s4, { shirt: CIT[1], label: "시민" }), person(s4, { shirt: CIT[3], label: "시민" })];
+    var say = bubble(s4, "헌법을 고쳐야 하지 않나…", 190);
+    var a4 = person(s4, AGENT), w4 = warrant(s4);
+    function scene4(lt) {
+      boardRender(3, lt, 200);
+      route(talk[0], [[300, 1800, -60, 380]], lt, { faceEnd: 1 });
+      route(talk[1], [[0, 1, 460, 460], [4600, 5400, 460, 540]], lt, { faceEnd: -1 });
+      op(say, lt > 1900 && lt < 3900 ? 1 : 0); at(say, 400, 300);
+      route(a4, [[2800, 4200, -100, 310]], lt, { raise: lt > 4300 });
+      op(w4, seg(lt, 4300, 4700)); at(w4, 300, 270);
+      var p = seg(lt, 5600, 6000), q = seg(lt, 6300, 6700);
+      op(paperStamp, p); at(paperStamp, 670, GROUND - 105, lerp(1.8, 1, easeOut(p)));
+      op(schoolStamp, q); at(schoolStamp, 885, 365, lerp(1.8, 1, easeOut(q)));
+    }
+
+    var SC = [scene1, scene2, scene3, scene4];
+    function render(t) {
+      t = Math.max(0, t);   // 첫 프레임에서 시간이 아주 조금 음수가 될 수 있음
+      var si = Math.min(3, Math.floor(t / LEN)), lt = t - si * LEN;
+      SC.forEach(function (f, i) { show(scenes[i], i === si); show(heads[i].g, i === si); });
+      headRender(si, lt);
+      SC[si](lt);
+    }
+    return stepper("emergency", [7999, 10999, 18999, 21999, 29999, 32999, 40999, 44000], render, svg);
+  })();
+
   /* ───────── 10대 국회의원 선거 (1978) ───────── */
   var election78 = (function () {
     var svg = $("#svgElection78");
@@ -408,7 +735,7 @@ svg text { font-family: var(--f-body); }
   })();
 
   /* ── 화면 전환 ── */
-  var pages = { power: power, election78: election78 }, names = ["power", "election78"], cur = null;
+  var pages = { power: power, emergency: emergency, election78: election78 }, names = ["power", "emergency", "election78"], cur = null;
   function go(name) {
     if (names.indexOf(name) < 0) name = "power";
     names.forEach(function (n) { $("#p-" + n).hidden = n !== name; });
