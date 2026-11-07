@@ -549,6 +549,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     pill(c, PARIS.name, px, py - 18, "#1f3a6b");
     PLACES.forEach(function (pl, k) {
       var has = placeHas(k), done = has && !placeLeft(k).length, isCur = k === cur;
+      if (!has) return;   // 몬스터를 넣지 않은 지역은 지도에 나오지 않는다
       if (isCur) {
         var pulse = (Math.sin(tt * 3) + 1) / 2;
         c.fillStyle = "rgba(192,53,43,.16)"; c.beginPath(); c.arc(pl.x, pl.y, ZR, 0, Math.PI * 2); c.fill();
