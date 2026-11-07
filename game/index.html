@@ -50,6 +50,10 @@ button { font: inherit; touch-action: manipulation; color: var(--ink); }
 /* 포획 연출용 요소(평소엔 투명)가 힌트·필기 버튼 위에 겹쳐 눌림을 막지 않게 */
 .capsule, .stars { pointer-events: none; }
 #flash.go { animation: flash .75s steps(2) 1; }
+/* 지도↔마을 이동: 몬스터를 만날 때(하얀 번쩍임)와 다르게, 화면이 동그랗게 닫혔다가 열린다 */
+#warp { position: absolute; left: 50%; top: 50%; width: 0; height: 0; border-radius: 50%; pointer-events: none; opacity: 0; box-shadow: 0 0 0 200vmax #14201b; transform: translate(-50%, -50%); z-index: 2; }
+#warp.go { animation: iris 1s ease-in-out 1; }
+@keyframes iris { 0% { width: 260vmax; height: 260vmax; opacity: 1; } 42%, 58% { width: 0; height: 0; opacity: 1; } 100% { width: 260vmax; height: 260vmax; opacity: 1; } }
 @keyframes flash { 0%, 100% { opacity: 0; } 20%, 60% { opacity: 1; } 40%, 80% { opacity: 0; } }
 
 /* ── 배틀 화면 ── */
@@ -229,6 +233,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     <div class="stick" id="stick" aria-label="조이스틱"><div class="knob" id="knob"></div></div>
     <div class="tip" id="tip">조이스틱을 끌어 풀숲(진한 초록)을 돌아다니면 몬스터가 나타나요!</div>
     <div id="flash"></div>
+    <div id="warp"></div>
 
     <div class="layer" id="titleL">
       <div class="card">
@@ -786,22 +791,28 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     LANDMARK[S.L](g, 9 * TS, 1 * TS, 6 * TS, 4 * TS);
     return { c: L.c, water: wat, S: S };
   }
+  function iris() { var w = $("warp"); w.classList.remove("go"); void w.offsetWidth; w.classList.add("go"); setTimeout(function () { w.classList.remove("go"); }, 1050); }
   function enterTown(k) {
     mode = "warp"; keys = {}; stickV = { x: 0, y: 0 };
-    var fl = $("flash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go");
+    iris();
     setTimeout(function () {
       if (!TOWNS[k]) TOWNS[k] = buildTown(k);
       scene = "town"; TOWN = k; CUR_MAP = TOWN_MAP;
       P.x = 12.5 * TS; P.y = 14.4 * TS; P.dir = "up"; P.cool = 30;
       mode = "map";
       tip(PLACES[k].name + "에 도착! 풀숲을 돌아다니며 몬스터를 찾으세요. 다 잡으면 다시 지도로 나가요.");
-    }, 420);
+    }, 460);
   }
-  function leaveTown(msg) {
+  function leaveTown(after) {
     var k = TOWN;
-    scene = "world"; TOWN = -1; CUR_MAP = MAP; townArm = false;
-    P.x = PLACES[k].x; P.y = PLACES[k].y; P.dir = "down";
-    var fl = $("flash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go");
+    mode = "warp"; keys = {}; stickV = { x: 0, y: 0 };
+    iris();
+    setTimeout(function () {
+      scene = "world"; TOWN = -1; CUR_MAP = MAP; townArm = false;
+      P.x = PLACES[k].x; P.y = PLACES[k].y; P.dir = "down";
+      mode = "map";
+      if (after) after();
+    }, 460);
   }
   function worldTip() {
     var cur = curPlace();
@@ -853,7 +864,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
       });
       return;
     }
-    if (scene === "town" && P.y > 15.15 * TS) { leaveTown(); worldTip(); return; }
+    if (scene === "town" && P.y > 15.15 * TS) { leaveTown(worldTip); return; }
     var inGrass = tile(Math.floor(P.x / TS), Math.floor(P.y / TS)) === "G";
     if (inGrass && P.cool <= 0) {
       P.grass += moved;
@@ -871,7 +882,33 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
       }
     }
   }
+  // 유럽 지도에서는 나폴레옹 차림: 이각모, 남색 군복, 금색 견장, 흰 바지, 검은 장화
+  function drawNapoleon(px, py, moving) {
+    var c = ctx, d = P.dir, walk = moving ? (Math.floor(P.walk / 9) % 2) : 0;
+    c.fillStyle = "rgba(0,0,0,.2)"; c.beginPath(); c.ellipse(px + 16, py + 29, 9, 3.5, 0, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#15171a"; c.fillRect(px + 10, py + 23 - (walk ? 1 : 0), 5, 7); c.fillRect(px + 17, py + 23 - (walk ? 0 : 1), 5, 7);
+    c.fillStyle = "#f4f1e8"; c.fillRect(px + 10, py + 19, 12, 5);
+    c.fillStyle = "#1f2f5c"; c.fillRect(px + 9, py + 12, 14, 10);
+    if (d !== "up") { c.fillStyle = "#f4f1e8"; c.fillRect(px + 14, py + 13, 4, 8); c.fillStyle = "#d8b03a"; c.fillRect(px + 12, py + 14, 1, 1); c.fillRect(px + 12, py + 17, 1, 1); c.fillRect(px + 19, py + 14, 1, 1); c.fillRect(px + 19, py + 17, 1, 1); }
+    c.fillStyle = "#1f2f5c"; c.fillRect(px + 7, py + 14, 3, 7); c.fillRect(px + 22, py + 14, 3, 7);
+    c.fillStyle = "#e0b43a"; c.fillRect(px + 6, py + 12, 5, 3); c.fillRect(px + 21, py + 12, 5, 3);
+    c.fillStyle = "#b8322a"; c.fillRect(px + 11, py + 11, 10, 2);
+    c.fillStyle = "#f2c9a0"; c.fillRect(px + 7, py + 20, 3, 2); c.fillRect(px + 22, py + 20, 3, 2);
+    c.fillRect(px + 10, py + 4, 12, 8);
+    c.fillStyle = "#3b2a1e"; c.fillRect(px + 10, py + 4, 2, 4); c.fillRect(px + 20, py + 4, 2, 4);
+    if (d === "up") c.fillRect(px + 10, py + 4, 12, 7);
+    c.fillStyle = "#1c2321";
+    if (d === "down") { c.fillRect(px + 13, py + 7, 2, 2); c.fillRect(px + 17, py + 7, 2, 2); }
+    if (d === "left") c.fillRect(px + 12, py + 7, 2, 2);
+    if (d === "right") c.fillRect(px + 18, py + 7, 2, 2);
+    // 이각모
+    c.fillStyle = "#121315";
+    if (d === "left" || d === "right") { c.beginPath(); c.moveTo(px + 9, py + 5); c.quadraticCurveTo(px + 16, py - 7, px + 23, py + 5); c.closePath(); c.fill(); c.fillRect(px + 9, py + 3, 14, 3); }
+    else { c.beginPath(); c.moveTo(px + 2, py + 5); c.quadraticCurveTo(px + 16, py - 5, px + 30, py + 5); c.lineTo(px + 26, py + 6); c.quadraticCurveTo(px + 16, py + 1, px + 6, py + 6); c.closePath(); c.fill(); }
+    if (d !== "up") { var cx = d === "left" ? px + 11 : d === "right" ? px + 21 : px + 16; c.fillStyle = "#1f3a8a"; c.beginPath(); c.arc(cx, py + 1.5, 2.6, 0, Math.PI * 2); c.fill(); c.fillStyle = "#fff"; c.beginPath(); c.arc(cx, py + 1.5, 1.7, 0, Math.PI * 2); c.fill(); c.fillStyle = "#c62828"; c.beginPath(); c.arc(cx, py + 1.5, .9, 0, Math.PI * 2); c.fill(); }
+  }
   function drawPlayer(px, py, moving) {
+    if (EU) return drawNapoleon(px, py, moving);
     var c = ctx, d = P.dir, walk = moving ? (Math.floor(P.walk / 9) % 2) : 0;
     c.fillStyle = "rgba(0,0,0,.18)"; c.beginPath(); c.ellipse(px + 16, py + 29, 9, 3.5, 0, 0, Math.PI * 2); c.fill();
     c.fillStyle = "#2a3b47"; c.fillRect(px + 10, py + 22 - (walk ? 1 : 0), 5, 7); c.fillRect(px + 17, py + 22 - (walk ? 0 : 1), 5, 7);
@@ -1212,7 +1249,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
           if (B.boss) { say("해냈다! 보스 " + j(m.name, "을", "를") + " 잡았다!", function () { buttons([{ label: "도감 완성 확인!", fn: finish }]); }); return; }
           say("신난다! " + j(m.name, "을", "를") + " 잡았다!", function () {
             if (complete()) { buttons([{ label: "도감 완성 확인!", fn: finish }]); return; }
-            var out = function () { backToMap(); if (scene === "town") { leaveTown(); if (bossOut()) tip(BOSS_TIP); else worldTip(); } };
+            var out = function () { backToMap(); if (scene === "town") leaveTown(function () { if (bossOut()) tip(BOSS_TIP); else worldTip(); }); };
             if (bossOut()) { say(EU ? "모든 곳의 몬스터를 다 잡았다! 그런데… 워털루에서 강한 기운이 느껴진다!" : "도감을 다 채웠다! 그런데… 마을 한가운데에서 강한 기운이 느껴진다!", function () { buttons([{ label: EU ? "지도로 돌아가기" : "보스를 찾으러 가기", fn: out }]); }); return; }
             if (scene === "town" && !placeLeft(TOWN).length) { say(PLACES[TOWN].name + "의 몬스터를 모두 잡았다! 지도로 돌아가 다음 곳으로 가자.", function () { buttons([{ label: "지도로 돌아가기", fn: out }]); }); return; }
             buttons([{ label: "계속 탐험하기", fn: backToMap }]);
