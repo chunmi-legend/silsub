@@ -319,7 +319,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   function allRegular() { return MONS.length > 0 && save.caught.length >= MONS.length; }
   function bossOut() { return !!BOSS && allRegular() && !save.boss; }          // 보스가 지도에 나와 있는가
   function complete() { return allRegular() && (!BOSS || !!save.boss); }
-  var BOSS_TIP = "마을 한가운데 큰 건물 앞에 보스가 나타났어요! 찾아가 보세요.";
+  var BOSS_TIP = DATA.world === "europe" ? "워털루(1815)에 보스가 나타났어요! 파리 북쪽으로 찾아가 보세요." : "마을 한가운데 큰 건물 앞에 보스가 나타났어요! 찾아가 보세요.";
 
   /* ── 지도 ── */
   // T 나무, W 물, G 풀숲, = 길, F 꽃, H 건물, f 울타리, S 표지판, R 바위
@@ -348,7 +348,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   ];
   var COLS = 24, ROWS = 16, TS = 32;
   function tile(x, y) { if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return "T"; return MAP[y].charAt(x) || "T"; }
-  function blockedAt(px, py) { return "TWHfSR".indexOf(tile(Math.floor(px / TS), Math.floor(py / TS))) >= 0; }
+  function blockedAt(px, py) { if (EU) return euBlocked(px, py); return "TWHfSR".indexOf(tile(Math.floor(px / TS), Math.floor(py / TS))) >= 0; }
 
   var cv = $("map"), ctx = cv.getContext("2d");
   var bg = document.createElement("canvas"); bg.width = 768; bg.height = 512;
@@ -416,11 +416,140 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     });
   }
 
+  /* ── 배경 지도 2: 나폴레옹의 유럽 원정 (경도 -10~40, 위도 29~60을 단순화해 그림) ── */
+  var EU = DATA.world === "europe";
+  var LON0 = -10, LON1 = 40, LAT0 = 29, LAT1 = 60;
+  function gx(lon) { return (lon - LON0) / (LON1 - LON0) * 768; }
+  function gy(lat) { return (LAT1 - lat) / (LAT1 - LAT0) * 512; }
+  // 원정지 (원정 순서). 몬스터마다 만들기 도구에서 원정지를 정한다
+  var PLACES = [
+    { id: "italy", name: "이탈리아 원정", year: "1796", lon: 9.2, lat: 45.5 },
+    { id: "egypt", name: "이집트 원정", year: "1798", lon: 29.9, lat: 30.9 },
+    { id: "austerlitz", name: "아우스터리츠", year: "1805", lon: 16.8, lat: 49.1 },
+    { id: "berlin", name: "베를린(대륙 봉쇄령)", year: "1806", lon: 13.4, lat: 52.5, up: true },
+    { id: "spain", name: "스페인", year: "1808", lon: -3.7, lat: 40.4 },
+    { id: "moscow", name: "모스크바(러시아 원정)", year: "1812", lon: 37.4, lat: 55.6, up: true }
+  ];
+  var PARIS = { name: "파리", lon: 2.35, lat: 48.85 }, WATERLOO = { name: "워털루", year: "1815", lon: 4.4, lat: 50.7 };
+  PLACES.forEach(function (pl) { pl.x = gx(pl.lon); pl.y = gy(pl.lat); });
+  var ZR = 36;   // 원정지 둘레(이 안을 걸으면 몬스터가 나타남)
+  // 몬스터의 원정지: 정해 두지 않았으면 몬스터 순서대로 원정지에 고르게 나눈다
+  MONS.forEach(function (m, i) {
+    var k = -1; PLACES.forEach(function (pl, j) { if (pl.id === m.place) k = j; });
+    m.pl = k >= 0 ? k : Math.min(PLACES.length - 1, Math.floor(i * PLACES.length / Math.max(1, MONS.length)));
+  });
+  function placeLeft(k) { return MONS.filter(function (m) { return m.pl === k && m.qs.length && save.caught.indexOf(m.id) < 0; }); }
+  function placeHas(k) { return MONS.some(function (m) { return m.pl === k && m.qs.length; }); }
+  function curPlace() { for (var k = 0; k < PLACES.length; k++) if (placeLeft(k).length) return k; return -1; }
+  var SEA = [
+    // 대서양·북해
+    [[-10,29],[-9.8,31.5],[-6.8,34],[-5.9,35.8],[-6.3,36.5],[-7.4,37.2],[-8.9,37],[-8.8,38.7],[-9.5,39],[-8.7,41],[-8.8,42.5],[-9.3,43],[-7.7,43.7],[-4.5,43.4],[-1.8,43.4],[-1.2,44.7],[-1.2,46],[-2.2,47.2],[-4.5,47.9],[-4.6,48.6],[-1.6,48.7],[-1.3,49.7],[0.2,49.5],[1.6,50.2],[2.5,51.1],[3.6,51.5],[4.8,52.9],[5.8,53.4],[8,53.6],[8.6,54.9],[8.1,55.6],[8.2,56.8],[9.9,57.6],[10.6,57.7],[11.9,57.7],[11.2,58.9],[10.6,59.9],[10,59],[8,58.1],[6,58.1],[5.5,59],[5,60],[-10,60]],
+    // 발트해
+    [[10.6,57.7],[10.5,57],[10.2,56.3],[10.9,56],[12.6,56],[12.6,55.6],[12.3,54.6],[10.9,54],[12,54.2],[13.7,54.3],[14.3,53.9],[16.5,54.5],[18.6,54.5],[19.9,54.4],[21.1,55.2],[21,56.5],[21.6,57.5],[23.5,57.1],[24.1,57],[24.3,58.3],[23.4,59.3],[25,59.5],[28,59.5],[30.2,59.9],[30.2,60],[18.7,60],[18.9,59.3],[17,58.7],[16.6,57.5],[16.5,56.2],[14.5,56.1],[12.9,55.4],[12.9,56],[11.9,57.4],[11.9,57.7]],
+    // 지중해
+    [[-5.6,36],[-4.4,36.7],[-2.1,36.7],[-0.5,38.3],[0.2,38.8],[-0.3,39.5],[0.9,41],[3.2,41.9],[3.1,43],[4.8,43.4],[6,43.1],[7.4,43.7],[8.8,44.4],[10.2,43.9],[11,42.4],[12.3,41.7],[13.7,41.2],[15.6,40.1],[16.2,38.9],[15.7,38],[16.6,38.4],[17.1,39],[17.2,40.5],[18.5,40.1],[18,40.6],[16.9,41.1],[15.9,41.9],[14,42.7],[13.6,43.5],[12.3,44.5],[12.3,45.4],[13.6,45.7],[14.5,45.2],[15.5,44],[16.4,43.5],[18.1,42.6],[19.4,41.8],[19.4,40.4],[20.1,39.6],[21.1,38.3],[21.7,36.8],[22.5,36.4],[23.1,36.8],[23.2,38],[24,38.2],[22.9,40.6],[24,40.9],[26,40.8],[26.2,40],[26.7,39.5],[26.4,38.3],[27.3,37.5],[28.3,36.7],[30.5,36.3],[32.5,36.1],[34.6,36.8],[36.2,36.6],[35.9,36.3],[35.8,34.5],[34.9,32.8],[34.2,31.4],[32.3,31.3],[29.9,31.2],[25,31.6],[23,32.6],[20.5,32.5],[20,31],[19,30.3],[15,32.3],[11.5,33.2],[10,34],[11,35.5],[10.2,37.2],[8,36.9],[3,36.8],[1,36.5],[-2,35.1],[-5.3,35.9]],
+    // 흑해
+    [[29,41.2],[31,41.1],[33,42],[35,42],[37,41.1],[40,41],[41.6,41.6],[41.5,42.5],[39,44.3],[37.5,44.7],[36.6,45.3],[35.5,45.1],[33.5,44.5],[32.5,45.4],[33.6,46.1],[31,46.6],[30.2,45.8],[29.6,45.2],[28.6,44.2],[27.9,43.1],[28,42]]
+  ];
+  var ISLANDS = [
+    [[-5.7,50.1],[-3.5,50.4],[-1,50.7],[1.4,51.2],[1.7,52.7],[0.3,53.4],[-0.2,54.1],[-1.6,55.6],[-2.1,57.1],[-1.8,57.6],[-3.4,58.6],[-5,58.6],[-5.6,57.5],[-5.7,56.3],[-4.9,55.2],[-3.2,54.9],[-3.4,54.3],[-3,53.4],[-4.6,53.3],[-4.2,52.8],[-4.1,52.2],[-5.2,51.7],[-3.2,51.4],[-4.2,51.2]],
+    [[-6,52.2],[-6.1,53.6],[-5.6,54.6],[-6.2,55.3],[-7.3,55.3],[-8.5,54.8],[-10,54.2],[-9.8,53.4],[-10.3,52],[-9.6,51.5],[-8.3,51.8]],
+    [[8.6,42],[9.4,43],[9.5,42.1],[9.2,41.4],[8.6,41.6]],
+    [[8.4,39],[8.2,40.9],[9.8,41.1],[9.6,39.1]],
+    [[12.4,37.8],[13.4,38.2],[15.6,38.3],[15.1,36.7]],
+    [[23.5,35.3],[26.3,35.3],[26,35],[24,35.1]],
+    [[32.3,34.7],[34,35.6],[34.6,35.7],[33.6,34.8]]
+  ];
+  var LANDMASK = null;
+  function polyPath(g, pts) { g.beginPath(); pts.forEach(function (q, i) { var x = gx(q[0]), y = gy(q[1]); if (i) g.lineTo(x, y); else g.moveTo(x, y); }); g.closePath(); }
+  if (EU) (function drawEurope() {
+    var g = bg.getContext("2d"), seed = 11;
+    function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    // 땅 모양(충돌 판정용)
+    var mk = document.createElement("canvas"); mk.width = 768; mk.height = 512;
+    var m = mk.getContext("2d");
+    m.fillStyle = "#000"; m.fillRect(0, 0, 768, 512);
+    m.globalCompositeOperation = "destination-out"; SEA.forEach(function (p) { polyPath(m, p); m.fill(); });
+    m.globalCompositeOperation = "source-over"; ISLANDS.forEach(function (p) { polyPath(m, p); m.fill(); });
+    LANDMASK = m.getImageData(0, 0, 768, 512).data;
+    // 바다
+    g.fillStyle = "#8fbfd8"; g.fillRect(0, 0, 768, 512);
+    g.fillStyle = "#a7d0e3";
+    for (var i = 0; i < 520; i++) { var x = Math.floor(rnd() * 760), y = Math.floor(rnd() * 508); if (!LANDMASK[(y * 768 + x) * 4 + 3]) g.fillRect(x, y, 6, 1); }
+    // 땅: 옛 지도 느낌의 종이색
+    var land = document.createElement("canvas"); land.width = 768; land.height = 512;
+    var l = land.getContext("2d");
+    l.drawImage(mk, 0, 0); l.globalCompositeOperation = "source-in"; l.fillStyle = "#e8dcb4"; l.fillRect(0, 0, 768, 512);
+    l.globalCompositeOperation = "source-atop"; l.fillStyle = "#d9cc9f";
+    for (i = 0; i < 900; i++) l.fillRect(Math.floor(rnd() * 766), Math.floor(rnd() * 510), 2, 2);
+    g.drawImage(land, 0, 0);
+    // 해안선
+    g.strokeStyle = "#6f8f8a"; g.lineWidth = 1.6; g.lineJoin = "round";
+    SEA.concat(ISLANDS).forEach(function (p) { polyPath(g, p); g.stroke(); });
+    // 나라 이름(흐리게)
+    g.font = "italic 700 15px sans-serif"; g.textAlign = "center"; g.fillStyle = "rgba(90,70,40,.38)";
+    [["영국", -2, 53.2], ["프랑스", 1.5, 46.6], ["프로이센", 19, 53.4], ["러시아", 30.5, 53.5], ["오스만 제국", 33, 39], ["에스파냐", -5.5, 39.3], ["이집트", 26, 30]].forEach(function (c) { g.fillText(c[1] === undefined ? "" : c[0], gx(c[1]), gy(c[2])); });
+  })();
+  function euBlocked(px, py) {
+    var x = Math.floor(px), y = Math.floor(py);
+    if (x < 2 || y < 2 || x >= 766 || y >= 510) return true;
+    return !LANDMASK[(y * 768 + x) * 4 + 3];
+  }
+  function label(c, text, sub, x, y, color) {
+    c.font = "800 13px sans-serif";
+    var hw = c.measureText(text).width / 2 + 4; x = Math.max(hw, Math.min(768 - hw, x)); c.textAlign = "center"; c.lineJoin = "round";
+    c.lineWidth = 4; c.strokeStyle = "rgba(255,250,235,.95)"; c.strokeText(text, x, y); c.fillStyle = color; c.fillText(text, x, y);
+    if (sub) { c.font = "700 11px sans-serif"; c.strokeText(sub, x, y + 13); c.fillText(sub, x, y + 13); }
+  }
+  function drawEuropeLive(tt) {
+    var c = ctx, cur = curPlace();
+    // 원정 경로: 파리 → 원정지 순서대로
+    // 몬스터가 있는 원정지만 잇는다
+    var pts = [[gx(PARIS.lon), gy(PARIS.lat), -1]];
+    PLACES.forEach(function (pl, k) { if (placeHas(k)) pts.push([pl.x, pl.y, k]); });
+    c.save(); c.lineWidth = 2.5; c.setLineDash([7, 6]);
+    for (var i = 1; i < pts.length; i++) {
+      var done = cur < 0 || pts[i][2] <= cur;
+      c.strokeStyle = done ? "rgba(160,40,30,.75)" : "rgba(90,80,60,.35)";
+      c.beginPath(); c.moveTo(pts[i - 1][0], pts[i - 1][1]); c.lineTo(pts[i][0], pts[i][1]); c.stroke();
+    }
+    c.restore();
+    // 파리
+    var px = gx(PARIS.lon), py = gy(PARIS.lat);
+    c.fillStyle = "#1f3a6b"; c.beginPath(); c.arc(px, py, 6, 0, Math.PI * 2); c.fill();
+    label(c, "파리 (출발)", "", px, py - 12, "#1f3a6b");
+    PLACES.forEach(function (pl, k) {
+      var has = placeHas(k), done = has && !placeLeft(k).length, isCur = k === cur;
+      if (isCur) {
+        var pulse = (Math.sin(tt * 3) + 1) / 2;
+        c.fillStyle = "rgba(76,150,60,.30)"; c.beginPath(); c.arc(pl.x, pl.y, ZR, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = "rgba(200,60,40," + (.5 + pulse * .5).toFixed(2) + ")"; c.lineWidth = 3;
+        c.beginPath(); c.arc(pl.x, pl.y, ZR + pulse * 4, 0, Math.PI * 2); c.stroke();
+        c.fillStyle = "#3f8d39";   // 풀숲 표시
+        for (var r = 0; r < 7; r++) { var a = r * 0.9 + 0.3, d = 12 + (r % 3) * 7, bx = pl.x + Math.cos(a) * d, by = pl.y + Math.sin(a) * d; c.fillRect(bx, by, 2, 7); c.fillRect(bx + 3, by - 3, 2, 10); c.fillRect(bx + 6, by, 2, 7); }
+      }
+      if (done) {   // 정복 완료: 삼색기
+        c.fillStyle = "#5a4a3a"; c.fillRect(pl.x - 1, pl.y - 22, 2, 22);
+        c.fillStyle = "#1f3a8a"; c.fillRect(pl.x + 1, pl.y - 22, 6, 11); c.fillStyle = "#fff"; c.fillRect(pl.x + 7, pl.y - 22, 6, 11); c.fillStyle = "#c62828"; c.fillRect(pl.x + 13, pl.y - 22, 6, 11);
+      } else {
+        c.fillStyle = isCur ? "#c0352b" : has ? "#8a8f8c" : "#c4bda5";
+        c.beginPath(); c.arc(pl.x, pl.y, isCur ? 7 : 5, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = "#fff"; c.lineWidth = 2; c.stroke();
+      }
+      var ly = pl.up ? pl.y - (done ? 30 : 14) - 13 : pl.y + (pl.y > 440 ? -ZR - 16 : ZR + 12);
+      label(c, pl.name, pl.year + (done ? " · 정복" : isCur ? " · 지금 원정지" : has ? " · 잠김" : ""), pl.x, ly, isCur ? "#a3241a" : has ? "#4a4f4c" : "#9a9580");
+    });
+    if (bossOut()) label(c, "워털루", WATERLOO.year, BP.x, BP.y + 16, "#5a2d91");
+  }
+
   /* ── 주인공: 발 위치(px, py)를 기준으로 자유롭게 이동 ── */
   var P = { x: 9.5 * TS, y: 7.8 * TS, dir: "down", walk: 0, grass: 0, cool: 0 };
+  if (EU) { P.x = gx(PARIS.lon); P.y = gy(PARIS.lat) + 14; }
+  var lockTipAt = 0;
   var SPEED = 150, HW = 8, HH = 5;           // 초당 픽셀, 발밑 충돌 상자 절반 크기
   var stickV = { x: 0, y: 0 }, keys = {}, mode = "title", last = 0;
   var BP = { x: 12.5 * TS, y: 7 * TS }, BS = 84, bossArm = true, bossPic = null;   // 보스 자리: 큰 건물 문 앞
+  if (EU) { BP = { x: gx(WATERLOO.lon), y: gy(WATERLOO.lat) }; BS = 64; }
   if (BOSS && BOSS.img) { bossPic = new Image(); bossPic.src = BOSS.img; }
   function bossResting() { var r = (save.rest || {}).boss; return r > Date.now() ? r : 0; }
   function free(x, y) { return !blockedAt(x - HW, y - HH) && !blockedAt(x + HW, y - HH) && !blockedAt(x - HW, y + HH) && !blockedAt(x + HW, y + HH); }
@@ -449,18 +578,27 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
         else { encounter(BOSS); return; }
       }
     }
-    if (tile(Math.floor(P.x / TS), Math.floor(P.y / TS)) === "G" && P.cool <= 0) {
+    var inGrass = false, cur = EU ? curPlace() : -1;
+    if (EU) {
+      PLACES.forEach(function (pl, k) {
+        var dd = Math.sqrt((P.x - pl.x) * (P.x - pl.x) + (P.y - pl.y) * (P.y - pl.y));
+        if (dd >= ZR) return;
+        if (k === cur) inGrass = true;
+        else if (placeHas(k) && placeLeft(k).length && Date.now() - lockTipAt > 4000) { lockTipAt = Date.now(); tip("아직 잠긴 원정지예요. 먼저 '" + PLACES[cur].name + "'의 몬스터를 모두 잡으세요!"); }
+      });
+    } else inGrass = tile(Math.floor(P.x / TS), Math.floor(P.y / TS)) === "G";
+    if (inGrass && P.cool <= 0) {
       P.grass += moved;
       if (P.grass >= 36) {
         P.grass = 0;
         var now = Date.now(), rest = save.rest || {};
-        var notYet = MONS.filter(function (m) { return save.caught.indexOf(m.id) < 0 && m.qs.length; });
+        var notYet = MONS.filter(function (m) { return save.caught.indexOf(m.id) < 0 && m.qs.length && (!EU || m.pl === cur); });
         var left = notYet.filter(function (m) { return !(rest[m.id] > now); });
         if (left.length && Math.random() < (DATA.rate || .2)) encounter(left[Math.floor(Math.random() * left.length)]);
         else if (!notYet.length && bossOut()) tip(BOSS_TIP);
         else if (!left.length && notYet.length) {
           var soon = Math.min.apply(null, notYet.map(function (m) { return rest[m.id]; }));
-          tip("남은 몬스터들이 쉬고 있어요. " + Math.max(1, Math.ceil((soon - now) / 1000)) + "초 뒤에 다시 나타나요!");
+          tip((EU ? "이 원정지의 " : "") + "남은 몬스터들이 쉬고 있어요. " + Math.max(1, Math.ceil((soon - now) / 1000)) + "초 뒤에 다시 나타나요!");
         }
       }
     }
@@ -510,8 +648,9 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   function render() {
     ctx.drawImage(bg, 0, 0);
     var tt = performance.now() / 1000;
+    if (EU) drawEuropeLive(tt);
     ctx.fillStyle = "#8cc8f2";
-    WATER.forEach(function (w) {
+    if (!EU) WATER.forEach(function (w) {
       var o = Math.sin(tt * 1.6 + w[2] * 6) * 4;
       ctx.fillRect(w[0] + 5 + o, w[1] + 8, 10, 2); ctx.fillRect(w[0] + 15 - o, w[1] + 20, 10, 2);
     });
@@ -520,7 +659,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
     if (showBoss && BP.y <= P.y) drawBoss(tt);
     drawPlayer(px, py, moving);
     if (showBoss && BP.y > P.y) drawBoss(tt);
-    if (tile(Math.floor(P.x / TS), Math.floor(P.y / TS)) === "G") {
+    if (!EU && tile(Math.floor(P.x / TS), Math.floor(P.y / TS)) === "G") {
       ctx.fillStyle = "#3f8d39";
       for (var c = 0; c < 4; c++) { var bx = px + c * 8 + 1; ctx.fillRect(bx, py + 22, 2, 8); ctx.fillRect(bx + 3, py + 18, 2, 12); ctx.fillRect(bx + 6, py + 22, 2, 8); }
     }
@@ -590,7 +729,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
   function tip(t) { var el = $("tip"); el.textContent = t; el.hidden = false; clearTimeout(tipT); tipT = setTimeout(function () { el.hidden = true; }, 3500); }
   // 틀린 적이 있는 몬스터는 잡지 못하고 헤어지면 잠시 쉰다 (같은 문제를 찍어서 맞히는 것 방지)
   function restIfWrong() { if (B && B.wrong && REST > 0) { save.rest = save.rest || {}; save.rest[B.m.id] = Date.now() + REST * 1000; store(); } }
-  function backToMap() { mode = "map"; showOnly(null); hud(); P.cool = 90; music("map"); if (bossOut()) tip(BOSS_TIP); }
+  function backToMap() { mode = "map"; showOnly(null); hud(); P.cool = 90; music("map"); if (bossOut()) tip(BOSS_TIP); else if (EU && curPlace() >= 0) tip("지금 원정지: " + PLACES[curPlace()].name + "(" + PLACES[curPlace()].year + ") · 빨간 원 안을 돌아다니세요!"); }
 
   /* ── 음악: 배경 음악(지도)과 배틀 음악. 첫 터치(모험 시작) 뒤에만 재생할 수 있다 ── */
   var SONG = {}, nowSong = null, muted = false;
@@ -790,7 +929,8 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
           if (B.boss) { say("해냈다! 보스 " + j(m.name, "을", "를") + " 잡았다!", function () { buttons([{ label: "도감 완성 확인!", fn: finish }]); }); return; }
           say("신난다! " + j(m.name, "을", "를") + " 잡았다!", function () {
             if (complete()) { buttons([{ label: "도감 완성 확인!", fn: finish }]); return; }
-            if (bossOut()) { say("도감을 다 채웠다! 그런데… 마을 한가운데에서 강한 기운이 느껴진다!", function () { buttons([{ label: "보스를 찾으러 가기", fn: backToMap }]); }); return; }
+            if (bossOut()) { say(EU ? "모든 원정지를 정복했다! 그런데… 워털루에서 강한 기운이 느껴진다!" : "도감을 다 채웠다! 그런데… 마을 한가운데에서 강한 기운이 느껴진다!", function () { buttons([{ label: "보스를 찾으러 가기", fn: backToMap }]); }); return; }
+            if (EU && m.pl !== curPlace()) { var nx = curPlace(); say("'" + PLACES[m.pl].name + "' 원정지를 정복했다! 다음 원정지는 '" + PLACES[nx].name + "(" + PLACES[nx].year + ")'!", function () { buttons([{ label: "다음 원정지로", fn: backToMap }]); }); return; }
             buttons([{ label: "계속 탐험하기", fn: backToMap }]);
           });
         } else {
@@ -909,6 +1049,7 @@ body.badge-gap .tip { bottom: calc(max(12px, env(safe-area-inset-bottom, 0px)) +
 
   /* ── 시작 ── */
   $("tTitle").textContent = DATA.title || "개념 도감";
+  if (EU) { var tq = document.querySelector("#titleL p"); tq.textContent = "파리에서 출발해 나폴레옹의 원정지를 차례로 찾아가세요. 빨간 원 안을 돌아다니면 몬스터가 나타나요. 문제를 맞혀 HP를 깎고 포획 도구를 던져 잡으세요. 한 원정지의 몬스터를 모두 잡아야 다음 원정지가 열려요. 모든 몬스터를 잡으면 도감 완성!"; }
   if (BOSS) { var tp = document.querySelector("#titleL p"); tp.textContent = tp.textContent.replace("모든 몬스터를 잡으면 도감 완성!", "모든 몬스터를 잡으면 마지막으로 보스가 나타나요. 보스까지 잡으면 도감 완성!"); }
   if (save.name) $("nameIn").value = save.name;
   if (save.caught.length) {
